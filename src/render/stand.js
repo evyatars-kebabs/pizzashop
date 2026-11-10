@@ -82,6 +82,11 @@ export function buildStand(loc, env) {
   g.add(cashier);
   env.cashier = cashier;
 
+  // The cook works at the prep table, behind it inside the cart. Hidden until a cook is hired.
+  const chef = buildChef(st.dough);
+  g.add(chef);
+  env.chef = chef;
+
   return g;
 }
 
@@ -115,15 +120,55 @@ function buildCashier() {
   return g;
 }
 
-// Called every frame: shows the cashier when hired and animates them while busy.
+// A low-poly cook in a white jacket and tall white hat, with an arm that works the dough.
+function buildChef(station) {
+  const g = new THREE.Group();
+  g.name = 'chef';
+  g.position.set(station[0], 0.65, station[2] - 0.75);
+  g.visible = false;
+  const jacket = uniqueMat('#fdfdfd');
+  const body = new THREE.Mesh(G.cylFine(), jacket);
+  body.scale.set(0.34, 0.9, 0.34);
+  body.position.y = 0.45;
+  body.castShadow = true;
+  const head = new THREE.Mesh(G.sphere(), mat('#8d5524'));
+  head.scale.set(0.23, 0.25, 0.23);
+  head.position.y = 1.3;
+  head.castShadow = true;
+  const hat = new THREE.Mesh(G.cylFine(), mat('#ffffff'));
+  hat.scale.set(0.2, 0.42, 0.2);
+  hat.position.y = 1.7;
+  hat.castShadow = true;
+  const arm = new THREE.Group();
+  arm.position.set(0.24, 0.95, 0.05);
+  const armMesh = new THREE.Mesh(G.cylFine(), jacket);
+  armMesh.scale.set(0.08, 0.5, 0.08);
+  armMesh.position.y = -0.25;
+  arm.add(armMesh);
+  g.add(body, head, hat, arm);
+  g.userData.arm = arm;
+  return g;
+}
+
+// Called every frame: shows the cashier and cook when hired, and animates them while busy.
 export function updateStaff(env, state, time) {
   const c = env.cashier;
-  if (!c) return;
-  c.visible = state.staff.cashier > 0;
-  if (!c.visible) return;
-  const busy = state.customers.some((x) => x.state === 'waiting');
-  c.userData.arm.rotation.x = busy ? -0.9 + Math.sin(time * 9) * 0.5 : -0.2 + Math.sin(time * 2) * 0.05;
-  c.position.y = 0.65 + (busy ? Math.abs(Math.sin(time * 9)) * 0.02 : 0);
+  if (c) {
+    c.visible = state.staff.cashier > 0;
+    if (c.visible) {
+      const busy = state.customers.some((x) => x.state === 'waiting');
+      c.userData.arm.rotation.x = busy ? -0.9 + Math.sin(time * 9) * 0.5 : -0.2 + Math.sin(time * 2) * 0.05;
+      c.position.y = 0.65 + (busy ? Math.abs(Math.sin(time * 9)) * 0.02 : 0);
+    }
+  }
+  const k = env.chef;
+  if (k) {
+    k.visible = state.staff.cook > 0;
+    if (k.visible) {
+      const working = state.pizzas.some((p) => p.stage === 'dough' || p.stage === 'topping');
+      k.userData.arm.rotation.x = working ? -0.7 + Math.sin(time * 10) * 0.6 : -0.2 + Math.sin(time * 2) * 0.05;
+    }
+  }
 }
 
 export function setNeonLevel(env, level) {
