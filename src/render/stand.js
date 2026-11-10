@@ -77,7 +77,53 @@ export function buildStand(loc, env) {
   pole.position.set(2.2, 2.8, -0.9);
   g.add(pole);
 
+  // The cashier stands behind the counter, next to the register. Hidden until one is hired.
+  const cashier = buildCashier();
+  g.add(cashier);
+  env.cashier = cashier;
+
   return g;
+}
+
+// A simple low-poly cashier: apron, red cap, and an arm that moves while they work.
+function buildCashier() {
+  const g = new THREE.Group();
+  g.name = 'cashier';
+  g.position.set(0.55, 0.65, 0.35);
+  g.visible = false;
+  const shirt = uniqueMat('#ef476f');
+  const body = new THREE.Mesh(G.cylFine(), shirt);
+  body.scale.set(0.34, 0.9, 0.34);
+  body.position.y = 0.45;
+  body.castShadow = true;
+  const apron = boxMesh([0.34, 0.52, 0.05], '#fff7ea', [0, 0.14, 0.2]);
+  const head = new THREE.Mesh(G.sphere(), mat('#c68642'));
+  head.scale.set(0.23, 0.25, 0.23);
+  head.position.y = 1.3;
+  head.castShadow = true;
+  const cap = new THREE.Mesh(G.cylFine(), mat('#ffd166'));
+  cap.scale.set(0.27, 0.1, 0.27);
+  cap.position.y = 1.5;
+  const arm = new THREE.Group();
+  arm.position.set(0.24, 0.95, 0.05);
+  const armMesh = new THREE.Mesh(G.cylFine(), shirt);
+  armMesh.scale.set(0.08, 0.5, 0.08);
+  armMesh.position.y = -0.25;
+  arm.add(armMesh);
+  g.add(body, apron, head, cap, arm);
+  g.userData.arm = arm;
+  return g;
+}
+
+// Called every frame: shows the cashier when hired and animates them while busy.
+export function updateStaff(env, state, time) {
+  const c = env.cashier;
+  if (!c) return;
+  c.visible = state.staff.cashier > 0;
+  if (!c.visible) return;
+  const busy = state.customers.some((x) => x.state === 'waiting');
+  c.userData.arm.rotation.x = busy ? -0.9 + Math.sin(time * 9) * 0.5 : -0.2 + Math.sin(time * 2) * 0.05;
+  c.position.y = 0.65 + (busy ? Math.abs(Math.sin(time * 9)) * 0.02 : 0);
 }
 
 export function setNeonLevel(env, level) {

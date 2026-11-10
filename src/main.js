@@ -15,7 +15,7 @@ import { offlineReport, applyOffline } from './game/offline.js';
 import { startEvent } from './game/events.js';
 import { createScene } from './render/scene.js';
 import { buildLocation } from './render/props.js';
-import { buildStand, setNeonLevel, setOvenGlow } from './render/stand.js';
+import { buildStand, setNeonLevel, setOvenGlow, updateStaff } from './render/stand.js';
 import { Actors } from './render/actors.js';
 import { FX } from './render/fx.js';
 import { createHUD, staticStrings } from './ui/hud.js';
@@ -503,6 +503,7 @@ function frame(now) {
   env.update(dt, S.dayClock);
   setNeonLevel(env, S.upgrades.neon);
   setOvenGlow(env, S.pizzas.some((p) => p.stage === 'baking'));
+  updateStaff(env, S, performance.now() / 1000);
 
   saveTimer += dt;
   if (saveTimer >= cfg.economy.time.autosaveSeconds) {
