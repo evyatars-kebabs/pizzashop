@@ -21,6 +21,7 @@ import { FX } from './render/fx.js';
 import { createHUD, staticStrings } from './ui/hud.js';
 import { initMinigames, doughStep, toppingStep, ovenStep, isMiniOpen, cancelMini } from './ui/minigames.js';
 import * as sheets from './ui/sheets.js';
+import { createSigns } from './ui/signs.js';
 
 const STEP = 0.1;
 const MAX_STEPS_PER_FRAME = 20;
@@ -32,6 +33,7 @@ let S;
 let env;
 let stand;
 let sceneryGroup = null;
+let signs = null;
 let actors;
 let fx;
 let hud;
@@ -57,6 +59,7 @@ async function boot() {
   actors = new Actors(env, currentLoc(), cfg);
   fx = new FX(env.scene);
   hud = createHUD(onAction);
+  signs = createSigns();
   buildScenery();
 
   initMinigames(cfg, {
@@ -92,6 +95,7 @@ function buildScenery() {
   const loc = currentLoc();
   if (sceneryGroup) env.scene.remove(sceneryGroup);
   env.glowMats.length = 0;
+  env.signs = [];
   sceneryGroup = new THREE.Group();
   sceneryGroup.add(buildLocation(loc, env));
   stand = buildStand(loc, env);
@@ -99,6 +103,7 @@ function buildScenery() {
   env.scene.add(sceneryGroup);
   env.setLocation(loc);
   actors.setLocation(loc);
+  signs.setSpecs(env.signs);
 }
 
 function moveTo(id) {
@@ -503,6 +508,7 @@ function frame(now) {
   env.update(dt, S.dayClock);
   setNeonLevel(env, S.upgrades.neon);
   setOvenGlow(env, S.pizzas.some((p) => p.stage === 'baking'));
+  signs.update(env, S, cfg);
   updateStaff(env, S, performance.now() / 1000);
 
   saveTimer += dt;

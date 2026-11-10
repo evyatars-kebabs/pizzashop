@@ -131,7 +131,7 @@ export function createScene(canvas, locData) {
     v.set(pos[0], pos[1], pos[2]).project(camera);
     const w = canvas.clientWidth;
     const h = canvas.clientHeight;
-    return { x: (v.x * 0.5 + 0.5) * w, y: (-v.y * 0.5 + 0.5) * h };
+    return { x: (v.x * 0.5 + 0.5) * w, y: (-v.y * 0.5 + 0.5) * h, front: v.z < 1 };
   }
 
   return { ...env, update, focus, shakeCam, resize, toScreen, recomputeGoal, setLocation };

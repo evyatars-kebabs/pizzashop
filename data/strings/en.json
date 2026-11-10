@@ -155,5 +155,8 @@
   "toast.locationMoved": "Stand moved to {location}. Queue cleared.",
   "toast.locationUnlocked": "New location unlocked: {location}",
   "action.locked": "Locked",
-  "settings.keys": "Keys: 1 to 6 for the action bar, M mute, Esc closes a window. Click the pizzas and customers directly."
+  "settings.keys": "Keys: 1 to 6 for the action bar, M mute, Esc closes a window. Click the pizzas and customers directly.",
+  "sign.menu.title": "Menu",
+  "sign.neon": "Open!",
+  "sign.sandwich": "Fresh pizza, hot now!"
 }

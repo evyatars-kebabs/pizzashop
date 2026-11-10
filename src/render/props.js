@@ -26,6 +26,8 @@ function makeProp(p, env) {
     case 'lamp': return lamp(p, env);
     case 'bench': return bench(p);
     case 'bin': return bin(p);
+    case 'planter': return planter(p);
+    case 'sandwichBoard': return sandwichBoard(p, env);
     default:
       console.warn('[props] unknown prop type', p.type);
       return null;
@@ -105,4 +107,37 @@ function bin(p) {
   m.position.set(p.pos[0], 0.45, p.pos[2]);
   m.castShadow = true;
   return m;
+}
+
+function planter(p) {
+  const g = new THREE.Group();
+  g.position.set(p.pos[0], 0, p.pos[2]);
+  g.add(boxMesh([1.2, 0.5, 0.5], '#8d5a3b', [0, 0, 0]));
+  const colors = ['#ef476f', '#ffd166', '#f78c6b', '#9b5de5'];
+  for (let i = 0; i < 4; i++) {
+    const bloom = new THREE.Mesh(G.ico(), mat(colors[i]));
+    bloom.scale.set(0.2, 0.2, 0.2);
+    bloom.position.set(-0.4 + i * 0.27, 0.7 + (i % 2) * 0.1, 0);
+    bloom.castShadow = true;
+    g.add(bloom);
+  }
+  return g;
+}
+
+// A-frame sidewalk sign with a coloured board. No text.
+function sandwichBoard(p, env) {
+  const g = new THREE.Group();
+  g.position.set(p.pos[0], 0, p.pos[2]);
+  // The text is drawn as an HTML label over the board (see src/ui/signs.js), not in the image.
+  if (env?.signs) env.signs.push({ id: 'sandwich', pos: [p.pos[0], 1.1, p.pos[2]], kind: 'street' });
+  const leg = (x, rz) => {
+    const m = boxMesh([0.06, 1.1, 0.06], '#3c4043', [x, 0, 0]);
+    m.rotation.z = rz;
+    m.position.y = 0.5;
+    return m;
+  };
+  g.add(leg(-0.3, 0.2), leg(0.3, -0.2));
+  g.add(boxMesh([0.8, 0.6, 0.05], '#fff7ea', [-0.4, 0.9, 0]));
+  g.add(boxMesh([0.6, 0.4, 0.06], '#e5533d', [-0.4, 1.0, 0.01]));
+  return g;
 }

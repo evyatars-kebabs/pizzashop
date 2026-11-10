@@ -77,6 +77,8 @@ export function buildStand(loc, env) {
   pole.position.set(2.2, 2.8, -0.9);
   g.add(pole);
 
+  addDetails(g, env, st);
+
   // The cashier stands behind the counter, next to the register. Hidden until one is hired.
   const cashier = buildCashier();
   g.add(cashier);
@@ -88,6 +90,53 @@ export function buildStand(loc, env) {
   env.chef = chef;
 
   return g;
+}
+
+// Small touches that make the cart read as a real stand. Shapes only, no text.
+function addDetails(g, env, st) {
+  env.signs?.push({ id: 'menu', pos: [0.2, 2.0, -0.85], kind: 'menu' });
+  env.signs?.push({ id: 'neon', pos: [0.2, 3.7, -0.85], kind: 'neon' });
+
+  // Menu board on the back panel, with a row of topping-coloured dots instead of words.
+  g.add(boxMesh([1.8, 0.7, 0.05], '#2b2d42', [0.2, 1.95, -0.95]));
+  g.add(boxMesh([1.6, 0.55, 0.02], '#f7f1e1', [0.2, 2.02, -0.92]));
+  ['#c0392b', '#2e8b57', '#e67e22', '#3d5a1e', '#c9b79c'].forEach((c, i) => {
+    const dot = new THREE.Mesh(G.cylFine(), mat(c));
+    dot.scale.set(0.09, 0.02, 0.09);
+    dot.rotation.x = Math.PI / 2;
+    dot.position.set(-0.5 + i * 0.3, 2.24, -0.9);
+    g.add(dot);
+  });
+
+  // Potted basil at both ends of the counter.
+  for (const x of [-1.75, 2.05]) {
+    g.add(boxMesh([0.36, 0.3, 0.36], '#b5562c', [x, 1.2, 2.1]));
+    const leaves = new THREE.Mesh(G.sphere(), mat('#4f9d4a'));
+    leaves.scale.set(0.3, 0.3, 0.3);
+    leaves.position.set(x, 1.85, 2.1);
+    leaves.castShadow = true;
+    g.add(leaves);
+  }
+
+  // A stack of pizza boxes on the left end of the counter.
+  [0, 1, 2].forEach((i) => g.add(boxMesh([0.8, 0.12, 0.8], '#f2d7a7', [-1.2, 1.2 + i * 0.12, 1.5])));
+  g.add(boxMesh([0.8, 0.03, 0.8], '#e5533d', [-1.2, 1.2 + 3 * 0.12, 1.5]));
+
+  // Tip jar on the counter, near the register.
+  const jar = new THREE.Mesh(G.cylFine(), mat('#ffe9a8', { transparent: true, opacity: 0.85 }));
+  jar.scale.set(0.12, 0.2, 0.12);
+  jar.position.set(1.35, 1.3, 1.95);
+  g.add(jar);
+
+  // String lights under the awning. They glow at night like the lamps.
+  const bulbMat = uniqueMat('#ffe9a8', { emissive: new THREE.Color('#ffd27a'), emissiveIntensity: 0.2 });
+  env.glowMats.push(bulbMat);
+  for (let i = 0; i < 10; i++) {
+    const b = new THREE.Mesh(G.sphere(), bulbMat);
+    b.scale.set(0.07, 0.07, 0.07);
+    b.position.set(-1.85 + i * 0.45, 2.7, 1.05);
+    g.add(b);
+  }
 }
 
 // A simple low-poly cashier: apron, red cap, and an arm that moves while they work.
