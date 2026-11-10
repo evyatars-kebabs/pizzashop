@@ -158,5 +158,7 @@
   "settings.keys": "Keys: 1 to 6 for the action bar, M mute, Esc closes a window. Click the pizzas and customers directly.",
   "sign.menu.title": "Menu",
   "sign.neon": "Open!",
-  "sign.sandwich": "Fresh pizza, hot now!"
+  "sign.sandwich": "Fresh pizza, hot now!",
+  "mini.oven.stopped.good": "Perfect bake!",
+  "mini.oven.stopped.miss": "Close enough. It still bakes."
 }

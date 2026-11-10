@@ -301,3 +301,15 @@ button.icon {
 .sign-label.neon { background: #ff5fa2; color: #fff; font-size: 14px; padding: 4px 12px; text-shadow: 0 1px 2px rgba(0,0,0,.3); }
 .sign-label.street { background: #fff3c4; }
 .sign-label.street { white-space: normal; width: 130px; text-align: center; }
+
+/* Where the oven marker stopped. */
+.oven-track .marker.frozen { box-shadow: 0 0 0 3px var(--gold); }
+.oven-track .stop-mark {
+  position: absolute; top: -10px; bottom: -10px; width: 16px; margin-left: -8px;
+  border-radius: 8px; border: 3px solid #fff; box-shadow: 0 0 12px rgba(0,0,0,.4);
+}
+.oven-track .stop-mark.good { background: #3fbf6f; }
+.oven-track .stop-mark.miss { background: #ef476f; }
+.stop-note { font-weight: 800; font-size: 16px; margin: 6px 0 2px; }
+.stop-note.good { color: var(--basil); }
+.stop-note.miss { color: #b3261e; }

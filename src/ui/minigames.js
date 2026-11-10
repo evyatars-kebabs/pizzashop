@@ -236,11 +236,30 @@ export function ovenStep(onDone) {
       let elapsed = 0;
       let pos = 0;
       frame((dt) => {
+        if (stopped) return;
         elapsed += dt;
         pos = (1 - Math.cos((2 * Math.PI * elapsed) / m.ovenMarkerPeriodSeconds)) / 2;
         marker.style.left = pos * 100 + '%';
       });
-      const hit = () => finish({ markerPos: pos });
+      // Tap: freeze the marker where it stopped, show how close it was, then finish.
+      let stopped = false;
+      let timer = 0;
+      const hit = () => {
+        if (stopped) return;
+        stopped = true;
+        tap.disabled = true;
+        const dist = Math.abs(pos - 0.5);
+        const inZone = dist <= m.ovenSweetZone / 2;
+        const mark = el('div', 'stop-mark ' + (inZone ? 'good' : 'miss'));
+        mark.style.left = pos * 100 + '%';
+        track.appendChild(mark);
+        const note = el('div', 'stop-note ' + (inZone ? 'good' : 'miss'), t(inZone ? 'mini.oven.stopped.good' : 'mini.oven.stopped.miss'));
+        body.insertBefore(note, tap);
+        marker.classList.add('frozen');
+        marker.style.left = pos * 100 + '%';
+        timer = setTimeout(() => finish({ markerPos: pos }), 900);
+      };
+      cleanup(() => clearTimeout(timer));
       tap.addEventListener('click', hit);
       track.addEventListener('pointerdown', hit);
       onKey(cleanup, (e) => {
