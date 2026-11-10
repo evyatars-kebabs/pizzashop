@@ -1,0 +1,318 @@
+{
+  "schemaVersion": 1,
+  "_comment": "All tunable values. Costs are baseCost * growth^currentLevel to go from currentLevel to currentLevel+1. Times are in seconds.",
+  "startingCash": 30,
+  "bigSaleThreshold": 20,
+  "time": {
+    "dayLengthSeconds": 600,
+    "startDayClock": 0.3,
+    "offlineCapSeconds": 28800,
+    "offlineBaseEfficiency": 0.5,
+    "offlineEfficiencyPerStaffRole": 0.25,
+    "autosaveSeconds": 10,
+    "randomEventMinSeconds": 300,
+    "randomEventMaxSeconds": 600
+  },
+  "customers": {
+    "spawnBaseSeconds": 24,
+    "spawnJitter": 0.3,
+    "nightSpawnMult": 0.6,
+    "tipMax": 0.3,
+    "wrongToppingTipMult": 0.4,
+    "wrongToppingPayMult": 0.9,
+    "wrongToppingQuality": 0.55,
+    "angryPenalty": 3,
+    "types": {
+      "hungry": {
+        "weight": 3,
+        "patience": 90,
+        "tipMult": 1.0
+      },
+      "chatty": {
+        "weight": 2,
+        "patience": 120,
+        "tipMult": 1.3
+      },
+      "grumpy": {
+        "weight": 1,
+        "patience": 45,
+        "tipMult": 0.7
+      }
+    },
+    "toppings": [
+      "pepperoni",
+      "mushroom",
+      "olive",
+      "basil",
+      "pepper"
+    ]
+  },
+  "styles": {
+    "margherita": {
+      "basePrice": 8,
+      "bakeSeconds": 10,
+      "unlock": {
+        "type": "start"
+      },
+      "enabled": true
+    },
+    "pepperoni": {
+      "basePrice": 11,
+      "bakeSeconds": 10,
+      "unlock": {
+        "type": "lifetime",
+        "value": 600
+      },
+      "enabled": true
+    },
+    "veggie": {
+      "basePrice": 10,
+      "bakeSeconds": 11,
+      "unlock": {
+        "type": "lifetime",
+        "value": 2500
+      },
+      "enabled": false
+    },
+    "seasonal": {
+      "basePrice": 14,
+      "bakeSeconds": 12,
+      "unlock": {
+        "type": "lifetime",
+        "value": 8000
+      },
+      "enabled": false
+    }
+  },
+  "pizzaQuality": {
+    "payBase": 0.6,
+    "payPerQuality": 0.6
+  },
+  "stages": {
+    "autoDoughSeconds": 4,
+    "autoToppingSeconds": 3,
+    "autoDoughQuality": 0.7,
+    "autoToppingQuality": 0.75,
+    "autoLoadQuality": 0.7,
+    "perfectBakeQuality": 0.9,
+    "perfectBakeSpeedMult": 0.85,
+    "autoServeDelaySeconds": 1.0
+  },
+  "manual": {
+    "doughWindowSeconds": 8,
+    "doughSwipesNeeded": 1200,
+    "doughRushedQuality": 0.5,
+    "doughFinishMinQuality": 0.6,
+    "toppingCorrectQuality": 1.0,
+    "toppingWrongQuality": 0.55,
+    "ovenSweetZone": 0.18,
+    "ovenMinQuality": 0.6,
+    "ovenMarkerPeriodSeconds": 1.6,
+    "doughKeyStep": 110
+  },
+  "cashier": {
+    "orderSecondsBase": 3,
+    "orderSpeedPerLevel": 0.5
+  },
+  "cook": {
+    "speedPerLevel": 0.4
+  },
+  "upgrades": {
+    "oven": {
+      "baseCost": 40,
+      "growth": 1.7,
+      "maxLevel": 5,
+      "ovenSlotsBase": 1,
+      "ovenSlotsPerLevel": 1
+    },
+    "counter": {
+      "baseCost": 60,
+      "growth": 1.8,
+      "maxLevel": 5,
+      "maxQueueBase": 3,
+      "maxQueuePerLevel": 2
+    },
+    "cheese": {
+      "baseCost": 80,
+      "growth": 1.9,
+      "maxLevel": 10,
+      "cheeseMultPerLevel": 0.1
+    },
+    "decor": {
+      "baseCost": 120,
+      "growth": 2.0,
+      "maxLevel": 10,
+      "trafficPerLevel": 0.05
+    },
+    "neon": {
+      "baseCost": 300,
+      "growth": 2.5,
+      "maxLevel": 2,
+      "trafficPerLevel": 0.2
+    },
+    "scooter": {
+      "baseCost": 500,
+      "growth": 2.2,
+      "maxLevel": 5,
+      "enabled": false,
+      "_note": "Delivery scooter: placeholder for post-prototype delivery kid."
+    }
+  },
+  "staff": {
+    "cashier": {
+      "baseCost": 150,
+      "growth": 1.8,
+      "maxLevel": 5
+    },
+    "cook": {
+      "baseCost": 250,
+      "growth": 1.9,
+      "maxLevel": 5
+    }
+  },
+  "prestige": {
+    "milestoneLifetimeCash": 20000,
+    "pointsDivisor": 20000,
+    "bonusPerPoint": 0.1
+  },
+  "events": {
+    "rainyDay": {
+      "durationSeconds": 150,
+      "weight": 1,
+      "spawnMult": 1.5,
+      "patienceDrainMult": 1.25,
+      "cashMult": 1.0,
+      "styleDemand": {}
+    },
+    "foodFestival": {
+      "durationSeconds": 150,
+      "weight": 1,
+      "spawnMult": 1.2,
+      "patienceDrainMult": 1.0,
+      "cashMult": 1.1,
+      "styleDemand": {
+        "pepperoni": 3
+      }
+    }
+  },
+  "goals": [
+    {
+      "id": "goal.cashier",
+      "condition": {
+        "type": "staffLevel",
+        "role": "cashier",
+        "value": 1
+      }
+    },
+    {
+      "id": "goal.pepperoni",
+      "condition": {
+        "type": "lifetime",
+        "value": 600
+      }
+    },
+    {
+      "id": "goal.cook",
+      "condition": {
+        "type": "staffLevel",
+        "role": "cook",
+        "value": 1
+      }
+    },
+    {
+      "id": "goal.neon",
+      "condition": {
+        "type": "upgradeLevel",
+        "upgrade": "neon",
+        "value": 1
+      }
+    },
+    {
+      "id": "goal.franchise",
+      "condition": {
+        "type": "lifetime",
+        "value": 20000
+      }
+    }
+  ],
+  "tutorial": [
+    {
+      "id": "t1",
+      "textKey": "tut.1",
+      "highlight": "customers",
+      "check": {
+        "stat": "ordersTaken",
+        "gte": 1
+      }
+    },
+    {
+      "id": "t2",
+      "textKey": "tut.2",
+      "highlight": "stretch",
+      "check": {
+        "stat": "manualStretch",
+        "gte": 1
+      }
+    },
+    {
+      "id": "t3",
+      "textKey": "tut.3",
+      "highlight": "top",
+      "check": {
+        "stat": "manualTopping",
+        "gte": 1
+      }
+    },
+    {
+      "id": "t4",
+      "textKey": "tut.4",
+      "highlight": "oven",
+      "check": {
+        "stat": "manualLoad",
+        "gte": 1
+      }
+    },
+    {
+      "id": "t5",
+      "textKey": "tut.5",
+      "highlight": "serve",
+      "check": {
+        "stat": "served",
+        "gte": 1
+      }
+    },
+    {
+      "id": "t6",
+      "textKey": "tut.6",
+      "highlight": "shop",
+      "check": {
+        "stat": "upgradesBought",
+        "gte": 1
+      }
+    },
+    {
+      "id": "t7",
+      "textKey": "tut.7",
+      "highlight": "shop",
+      "check": {
+        "stat": "staffHired",
+        "gte": 1
+      }
+    }
+  ],
+  "monetizationStubs": {
+    "offlineBoostAd": {
+      "multiplier": 2,
+      "placeholderSeconds": 1.5
+    },
+    "starterPack": {
+      "priceLabel": "$2.99",
+      "placeholder": true
+    },
+    "ovenSkins": [
+      "skin.classic",
+      "skin.neon",
+      "skin.copper"
+    ]
+  }
+}

@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#ffd9a0">
+  <meta name="description" content="A cozy idle pizza stand prototype, for phone and PC.">
+  <title>Slice Street</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Ccircle cx=%2750%27 cy=%2750%27 r=%2746%27 fill=%27%23e5533d%27/%3E%3Cpath d=%27M50 12 L88 82 L12 82 Z%27 fill=%27%23ffd166%27/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+  <script type="importmap">
+  { "imports": { "three": "./vendor/three.module.js" } }
+  </script>
+</head>
+<body>
+  <canvas id="scene" aria-label="Pizza stand scene"></canvas>
+
+  <header id="topbar">
+    <div class="cash">
+      <span class="lbl" data-i18n="hud.cash">Cash</span>
+      <span id="cash" class="val">0</span>
+    </div>
+    <div class="meta">
+      <div id="rate" class="rate"></div>
+      <div id="goal" class="goal"></div>
+    </div>
+    <button id="btnSettings" class="icon" data-i18n-aria="action.settings" aria-label="Settings">⚙</button>
+    <button id="btnDebug" class="icon hidden" aria-label="Debug">🐞</button>
+  </header>
+
+  <div id="events" class="events"></div>
+  <div id="hint" class="hint hidden"></div>
+  <div id="floats" aria-hidden="true"></div>
+  <div id="toasts" aria-live="polite"></div>
+
+  <nav id="actions" aria-label="Actions">
+    <button data-action="customers" title="1"><kbd class="key">1</kbd><span class="ico">🙋</span><span class="lbl" data-i18n="action.customers">Order</span><span class="badge" hidden>0</span></button>
+    <button data-action="stretch" title="2"><kbd class="key">2</kbd><span class="ico">🫓</span><span class="lbl" data-i18n="action.stretch">Stretch</span><span class="badge" hidden>0</span></button>
+    <button data-action="top" title="3"><kbd class="key">3</kbd><span class="ico">🍅</span><span class="lbl" data-i18n="action.top">Topping</span><span class="badge" hidden>0</span></button>
+    <button data-action="oven" title="4"><kbd class="key">4</kbd><span class="ico">🔥</span><span class="lbl" data-i18n="action.oven">Oven</span><span class="badge" hidden>0</span></button>
+    <button data-action="serve" title="5"><kbd class="key">5</kbd><span class="ico">🍕</span><span class="lbl" data-i18n="action.serve">Serve</span><span class="badge" hidden>0</span></button>
+    <button data-action="shop" title="6"><kbd class="key">6</kbd><span class="ico">🛒</span><span class="lbl" data-i18n="action.shop">Shop</span></button>
+  </nav>
+
+  <div id="mini" class="overlay hidden" role="dialog" aria-modal="true">
+    <div class="sheet mini">
+      <header>
+        <h2 id="miniTitle"></h2>
+        <button id="miniClose" class="icon" aria-label="Close">✕</button>
+      </header>
+      <p id="miniHint" class="muted"></p>
+      <div id="miniBody"></div>
+    </div>
+  </div>
+
+  <div id="modal" class="overlay hidden" role="dialog" aria-modal="true">
+    <div class="sheet">
+      <header>
+        <h2 id="modalTitle"></h2>
+        <button id="modalClose" class="icon" aria-label="Close">✕</button>
+      </header>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <div id="loading">Loading…</div>
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>

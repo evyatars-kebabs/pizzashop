@@ -1,0 +1,198 @@
+{
+  "id": "corner",
+  "nameKey": "location.corner.name",
+  "unlock": {
+    "type": "start"
+  },
+  "ground": {
+    "color": "#e8c28a"
+  },
+  "sky": {
+    "day": "#9fd8f2",
+    "night": "#1d2540",
+    "dusk": "#f6a66b"
+  },
+  "queueStart": [
+    -2.2,
+    0,
+    4.3
+  ],
+  "queueStep": [
+    0.75,
+    0,
+    0.85
+  ],
+  "queueRowLength": 4,
+  "camera": {
+    "position": [
+      0,
+      6.4,
+      12.5
+    ],
+    "target": [
+      0,
+      1.3,
+      0.6
+    ],
+    "fov": 46
+  },
+  "stations": {
+    "dough": [
+      -1.0,
+      1.15,
+      0.7
+    ],
+    "load": [
+      1.0,
+      1.15,
+      0.7
+    ],
+    "oven": [
+      2.3,
+      1.0,
+      -0.2
+    ],
+    "pass": [
+      0.2,
+      1.15,
+      1.5
+    ]
+  },
+  "props": [
+    {
+      "type": "road",
+      "pos": [
+        0,
+        0.01,
+        -9
+      ],
+      "size": [
+        60,
+        8
+      ]
+    },
+    {
+      "type": "building",
+      "pos": [
+        -8,
+        0,
+        -6
+      ],
+      "size": [
+        4,
+        9,
+        4
+      ],
+      "color": "#e07a5f"
+    },
+    {
+      "type": "building",
+      "pos": [
+        -2.5,
+        0,
+        -8
+      ],
+      "size": [
+        3.5,
+        6,
+        3.5
+      ],
+      "color": "#f2cc8f"
+    },
+    {
+      "type": "building",
+      "pos": [
+        4.5,
+        0,
+        -7
+      ],
+      "size": [
+        4,
+        11,
+        4
+      ],
+      "color": "#81b29a"
+    },
+    {
+      "type": "building",
+      "pos": [
+        10,
+        0,
+        -4
+      ],
+      "size": [
+        3,
+        7,
+        4
+      ],
+      "color": "#f4a261"
+    },
+    {
+      "type": "tree",
+      "pos": [
+        -5.5,
+        0,
+        1.5
+      ]
+    },
+    {
+      "type": "tree",
+      "pos": [
+        7,
+        0,
+        2.5
+      ]
+    },
+    {
+      "type": "tree",
+      "pos": [
+        9.5,
+        0,
+        -1
+      ]
+    },
+    {
+      "type": "lamp",
+      "pos": [
+        3.8,
+        0,
+        4.2
+      ]
+    },
+    {
+      "type": "lamp",
+      "pos": [
+        -4.8,
+        0,
+        3.8
+      ]
+    },
+    {
+      "type": "bench",
+      "pos": [
+        5.5,
+        0,
+        6.5
+      ]
+    },
+    {
+      "type": "bin",
+      "pos": [
+        -4.0,
+        0,
+        6.0
+      ]
+    }
+  ],
+  "_queueNote": "queueStep: x = column step (queueRowLength per row, filling left to right), z = row depth, toward the camera.",
+  "window": [
+    -0.2,
+    0,
+    2.8
+  ],
+  "descKey": "location.corner.desc",
+  "economy": {
+    "trafficMult": 1.0,
+    "styleDemand": {}
+  }
+}

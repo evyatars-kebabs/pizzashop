@@ -1,0 +1,192 @@
+{
+  "id": "sideStreet",
+  "nameKey": "location.side.name",
+  "descKey": "location.side.desc",
+  "unlock": {
+    "type": "lifetime",
+    "value": 3000
+  },
+  "economy": {
+    "trafficMult": 1.35,
+    "styleDemand": {
+      "pepperoni": 2
+    }
+  },
+  "ground": {
+    "color": "#d9b38a"
+  },
+  "sky": {
+    "day": "#b8e0f0",
+    "night": "#202a4a",
+    "dusk": "#f08c5a"
+  },
+  "queueStart": [
+    -2.4,
+    0,
+    4.4
+  ],
+  "queueStep": [
+    0.75,
+    0,
+    0.85
+  ],
+  "queueRowLength": 4,
+  "window": [
+    0.1,
+    0,
+    2.8
+  ],
+  "camera": {
+    "position": [
+      0,
+      6.4,
+      12.5
+    ],
+    "target": [
+      0,
+      1.3,
+      0.6
+    ],
+    "fov": 46
+  },
+  "stations": {
+    "dough": [
+      -1.0,
+      1.15,
+      0.7
+    ],
+    "load": [
+      1.0,
+      1.15,
+      0.7
+    ],
+    "oven": [
+      2.3,
+      1.0,
+      -0.2
+    ],
+    "pass": [
+      0.2,
+      1.15,
+      1.5
+    ]
+  },
+  "props": [
+    {
+      "type": "road",
+      "pos": [
+        0,
+        0.01,
+        -9
+      ],
+      "size": [
+        60,
+        8
+      ]
+    },
+    {
+      "type": "building",
+      "pos": [
+        -9,
+        0,
+        -6
+      ],
+      "size": [
+        3.5,
+        6,
+        4
+      ],
+      "color": "#8ab17d"
+    },
+    {
+      "type": "building",
+      "pos": [
+        -4,
+        0,
+        -8
+      ],
+      "size": [
+        4,
+        10,
+        4
+      ],
+      "color": "#c9ada7"
+    },
+    {
+      "type": "building",
+      "pos": [
+        4,
+        0,
+        -7
+      ],
+      "size": [
+        3,
+        8,
+        3.5
+      ],
+      "color": "#f2cc8f"
+    },
+    {
+      "type": "building",
+      "pos": [
+        9.5,
+        0,
+        -6
+      ],
+      "size": [
+        4,
+        12,
+        4
+      ],
+      "color": "#e07a5f"
+    },
+    {
+      "type": "tree",
+      "pos": [
+        -6.5,
+        0,
+        2.0
+      ]
+    },
+    {
+      "type": "tree",
+      "pos": [
+        8,
+        0,
+        3
+      ]
+    },
+    {
+      "type": "lamp",
+      "pos": [
+        -3.8,
+        0,
+        4.6
+      ]
+    },
+    {
+      "type": "lamp",
+      "pos": [
+        4.2,
+        0,
+        4.6
+      ]
+    },
+    {
+      "type": "bench",
+      "pos": [
+        6.2,
+        0,
+        6.8
+      ]
+    },
+    {
+      "type": "bin",
+      "pos": [
+        -5.0,
+        0,
+        6.2
+      ]
+    }
+  ]
+}
