@@ -28,6 +28,7 @@ function makeProp(p, env) {
     case 'bin': return bin(p);
     case 'planter': return planter(p);
     case 'sandwichBoard': return sandwichBoard(p, env);
+    case 'menuBoard': return menuBoard(p, env);
     default:
       console.warn('[props] unknown prop type', p.type);
       return null;
@@ -139,5 +140,23 @@ function sandwichBoard(p, env) {
   g.add(leg(-0.3, 0.2), leg(0.3, -0.2));
   g.add(boxMesh([0.8, 0.6, 0.05], '#fff7ea', [-0.4, 0.9, 0]));
   g.add(boxMesh([0.6, 0.4, 0.06], '#e5533d', [-0.4, 1.0, 0.01]));
+  return g;
+}
+
+// Standing menu board on the sidewalk, away from the cart. Its text is an HTML label (src/ui/signs.js).
+function menuBoard(p, env) {
+  const g = new THREE.Group();
+  g.position.set(p.pos[0], 0, p.pos[2]);
+  for (const x of [-0.45, 0.45]) g.add(boxMesh([0.08, 1.1, 0.08], '#3c4043', [x, 0, 0]));
+  g.add(boxMesh([1.3, 0.9, 0.08], '#2b2d42', [0, 1.0, 0]));
+  g.add(boxMesh([1.16, 0.76, 0.02], '#f7f1e1', [0, 1.07, 0.05]));
+  ['#c0392b', '#2e8b57', '#e67e22', '#3d5a1e', '#c9b79c'].forEach((c, i) => {
+    const dot = new THREE.Mesh(G.cylFine(), mat(c));
+    dot.scale.set(0.08, 0.02, 0.08);
+    dot.rotation.x = Math.PI / 2;
+    dot.position.set(-0.4 + i * 0.2, 0.68, 0.06);
+    g.add(dot);
+  });
+  if (env?.signs) env.signs.push({ id: 'menu', pos: [p.pos[0], 2.2, p.pos[2]], kind: 'menu' });
   return g;
 }
