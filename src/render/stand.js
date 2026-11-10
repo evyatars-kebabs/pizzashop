@@ -92,19 +92,22 @@ export function buildStand(loc, env) {
   return g;
 }
 
+// Left end of the back panel, out of the way of the register and the oven.
+const MENU_X = -1.15;
+
 // Small touches that make the cart read as a real stand. Shapes only, no text.
 function addDetails(g, env, st) {
-  env.signs?.push({ id: 'menu', pos: [0.2, 2.0, -0.85], kind: 'menu' });
+  env.signs?.push({ id: 'menu', pos: [MENU_X, 2.0, -0.85], kind: 'menu' });
   env.signs?.push({ id: 'neon', pos: [0.2, 3.7, -0.85], kind: 'neon' });
 
-  // Menu board on the back panel, with a row of topping-coloured dots instead of words.
-  g.add(boxMesh([1.8, 0.7, 0.05], '#2b2d42', [0.2, 1.95, -0.95]));
-  g.add(boxMesh([1.6, 0.55, 0.02], '#f7f1e1', [0.2, 2.02, -0.92]));
+  // Menu board on the left end of the back panel, with a row of topping-coloured dots instead of words.
+  g.add(boxMesh([1.5, 0.7, 0.05], '#2b2d42', [MENU_X, 1.95, -0.95]));
+  g.add(boxMesh([1.35, 0.55, 0.02], '#f7f1e1', [MENU_X, 2.02, -0.92]));
   ['#c0392b', '#2e8b57', '#e67e22', '#3d5a1e', '#c9b79c'].forEach((c, i) => {
     const dot = new THREE.Mesh(G.cylFine(), mat(c));
     dot.scale.set(0.09, 0.02, 0.09);
     dot.rotation.x = Math.PI / 2;
-    dot.position.set(-0.5 + i * 0.3, 2.24, -0.9);
+    dot.position.set(MENU_X - 0.44 + i * 0.22, 2.24, -0.9);
     g.add(dot);
   });
 
