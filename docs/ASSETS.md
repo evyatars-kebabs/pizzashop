@@ -1,6 +1,8 @@
 # Placeholder asset list
 
-Everything in the prototype is built from primitives and synthesized sound, so nothing here blocks play. This list is what the final art and audio need.
+Everything in the prototype is built in code (merged primitives, procedural canvas textures, synthesized sound), so nothing here blocks play. The stand-ins are now fairly detailed, but they are still placeholders. This list is what final art and audio need.
+
+Built in code since this list was first written: three stand tiers (cart, big stand, pizza shop), ten decoration sets, characters with faces and walk cycles, detailed pizzas, buildings with windows and shopfronts, cars, sky dome, clouds, smoke and steam. A final art pass would replace these with authored models that keep the same anchor points (`layoutFor` in `src/render/stand.js`).
 
 Naming: `category/name_variant.ext`. Every asset is referenced from a data file or a single constant, so swapping one is a one-line change.
 

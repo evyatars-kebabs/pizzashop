@@ -1,6 +1,6 @@
 // Player and staff actions. All mutate the state object and return small result objects
 // so the UI and renderer can react. No DOM, no Three.js.
-import { derive, upgradeCost, payment, franchiseGain } from './economy.js';
+import { derive, upgradeCost, payment, franchiseGain, franchiseReady } from './economy.js';
 import { activeModifiers } from './events.js';
 
 export function findCustomer(state, id) {
@@ -192,7 +192,7 @@ function firstPurchase(state) {
 }
 
 export function canFranchise(state, cfg) {
-  return state.lifetimeCash >= cfg.economy.prestige.milestoneLifetimeCash;
+  return franchiseReady(state, cfg);
 }
 
 // Returns a brand-new state object that keeps what the design says carries over.
@@ -200,7 +200,12 @@ export function franchise(state, cfg, newGameFn, now = Date.now()) {
   const gain = franchiseGain(state, cfg);
   const fresh = newGameFn(cfg, now);
   fresh.unlockedLocations = { ...state.unlockedLocations };
-  fresh.franchise = { points: state.franchise.points + gain, count: state.franchise.count + 1 };
+  fresh.franchise = {
+    points: state.franchise.points + gain,
+    count: state.franchise.count + 1,
+    lifetimeAtLast: state.lifetimeCash,
+    readyNotified: false,
+  };
   fresh.styles = { ...state.styles };
   fresh.tutorialStep = state.tutorialStep;
   fresh.tutorialDone = state.tutorialDone;

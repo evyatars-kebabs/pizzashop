@@ -144,16 +144,39 @@ Example at the starting setup: about 5.7k from 8 hours away. With both staff: ab
 
 ## 6. Franchise (prestige)
 
-Unlocked at 20,000 lifetime cash (`prestige.milestoneLifetimeCash`).
+**Every franchise has to be earned.** The current stand must earn a set amount before it can franchise, counted from the last franchise (or from the start):
 
-Franchising resets the current stand and starts again from scratch. The Franchise sheet spells out exactly what happens:
+```
+requirement = milestoneLifetimeCash x requirementGrowth^(franchises so far)   // 20,000, 32,000, 51,200, ...
+earned here = lifetimeCash - lifetimeCash at the last franchise
+```
 
-- **Resets:** cash, upgrades, staff, queue, pizzas, and the current stand.
-- **Keeps:** franchise points, unlocked pizza styles (recipes), the tutorial, settings, and lifetime stats.
+Right after a franchise the amount earned here is zero, so it cannot be repeated for free. The Shop shows the target and the progress.
 
-Gain: `floor(lifetimeCash / 20000)` franchise points. Each point is a permanent +10% to payment.
+Franchising resets the current stand and starts again. The Franchise sheet spells out what happens, including what the next one will need:
 
----
+- **Resets:** cash, upgrades, staff, queue, pizzas, and the stand goes back to the corner.
+- **Keeps:** franchise points, unlocked pizza styles (recipes), unlocked locations, the tutorial, settings, and lifetime stats.
+
+Gain: `max(1, floor(earned here / 20000))` franchise points. Each point is a permanent +10% to payment. Only cash earned at the current stand counts, so lifetime totals are never counted twice.
+
+Saves from before this rule are migrated (save version 2): a save that had already franchised starts its next run from zero.
+
+**The place grows with each franchise** (`prestige.tiers`), so prestige is visible, not just a number:
+
+| Franchises | Place | Staff seen working (per role) | Oven slots | Queue |
+|---|---|---|---|---|
+| 0 | Pizza cart | 1 | +0 | +0 |
+| 1 | Big pizza stand: tiled roof, name sign, franchise plaque | 2 | +1 | +2 |
+| 2+ | Pizza shop: two-storey building, awning, rooftop sign | 3 | +2 | +4 |
+
+Hiring is unchanged (levels 1 to 5), but each hired level up to the tier's limit adds another visible employee: extra cashiers at the counter, a waiter outside the shop, extra cooks at the oven and prep line.
+
+### Decorations
+
+The decor upgrade has 10 levels. Each level still adds +5% foot traffic, and now also adds one clearly visible decoration (`upgrades.decor.steps`), named in the Shop and in a toast:
+
+1. flower boxes and hanging baskets, 2. festoon lights on poles, 3. bunting, 4. a bistro table with an umbrella, 5. floor lanterns, 6. a red carpet with brass posts for the queue, 7. a second table and olive trees, 8. balloons, 9. rooftop flags, 10. a turning golden pizza on the roof.
 
 ## 7. Events
 
@@ -170,13 +193,13 @@ The **health inspector** from the brief is not in the prototype. It fits the sam
 
 ## 8. Presentation
 
-- **Camera:** fixed third-person framing of the stand and queue. It widens automatically on tall, narrow phones. Taps on a station zoom the camera toward it (0.6 s ease) and zoom back when the step closes.
-- **Art:** low-poly, flat-shaded primitives, warm palette, soft shadows (one shadow-casting directional light). Materials and geometry are shared through a cache (`src/render/assets.js`) to keep draw calls down. The draw-call count has not been measured on a device yet.
-- **Juice:** squash and stretch on pizzas when the stage changes, cash puffs, floating "+amount" numbers, a small camera nudge on big sales (total >= 20), a count-up cash total, and a pulsing button for the current tutorial step.
-- **Day and night:** a 10-minute cycle. The sun arcs, the sky shifts through a dusk tint, lamps and the neon glow at night, and the customer rate drops at night.
+- **Camera:** fixed third-person framing of the stand and queue. It widens on tall, narrow phones and pulls back as the stand grows. Taps on a station zoom the camera toward it and back.
+- **Art:** stylised low-poly built in code, no image files. Characters have faces, hair, hats and walk cycles. Pizzas show dough, sauce, cheese and toppings and brown as they bake. Buildings have window grids, shutters, shopfronts and roof clutter. Procedural canvas textures cover pavement, asphalt, brick, wood, plaster, tiles and the striped awning.
+- **Sky and light:** a shader sky dome with a sun, moon, stars and drifting clouds. One shadow-casting light (sun by day, moon at night), a hemisphere fill, and one warm point light under the awning. Lamps and windows glow at night, and lamps drop pools of light on the pavement.
+- **Life:** traffic on the road with headlights at night, chimney smoke that thickens while baking, steam from finished pizzas, swaying balloons and flags.
+- **Juice:** squash and stretch on pizzas, spinning coins and sparkles on a sale, floating "+amount" numbers, a camera nudge on big sales, and a pulsing ring over pizzas that need the player.
+- **Performance design:** static geometry is merged into a few vertex-coloured meshes (about 40 draw calls for the empty cart scene, about 150 for the fully decorated shop with a queue), all materials use cheap Lambert shading, the shadow map refreshes every second frame, and there is a Graphics setting (Auto / High / Low). Auto lowers pixel density, then turns off shadows, if the frame rate stays low.
 - **Sound:** synthesized in code (cash, click, bell, pop, angry buzz). No licensed or copyrighted music.
-
----
 
 ## 9. Mobile UX
 
@@ -275,7 +298,7 @@ Open with `?debug=1` (a bug button appears), or tap the version number in Settin
 ## 16. Known gaps and next steps
 
 - **Engine.** The prototype is Three.js, which the brief allows. For store release, wrap it with a mobile shell such as Capacitor. The brief's Unity option is not used.
-- **Testing.** Logic has 12 Node unit tests. The UI was checked in headless Chromium at 390 x 844 with software WebGL, which ran at about 27 fps. That is not a device measurement. The 60 fps target on mid-range phones, touch feel, and audio latency still need a real-device pass.
+- **Testing.** Logic has 18 Node unit tests. The UI was checked in headless Chromium with software WebGL. The richer graphics run much slower there than the first prototype did (about 8 fps on High and 13 on Low at 390 x 844, against 27 before). Software rendering exaggerates per-pixel cost and is not a device measurement, but it is a warning: the 60 fps target on mid-range phones is unverified and needs a real-device pass, along with touch feel and audio latency.
 - **Locations, styles and events** are data-driven. The side street is built, but a third location, the health inspector event, the delivery kid and the collectible recipes are not.
 - **Balance** is a first pass. Use the debug panel and analytics to tune the spawn interval, upgrade growth rates and offline efficiency.
 - **Offline push notifications** need a push service.

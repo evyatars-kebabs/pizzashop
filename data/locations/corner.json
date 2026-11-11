@@ -1,230 +1,400 @@
 {
   "id": "corner",
   "nameKey": "location.corner.name",
+  "descKey": "location.corner.desc",
   "unlock": {
     "type": "start"
   },
-  "ground": {
-    "color": "#e8c28a"
+  "economy": {
+    "trafficMult": 1.0,
+    "styleDemand": {}
   },
-  "sky": {
-    "day": "#9fd8f2",
-    "night": "#1d2540",
-    "dusk": "#f6a66b"
-  },
+  "_note": "Stations and the stand itself are laid out in code (src/render/stand.js layoutFor), because they depend on the stand tier. This file is the street around it.",
   "queueStart": [
     -2.2,
     0,
-    4.3
+    4.4
   ],
   "queueStep": [
-    0.75,
+    0.78,
     0,
-    0.85
+    0.9
   ],
+  "_queueNote": "queueStep: x = column step (queueRowLength per row, filling left to right), z = row depth, toward the camera.",
   "queueRowLength": 4,
   "camera": {
     "position": [
       0,
-      6.4,
-      12.5
+      6.6,
+      12.8
     ],
     "target": [
       0,
-      1.3,
-      0.6
+      1.45,
+      0.7
     ],
     "fov": 46
-  },
-  "stations": {
-    "dough": [
-      -1.0,
-      1.15,
-      0.7
-    ],
-    "load": [
-      1.0,
-      1.15,
-      0.7
-    ],
-    "oven": [
-      2.3,
-      1.0,
-      -0.2
-    ],
-    "pass": [
-      0.2,
-      1.15,
-      1.5
-    ]
   },
   "props": [
     {
       "type": "road",
-      "pos": [
-        0,
-        0.01,
-        -9
-      ],
-      "size": [
-        60,
-        8
-      ]
+      "z": -8,
+      "width": 7
     },
     {
       "type": "building",
       "pos": [
-        -8,
+        -27.5,
         0,
-        -6
+        -16.2
       ],
       "size": [
-        4,
-        9,
-        4
+        7,
+        9.5,
+        6
       ],
-      "color": "#e07a5f"
+      "color": "#e07a5f",
+      "awning": "#d8402f"
     },
     {
       "type": "building",
       "pos": [
-        -2.5,
+        -20.5,
         0,
-        -8
+        -16.2
       ],
       "size": [
-        3.5,
+        7,
+        12.5,
+        6
+      ],
+      "color": "#f2cc8f",
+      "awning": "#2f7d6a"
+    },
+    {
+      "type": "building",
+      "pos": [
+        -14,
+        0,
+        -16.2
+      ],
+      "size": [
         6,
-        3.5
+        8.5,
+        6
       ],
-      "color": "#f2cc8f"
+      "color": "#81b29a",
+      "awning": "#e9a23b"
     },
     {
       "type": "building",
       "pos": [
-        4.5,
+        -7,
         0,
-        -7
+        -16.2
       ],
       "size": [
-        4,
-        11,
-        4
+        8,
+        13.5,
+        6
       ],
-      "color": "#81b29a"
+      "color": "#e9c46a",
+      "awning": "#4a6fa5"
     },
     {
       "type": "building",
+      "pos": [
+        0,
+        0,
+        -16.2
+      ],
+      "size": [
+        6,
+        10,
+        6
+      ],
+      "color": "#d9a5a0",
+      "awning": "#d8402f"
+    },
+    {
+      "type": "building",
+      "pos": [
+        6.5,
+        0,
+        -16.2
+      ],
+      "size": [
+        7,
+        11.5,
+        6
+      ],
+      "color": "#a8c5da",
+      "awning": "#2f7d6a"
+    },
+    {
+      "type": "building",
+      "pos": [
+        13,
+        0,
+        -16.2
+      ],
+      "size": [
+        6,
+        9,
+        6
+      ],
+      "color": "#f4a261",
+      "awning": "#e9a23b"
+    },
+    {
+      "type": "building",
+      "pos": [
+        19.5,
+        0,
+        -16.2
+      ],
+      "size": [
+        7,
+        12,
+        6
+      ],
+      "color": "#c9b8e0",
+      "awning": "#4a6fa5"
+    },
+    {
+      "type": "building",
+      "pos": [
+        26.5,
+        0,
+        -16.2
+      ],
+      "size": [
+        7,
+        10.5,
+        6
+      ],
+      "color": "#f0d9b5",
+      "awning": "#d8402f"
+    },
+    {
+      "type": "tree",
+      "pos": [
+        -17,
+        0,
+        -12.4
+      ],
+      "scale": 0.95
+    },
+    {
+      "type": "tree",
+      "pos": [
+        -10.5,
+        0,
+        -12.4
+      ],
+      "scale": 0.95
+    },
+    {
+      "type": "tree",
+      "pos": [
+        -3.5,
+        0,
+        -12.4
+      ],
+      "scale": 0.95
+    },
+    {
+      "type": "tree",
+      "pos": [
+        3.5,
+        0,
+        -12.4
+      ],
+      "scale": 0.95
+    },
+    {
+      "type": "tree",
       "pos": [
         10,
         0,
-        -4
+        -12.4
       ],
-      "size": [
-        3,
-        7,
-        4
-      ],
-      "color": "#f4a261"
+      "scale": 0.95
     },
     {
       "type": "tree",
       "pos": [
-        -5.5,
+        17,
+        0,
+        -12.4
+      ],
+      "scale": 0.95
+    },
+    {
+      "type": "building",
+      "pos": [
+        -17.5,
         0,
         1.5
-      ]
-    },
-    {
-      "type": "tree",
-      "pos": [
+      ],
+      "size": [
         7,
+        11,
+        12
+      ],
+      "color": "#f0d9b5",
+      "awning": "#2f7d6a"
+    },
+    {
+      "type": "building",
+      "pos": [
+        18,
         0,
-        2.5
+        1.0
+      ],
+      "size": [
+        7,
+        13,
+        12
+      ],
+      "color": "#d9a5a0",
+      "awning": "#4a6fa5"
+    },
+    {
+      "type": "car",
+      "pos": [
+        -8.5,
+        0,
+        -5.6
+      ],
+      "color": "#d8402f",
+      "rot": 0
+    },
+    {
+      "type": "car",
+      "pos": [
+        8.8,
+        0,
+        -5.6
+      ],
+      "color": "#3d9a8b",
+      "rot": 0
+    },
+    {
+      "type": "lamp",
+      "pos": [
+        -6.2,
+        0,
+        -3.4
+      ],
+      "light": true
+    },
+    {
+      "type": "lamp",
+      "pos": [
+        6.0,
+        0,
+        -3.4
+      ],
+      "light": true
+    },
+    {
+      "type": "lamp",
+      "pos": [
+        -11.5,
+        0,
+        -3.4
+      ]
+    },
+    {
+      "type": "lamp",
+      "pos": [
+        12,
+        0,
+        -3.4
       ]
     },
     {
       "type": "tree",
       "pos": [
-        9.5,
+        -7.2,
         0,
-        -1
+        1.2
+      ],
+      "scale": 1.05
+    },
+    {
+      "type": "tree",
+      "pos": [
+        8.2,
+        0,
+        2.2
+      ],
+      "scale": 1.0
+    },
+    {
+      "type": "bush",
+      "pos": [
+        -8.6,
+        0,
+        3.4
       ]
     },
     {
-      "type": "lamp",
+      "type": "bush",
       "pos": [
-        3.8,
+        9.4,
         0,
-        4.2
-      ]
-    },
-    {
-      "type": "lamp",
-      "pos": [
-        -4.8,
-        0,
-        3.8
+        4.6
       ]
     },
     {
       "type": "bench",
       "pos": [
-        5.5,
-        0,
-        6.5
-      ]
-    },
-    {
-      "type": "bin",
-      "pos": [
-        -4.0,
-        0,
-        6.0
-      ]
-    },
-    {
-      "type": "planter",
-      "pos": [
-        -4.2,
-        0,
-        5.4
-      ]
-    },
-    {
-      "type": "planter",
-      "pos": [
-        4.6,
+        6.6,
         0,
         5.6
       ]
     },
     {
-      "type": "sandwichBoard",
+      "type": "bin",
       "pos": [
-        2.6,
+        -5.8,
         0,
-        5.0
+        3.6
       ]
     },
     {
-      "type": "menuBoard",
+      "type": "hydrant",
       "pos": [
-        -2.55,
+        4.9,
         0,
-        3.0
+        -3.5
+      ]
+    },
+    {
+      "type": "planter",
+      "pos": [
+        -5.4,
+        0,
+        6.2
+      ]
+    },
+    {
+      "type": "planter",
+      "pos": [
+        5.6,
+        0,
+        7.4
+      ]
+    },
+    {
+      "type": "sandwichBoard",
+      "pos": [
+        1.9,
+        0,
+        6.6
       ]
     }
-  ],
-  "_queueNote": "queueStep: x = column step (queueRowLength per row, filling left to right), z = row depth, toward the camera.",
-  "window": [
-    -0.2,
-    0,
-    2.8
-  ],
-  "descKey": "location.corner.desc",
-  "economy": {
-    "trafficMult": 1.0,
-    "styleDemand": {}
-  }
+  ]
 }

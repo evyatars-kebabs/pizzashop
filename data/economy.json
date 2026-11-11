@@ -142,7 +142,19 @@
       "baseCost": 120,
       "growth": 2.0,
       "maxLevel": 10,
-      "trafficPerLevel": 0.05
+      "trafficPerLevel": 0.05,
+      "steps": [
+        "flowers",
+        "festoon",
+        "bunting",
+        "table",
+        "lanterns",
+        "carpet",
+        "secondTable",
+        "balloons",
+        "flags",
+        "statue"
+      ]
     },
     "neon": {
       "baseCost": 300,
@@ -173,7 +185,42 @@
   "prestige": {
     "milestoneLifetimeCash": 20000,
     "pointsDivisor": 20000,
-    "bonusPerPoint": 0.1
+    "bonusPerPoint": 0.1,
+    "_tiersNote": "The stand grows with each franchise. Width/depth are metres; staffVisible is how many employees per role can be seen working; bonuses add to oven slots and queue size.",
+    "tiers": [
+      {
+        "id": "cart",
+        "minFranchises": 0,
+        "width": 4.2,
+        "depth": 2.6,
+        "staffVisible": 1,
+        "ovenSlotsBonus": 0,
+        "maxQueueBonus": 0,
+        "cameraZoom": 1.0
+      },
+      {
+        "id": "stand",
+        "minFranchises": 1,
+        "width": 5.8,
+        "depth": 3.2,
+        "staffVisible": 2,
+        "ovenSlotsBonus": 1,
+        "maxQueueBonus": 2,
+        "cameraZoom": 1.16
+      },
+      {
+        "id": "shop",
+        "minFranchises": 2,
+        "width": 7.6,
+        "depth": 5.0,
+        "staffVisible": 3,
+        "ovenSlotsBonus": 2,
+        "maxQueueBonus": 4,
+        "cameraZoom": 1.46
+      }
+    ],
+    "requirementGrowth": 1.6,
+    "_requirementNote": "Each franchise must be earned again: cash earned at the current stand must reach milestoneLifetimeCash * requirementGrowth^(franchises so far). The point gain is floor(cash earned at this stand / pointsDivisor)."
   },
   "events": {
     "rainyDay": {

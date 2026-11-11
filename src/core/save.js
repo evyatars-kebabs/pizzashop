@@ -2,11 +2,19 @@
 // Migrations run in order: MIGRATIONS[v] upgrades a save from version v to v+1.
 import { DEFAULT_STATE_PARTIAL } from '../game/state.js';
 
-export const SAVE_VERSION = 1;
+export const SAVE_VERSION = 2;
 const KEY = 'pizzastand.save';
 
 const MIGRATIONS = {
-  // 0: (save) => { ...; return save; }  // example for a future v1 -> v2 change
+  // v1 -> v2: franchises must be earned again. Older saves had no record of when the last
+  // franchise happened, so a save that has already franchised starts its next run from zero.
+  1: (save) => {
+    const f = save.franchise || (save.franchise = { points: 0, count: 0 });
+    f.lifetimeAtLast = f.count > 0 ? (save.lifetimeCash || 0) : 0;
+    f.readyNotified = false;
+    delete f.unlocked;
+    return save;
+  },
 };
 
 function deepDefaults(target, defaults) {

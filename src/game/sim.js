@@ -1,6 +1,6 @@
 // The live simulation tick. Pure: takes state + dt, mutates state, returns a list of
 // events for the renderer, audio and UI to react to.
-import { derive, daylightOf, unlockMet, locationEconomy } from './economy.js';
+import { derive, daylightOf, unlockMet, franchiseReady } from './economy.js';
 import { updateEvents, activeModifiers } from './events.js';
 import { nextRandom, pickWeighted } from '../core/rng.js';
 import { takeOrder, autoStage, autoLoad, serve } from './actions.js';
@@ -19,6 +19,10 @@ export function tick(state, dt, cfg, out = []) {
 
   unlockStyles(state, cfg, out);
   unlockLocations(state, cfg, out);
+  if (!state.franchise.readyNotified && franchiseReady(state, cfg)) {
+    state.franchise.readyNotified = true;
+    out.push({ type: 'franchise_ready' });
+  }
   drainPatience(state, dt, mods, cfg, out);
   spawn(state, dt, mods, d, daylight, cfg, out);
   runCashier(state, dt, d, cfg, out);

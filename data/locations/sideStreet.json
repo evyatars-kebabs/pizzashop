@@ -12,212 +12,391 @@
       "pepperoni": 2
     }
   },
-  "ground": {
-    "color": "#d9b38a"
-  },
-  "sky": {
-    "day": "#b8e0f0",
-    "night": "#202a4a",
-    "dusk": "#f08c5a"
-  },
+  "_note": "Stations and the stand itself are laid out in code (src/render/stand.js layoutFor), because they depend on the stand tier. This file is the street around it.",
   "queueStart": [
-    -2.4,
+    -2.2,
     0,
     4.4
   ],
   "queueStep": [
-    0.75,
+    0.78,
     0,
-    0.85
+    0.9
   ],
+  "_queueNote": "queueStep: x = column step (queueRowLength per row, filling left to right), z = row depth, toward the camera.",
   "queueRowLength": 4,
-  "window": [
-    0.1,
-    0,
-    2.8
-  ],
   "camera": {
     "position": [
       0,
-      6.4,
-      12.5
+      6.6,
+      12.8
     ],
     "target": [
       0,
-      1.3,
-      0.6
+      1.45,
+      0.7
     ],
     "fov": 46
-  },
-  "stations": {
-    "dough": [
-      -1.0,
-      1.15,
-      0.7
-    ],
-    "load": [
-      1.0,
-      1.15,
-      0.7
-    ],
-    "oven": [
-      2.3,
-      1.0,
-      -0.2
-    ],
-    "pass": [
-      0.2,
-      1.15,
-      1.5
-    ]
   },
   "props": [
     {
       "type": "road",
-      "pos": [
-        0,
-        0.01,
-        -9
-      ],
-      "size": [
-        60,
-        8
-      ]
+      "z": -8,
+      "width": 7
     },
     {
       "type": "building",
       "pos": [
-        -9,
+        -27.5,
         0,
-        -6
+        -16.2
       ],
       "size": [
-        3.5,
+        7,
+        11,
+        6
+      ],
+      "color": "#8ab17d",
+      "awning": "#4a6fa5"
+    },
+    {
+      "type": "building",
+      "pos": [
+        -20.5,
+        0,
+        -16.2
+      ],
+      "size": [
+        7,
+        8.5,
+        6
+      ],
+      "color": "#c9ada7",
+      "awning": "#d8402f"
+    },
+    {
+      "type": "building",
+      "pos": [
+        -14,
+        0,
+        -16.2
+      ],
+      "size": [
         6,
-        4
+        13,
+        6
       ],
-      "color": "#8ab17d"
+      "color": "#f2cc8f",
+      "awning": "#2f7d6a"
     },
     {
       "type": "building",
       "pos": [
-        -4,
+        -7,
         0,
-        -8
+        -16.2
       ],
       "size": [
-        4,
-        10,
-        4
-      ],
-      "color": "#c9ada7"
-    },
-    {
-      "type": "building",
-      "pos": [
-        4,
-        0,
-        -7
-      ],
-      "size": [
-        3,
         8,
-        3.5
-      ],
-      "color": "#f2cc8f"
-    },
-    {
-      "type": "building",
-      "pos": [
         9.5,
+        6
+      ],
+      "color": "#e07a5f",
+      "awning": "#e9a23b"
+    },
+    {
+      "type": "building",
+      "pos": [
         0,
-        -6
+        0,
+        -16.2
       ],
       "size": [
-        4,
+        6,
         12,
-        4
+        6
       ],
-      "color": "#e07a5f"
+      "color": "#9ec5d8",
+      "awning": "#4a6fa5"
+    },
+    {
+      "type": "building",
+      "pos": [
+        6.5,
+        0,
+        -16.2
+      ],
+      "size": [
+        7,
+        10,
+        6
+      ],
+      "color": "#f6bd60",
+      "awning": "#d8402f"
+    },
+    {
+      "type": "building",
+      "pos": [
+        13,
+        0,
+        -16.2
+      ],
+      "size": [
+        6,
+        14,
+        6
+      ],
+      "color": "#b8a9c9",
+      "awning": "#2f7d6a"
+    },
+    {
+      "type": "building",
+      "pos": [
+        19.5,
+        0,
+        -16.2
+      ],
+      "size": [
+        7,
+        9,
+        6
+      ],
+      "color": "#e5989b",
+      "awning": "#e9a23b"
+    },
+    {
+      "type": "building",
+      "pos": [
+        26.5,
+        0,
+        -16.2
+      ],
+      "size": [
+        7,
+        11.5,
+        6
+      ],
+      "color": "#a3b18a",
+      "awning": "#4a6fa5"
     },
     {
       "type": "tree",
       "pos": [
-        -6.5,
+        -17,
         0,
-        2.0
-      ]
+        -12.4
+      ],
+      "scale": 0.95
     },
     {
       "type": "tree",
       "pos": [
-        8,
+        -10.5,
         0,
-        3
+        -12.4
+      ],
+      "scale": 0.95
+    },
+    {
+      "type": "tree",
+      "pos": [
+        -3.5,
+        0,
+        -12.4
+      ],
+      "scale": 0.95
+    },
+    {
+      "type": "tree",
+      "pos": [
+        3.5,
+        0,
+        -12.4
+      ],
+      "scale": 0.95
+    },
+    {
+      "type": "tree",
+      "pos": [
+        10,
+        0,
+        -12.4
+      ],
+      "scale": 0.95
+    },
+    {
+      "type": "tree",
+      "pos": [
+        17,
+        0,
+        -12.4
+      ],
+      "scale": 0.95
+    },
+    {
+      "type": "building",
+      "pos": [
+        -17.5,
+        0,
+        1.5
+      ],
+      "size": [
+        7,
+        13,
+        12
+      ],
+      "color": "#c9ada7",
+      "awning": "#d8402f"
+    },
+    {
+      "type": "building",
+      "pos": [
+        18,
+        0,
+        1.0
+      ],
+      "size": [
+        7,
+        10.5,
+        12
+      ],
+      "color": "#8ab17d",
+      "awning": "#e9a23b"
+    },
+    {
+      "type": "car",
+      "pos": [
+        -9.5,
+        0,
+        -5.6
+      ],
+      "color": "#e9c46a",
+      "rot": 0
+    },
+    {
+      "type": "car",
+      "pos": [
+        7.2,
+        0,
+        -5.6
+      ],
+      "color": "#4a6fa5",
+      "rot": 0
+    },
+    {
+      "type": "lamp",
+      "pos": [
+        -5.6,
+        0,
+        -3.4
+      ],
+      "light": true
+    },
+    {
+      "type": "lamp",
+      "pos": [
+        6.6,
+        0,
+        -3.4
+      ],
+      "light": true
+    },
+    {
+      "type": "lamp",
+      "pos": [
+        -12,
+        0,
+        -3.4
       ]
     },
     {
       "type": "lamp",
       "pos": [
-        -3.8,
+        12.5,
         0,
-        4.6
+        -3.4
       ]
     },
     {
-      "type": "lamp",
+      "type": "tree",
       "pos": [
-        4.2,
+        -8.0,
         0,
-        4.6
+        2.4
+      ],
+      "scale": 1.0
+    },
+    {
+      "type": "tree",
+      "pos": [
+        7.6,
+        0,
+        1.0
+      ],
+      "scale": 1.1
+    },
+    {
+      "type": "bush",
+      "pos": [
+        8.8,
+        0,
+        3.6
+      ]
+    },
+    {
+      "type": "bush",
+      "pos": [
+        -9.2,
+        0,
+        4.8
       ]
     },
     {
       "type": "bench",
       "pos": [
-        6.2,
+        -6.4,
         0,
-        6.8
+        5.2
       ]
     },
     {
       "type": "bin",
       "pos": [
-        -5.0,
+        6.0,
         0,
-        6.2
+        3.4
+      ]
+    },
+    {
+      "type": "hydrant",
+      "pos": [
+        -4.9,
+        0,
+        -3.5
       ]
     },
     {
       "type": "planter",
       "pos": [
-        -4.2,
+        5.6,
         0,
-        5.8
+        6.4
       ]
     },
     {
       "type": "planter",
       "pos": [
-        4.6,
+        -5.6,
         0,
-        5.6
+        7.2
       ]
     },
     {
       "type": "sandwichBoard",
       "pos": [
-        2.6,
+        1.9,
         0,
-        5.0
-      ]
-    },
-    {
-      "type": "menuBoard",
-      "pos": [
-        -2.55,
-        0,
-        3.0
+        6.6
       ]
     }
   ]

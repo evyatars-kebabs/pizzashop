@@ -66,12 +66,13 @@ src/
     events.js            Timed event scheduler and modifier combination
     offline.js           Capped offline earnings
   render/                Three.js only
-    assets.js            Shared geometry and material cache
-    scene.js             Renderer, camera framing, focus transitions, day/night
-    props.js             Builds a location from its JSON. Add a location without code.
-    stand.js             The player's cart and its station positions
-    actors.js            Customers and pizza views; picking
-    fx.js                Pooled particles, rain, bunting
+    assets.js            Materials, procedural textures, and the geometry batcher
+    people.js            Character builder for customers and staff
+    scene.js             Renderer, sky, day/night, camera, graphics quality
+    props.js             Builds a street from its JSON: buildings, trees, lamps, traffic
+    stand.js             Cart / stand / shop tiers, decorations, neon sign, staff, layout
+    actors.js            Customer and pizza views; picking
+    fx.js                Coins, sparkles, smoke, steam, rain, bunting
   ui/                    DOM only
     hud.js               Top bar, action bar, hints, toasts, floating numbers
     minigames.js         Dough swipe, topping drag, oven timing
@@ -89,7 +90,9 @@ Change `data/economy.json`, then reload. Some useful knobs:
 - `upgrades.*.baseCost` and `growth`: the cost curve.
 - `staff.*.baseCost`: when staff unlock.
 - `time.offlineCapSeconds` and `time.offlineBaseEfficiency`: the away-time reward.
-- `prestige.milestoneLifetimeCash`: when franchising opens.
+- `prestige.milestoneLifetimeCash` and `prestige.requirementGrowth`: what a stand must earn before each franchise, and how fast that grows.
+- `prestige.tiers`: how the place grows per franchise (size, visible staff, capacity bonuses, camera zoom).
+- `upgrades.decor.steps`: which decoration each decor level adds.
 - `events.*`: event length, multipliers and style demand.
 - `goals`, `tutorial`: what the HUD asks for and when the tutorial advances.
 
@@ -98,6 +101,7 @@ Change `data/economy.json`, then reload. Some useful knobs:
 - **A pizza style:** add it under `styles` in `economy.json` with an `unlock` condition, then add `style.<id>` to `strings/en.json`. Set `enabled: true`.
 - **An upgrade:** add it under `upgrades`, then add `upgrade.<id>.name` and `.desc` strings. Give the effect a line in `src/game/economy.js` (`derive`) and a case in `upgradeVars` (`src/ui/sheets.js`) for its description.
 - **An event:** add it under `events`, then add `event.<id>.name` and `.desc`. Modifiers (`spawnMult`, `patienceDrainMult`, `cashMult`, `styleDemand`) apply automatically. Add visuals in `src/render/fx.js` if it needs them.
+- **A decoration:** add an id to `upgrades.decor.steps`, a `decor.step.<id>` string, and a builder with that id in `DECOR` (`src/render/stand.js`).
 - **A location:** copy `data/locations/corner.json` to `data/locations/<id>.json` with a new `id`, change the props, stations and `economy` (`trafficMult`, `styleDemand`), set its `unlock`, add the id to `data/locations/index.json`, and add `location.<id>.name` and `.desc` strings. It appears in the Shop's Locations list automatically.
 - **A save-format change:** bump `SAVE_VERSION` in `src/core/save.js`, add a migration for the old version, and add any new field to `DEFAULT_STATE_PARTIAL` in `src/game/state.js`.
 
@@ -109,6 +113,6 @@ Change `data/economy.json`, then reload. Some useful knobs:
 
 ## Notes
 
-- Tested headless in Chromium at 390 x 844 with software WebGL (about 27 fps there, which is not a device measurement). Not yet tested on real phones.
+- Tested headless in Chromium with software WebGL (about 8 fps on High and 13 on Low at 390 x 844; that is not a device measurement). Not yet tested on real phones. Settings has a Graphics option (Auto / High / Low).
 - Frame budget: target steady 60 fps on mid-range phones. Draw calls are kept low with shared materials and a single shadow light. Measure on a device before release.
 - For app-store builds, wrap this folder with a mobile shell (for example Capacitor). Lock orientation to portrait there.

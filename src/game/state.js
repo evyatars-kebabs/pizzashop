@@ -2,7 +2,7 @@
 // from this template, so adding a field only needs a default here (plus a migration if it
 // changes the meaning of existing data).
 export const DEFAULT_STATE_PARTIAL = {
-  schemaVersion: 1,
+  schemaVersion: 2,
   rngSeed: 1234567,
   cash: 0,
   lifetimeCash: 0,
@@ -17,7 +17,9 @@ export const DEFAULT_STATE_PARTIAL = {
   staff: { cashier: 0, cook: 0 },
   // Recipes carry over franchises.
   styles: { margherita: true, pepperoni: false, veggie: false, seasonal: false },
-  franchise: { points: 0, count: 0 },
+  // lifetimeAtLast: lifetime cash at the last franchise. Cash earned since then is what counts
+  // toward the next one, so every franchise has to be earned again.
+  franchise: { points: 0, count: 0, lifetimeAtLast: 0, readyNotified: false },
   tutorialStep: 0,
   tutorialDone: false,
   stats: {
@@ -34,7 +36,7 @@ export const DEFAULT_STATE_PARTIAL = {
   cookIdle: 0,
   idleNotified: { cashier: false, cook: false },
   spawnTimer: 4,
-  settings: { sound: true, notify: false },
+  settings: { sound: true, notify: false, graphics: 'auto' },
   cosmetics: { ovenSkin: 'skin.classic' },
 };
 

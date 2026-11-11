@@ -1,6 +1,6 @@
 // Modal sheets: shop, collect (offline earnings), franchise, settings, debug.
 import { t, money, moneyFull, duration } from '../core/i18n.js';
-import { upgradeCost, derive, franchiseGain } from '../game/economy.js';
+import { upgradeCost, derive, franchiseGain, franchiseReady, franchiseRequirement, runCash, tierIndex } from '../game/economy.js';
 
 const $ = (id) => document.getElementById(id);
 let refreshFn = null;
@@ -67,7 +67,7 @@ function upgradeVars(key, level, cfg) {
     case 'oven': return { slots: u.ovenSlotsBase + u.ovenSlotsPerLevel * next };
     case 'counter': return { slots: u.maxQueueBase + u.maxQueuePerLevel * next };
     case 'cheese': return { pct: Math.round(u.cheeseMultPerLevel * next * 100) };
-    case 'decor': return { pct: Math.round(u.trafficPerLevel * next * 100) };
+    case 'decor': return { pct: Math.round(u.trafficPerLevel * next * 100), item: t('decor.step.' + (u.steps[level] || u.steps[u.steps.length - 1])) };
     case 'neon': return { pct: Math.round(u.trafficPerLevel * 100) };
     default: return {};
   }
@@ -139,12 +139,16 @@ export function openShop(state, cfg, actions) {
     body.append(el('h3', '', t('shop.franchise')));
     const fr = el('div', 'row');
     const frInfo = el('div', 'info');
-    const eligible = state.lifetimeCash >= cfg.economy.prestige.milestoneLifetimeCash;
+    const eligible = franchiseReady(state, cfg);
+    const tiers = cfg.economy.prestige.tiers;
+    const ti = tierIndex(state, cfg);
+    const nextTier = tiers.find((x) => x.minFranchises > state.franchise.count);
     frInfo.append(
       el('b', '', t('franchise.title')),
       el('small', '', eligible
-        ? t('franchise.gain', { points: franchiseGain(state, cfg) })
-        : t('franchise.locked', { target: moneyFull(cfg.economy.prestige.milestoneLifetimeCash) })),
+        ? t('franchise.ready') + ' ' + t('franchise.gain', { points: franchiseGain(state, cfg) })
+        : t('franchise.locked', { target: moneyFull(franchiseRequirement(state, cfg)), have: moneyFull(runCash(state)) })),
+      el('small', '', t('franchise.now', { tier: t('tier.' + tiers[ti].id) }) + (nextTier ? '. ' + t('franchise.next', { tier: t('tier.' + nextTier.id) }) : '')),
       el('small', 'lvl', t('franchise.points', { points: state.franchise.points })),
     );
     fr.append(frInfo, button(t('action.franchise'), () => actions.franchise(), { disabled: !eligible }));
@@ -207,9 +211,12 @@ export function openCollect(report, cfg, actions) {
 export function openFranchise(state, cfg, actions) {
   openModal('franchise', t('franchise.title'), (body) => {
     const gain = franchiseGain(state, cfg);
+    const tiers = cfg.economy.prestige.tiers;
+    const nextTier = tiers.find((x) => x.minFranchises > state.franchise.count);
     body.append(
       el('p', 'lead', t('franchise.explain', { bonus: Math.round(cfg.economy.prestige.bonusPerPoint * 100) })),
-      el('p', '', t('franchise.gain', { points: gain })),
+      el('p', '', t('franchise.nextCost', { target: moneyFull(franchiseRequirement({ franchise: { count: state.franchise.count + 1 } }, cfg)) })),
+      el('p', '', t('franchise.gain', { points: gain }) + (nextTier ? ' ' + t('franchise.next', { tier: t('tier.' + nextTier.id) }) + '.' : '')),
       el('p', 'muted', t('franchise.resets')),
       el('p', 'muted', t('franchise.keeps')),
       el('p', 'muted', t('franchise.points', { points: state.franchise.points })),
@@ -226,6 +233,8 @@ export function openSettings(state, actions) {
     body.append(
       toggleRow(t('settings.sound'), state.settings.sound, (v) => actions.setSound(v)),
       toggleRow(t('settings.notify'), state.settings.notify, (v) => actions.setNotify(v), t('settings.notifyDesc')),
+      choiceRow(t('settings.graphics'), t('settings.graphicsDesc'), ['auto', 'high', 'low'], state.settings.graphics || 'auto',
+        (v) => actions.setGraphics(v), (v) => t('settings.graphics.' + v)),
     );
     const version = el('button', 'version-tap', `${t('app.version')}`);
     let taps = 0;
@@ -241,6 +250,21 @@ export function openSettings(state, actions) {
     }));
     body.append(row);
   });
+}
+
+// A row with a small set of choices (segmented buttons).
+function choiceRow(label, desc, values, current, onChange, labelOf) {
+  const row = el('div', 'row');
+  const info = el('div', 'info');
+  info.append(el('b', '', label), el('small', '', desc));
+  const seg = el('div', 'segmented');
+  for (const v of values) {
+    const b = el('button', 'seg' + (v === current ? ' on' : ''), labelOf(v));
+    b.addEventListener('click', () => onChange(v));
+    seg.append(b);
+  }
+  row.append(info, seg);
+  return row;
 }
 
 function toggleRow(label, on, onChange, desc) {

@@ -170,7 +170,7 @@ test('tutorial advances on stats and completes', () => {
 test('save migration fills in missing fields from the template', () => {
   const old = { schemaVersion: 0, cash: 12 };
   const m = migrate(old);
-  assert.equal(m.schemaVersion, 1);
+  assert.equal(m.schemaVersion, 2);
   assert.equal(m.cash, 12);
   assert.deepEqual(Object.keys(m.stats).sort(), Object.keys(DEFAULT_STATE_PARTIAL.stats).sort());
 });
@@ -222,4 +222,59 @@ test('franchise keeps unlocked locations but sends the stand back to the corner'
   const { state: f } = franchise(s, locCfg, newGame, NOW);
   assert.equal(f.location, 'corner');
   assert.equal(f.unlockedLocations.sideStreet, true);
+});
+
+// ---- Franchise tiers ----
+const { tierOf, franchiseRequirement, runCash } = await import('../src/game/economy.js');
+
+test('every franchise has to be earned again, and each one needs more', () => {
+  const s = newGame(cfg, NOW);
+  const need0 = franchiseRequirement(s, cfg);
+  assert.equal(need0, cfg.economy.prestige.milestoneLifetimeCash);
+  assert.equal(canFranchise(s, cfg), false);
+  s.lifetimeCash = need0;
+  const ev = runFor(s, 1);
+  assert.ok(ev.some((e) => e.type === 'franchise_ready'));
+  assert.ok(canFranchise(s, cfg));
+
+  // Right after franchising it is NOT available again: nothing has been earned at the new stand.
+  const f1 = franchise(s, cfg, newGame, NOW).state;
+  assert.equal(f1.franchise.count, 1);
+  assert.equal(runCash(f1), 0);
+  assert.equal(canFranchise(f1, cfg), false, 'no free repeat');
+
+  // The second one needs more than the first, earned at this stand.
+  const need1 = franchiseRequirement(f1, cfg);
+  assert.ok(need1 > need0);
+  f1.lifetimeCash += need0;
+  assert.equal(canFranchise(f1, cfg), false, 'old amount is no longer enough');
+  f1.lifetimeCash += need1 - need0;
+  assert.ok(canFranchise(f1, cfg));
+  // The gain counts only what this stand earned, not the lifetime total.
+  assert.equal(franchiseGain(f1, cfg), Math.floor(need1 / cfg.economy.prestige.pointsDivisor));
+});
+
+test('an old save that already franchised does not get a free franchise', () => {
+  const old = { schemaVersion: 1, lifetimeCash: 90000, cash: 10, franchise: { points: 3, count: 2, unlocked: true } };
+  const m = migrate(old);
+  assert.equal(m.schemaVersion, 2);
+  assert.equal(m.franchise.lifetimeAtLast, 90000);
+  assert.equal(canFranchise(m, cfg), false);
+  assert.equal(m.franchise.unlocked, undefined);
+});
+
+test('the place grows with franchises: cart, stand, shop, with more capacity', () => {
+  const s = newGame(cfg, NOW);
+  assert.equal(tierOf(s, cfg).id, 'cart');
+  const base = derive(s, cfg);
+  s.franchise.count = 1;
+  assert.equal(tierOf(s, cfg).id, 'stand');
+  s.franchise.count = 2;
+  const shop = derive(s, cfg);
+  assert.equal(tierOf(s, cfg).id, 'shop');
+  assert.ok(shop.ovenSlots > base.ovenSlots);
+  assert.ok(shop.maxQueue > base.maxQueue);
+  assert.ok(tierOf(s, cfg).staffVisible > 1);
+  s.franchise.count = 9;
+  assert.equal(tierOf(s, cfg).id, 'shop');
 });

@@ -7,7 +7,7 @@ import { track, startSession, endSession } from './core/analytics.js';
 import { sfx, setSoundEnabled } from './core/audio.js';
 import { newGame } from './game/state.js';
 import { tick } from './game/sim.js';
-import { derive, nextGoal, franchiseGain } from './game/economy.js';
+import { derive, nextGoal, franchiseGain, franchiseRequirement, runCash, tierIndex } from './game/economy.js';
 import {
   takeOrder, applyManual, buyUpgrade, hireStaff, franchise, canFranchise, findCustomer, moveLocation,
 } from './game/actions.js';
@@ -15,7 +15,7 @@ import { offlineReport, applyOffline } from './game/offline.js';
 import { startEvent } from './game/events.js';
 import { createScene } from './render/scene.js';
 import { buildLocation } from './render/props.js';
-import { buildStand, setNeonLevel, setOvenGlow, updateStaff } from './render/stand.js';
+import { buildStand, layoutFor, setNeonLevel, setOvenGlow, updateStaff } from './render/stand.js';
 import { Actors } from './render/actors.js';
 import { FX } from './render/fx.js';
 import { createHUD, staticStrings } from './ui/hud.js';
@@ -33,6 +33,8 @@ let S;
 let env;
 let stand;
 let sceneryGroup = null;
+let layout = null;
+let builtKey = '';
 let signs = null;
 let actors;
 let fx;
@@ -55,19 +57,21 @@ async function boot() {
   S = saved || newGame(cfg, now);
   if (!cfg.locations[S.location]) S.location = 'corner';
 
-  env = createScene($('scene'), currentLoc());
-  actors = new Actors(env, currentLoc(), cfg);
-  fx = new FX(env.scene);
+  layout = computeLayout();
+  env = createScene($('scene'), layout);
+  actors = new Actors(env, layout, cfg);
+  fx = new FX(env);
   hud = createHUD(onAction);
   signs = createSigns();
   buildScenery();
 
   initMinigames(cfg, {
-    onOpen: (station) => env.focus(station ? currentLoc().stations[station] : null),
+    onOpen: (station) => env.focus(station ? layout.stations[station] : null),
     onClose: () => env.focus(null),
   });
 
   setSoundEnabled(S.settings.sound);
+  env.setQuality(S.settings.graphics || 'auto');
   startSession();
   track('session_start_state', { fresh: !saved });
 
@@ -81,7 +85,7 @@ async function boot() {
   requestAnimationFrame(frame);
   if (new URLSearchParams(location.search).has('debug')) $('btnDebug').classList.remove('hidden');
   // Handle for the console and for end-to-end tests. Read-only for the game itself.
-  window.pizzaStand = { get state() { return S; }, cfg, debug: debugActions(), env, actors };
+  window.pizzaStand = { get state() { return S; }, get layout() { return layout; }, cfg, debug: debugActions(), env, actors };
 }
 
 // ---- Locations ----
@@ -90,20 +94,40 @@ function currentLoc() {
   return cfg.locations[S.location];
 }
 
-// Builds the street (props) and the cart for the current location. Replaces whatever was there.
-function buildScenery() {
-  const loc = currentLoc();
-  if (sceneryGroup) env.scene.remove(sceneryGroup);
+// Where everything stands for the current location and stand tier (cart, stand, shop).
+function computeLayout() {
+  const idx = tierIndex(S, cfg);
+  const l = layoutFor(currentLoc(), cfg.economy.prestige.tiers[idx], idx);
+  l.decorSteps = cfg.economy.upgrades.decor.steps;
+  return l;
+}
+
+// The scenery is rebuilt whenever one of these changes.
+function sceneKey() {
+  return `${S.location}|${tierIndex(S, cfg)}|${S.upgrades.decor}`;
+}
+
+// Builds the street and the stand. Replaces whatever was there.
+// snap=false lets the camera glide to the new framing (used when the stand grows).
+function buildScenery(snap = true) {
+  layout = computeLayout();
+  if (sceneryGroup) {
+    env.scene.remove(sceneryGroup);
+    sceneryGroup.traverse((o) => { if (o.geometry) o.geometry.dispose(); });
+  }
   env.glowMats.length = 0;
+  env.nightFades.length = 0;
+  env.updaters.length = 0;
   env.signs = [];
   sceneryGroup = new THREE.Group();
-  sceneryGroup.add(buildLocation(loc, env));
-  stand = buildStand(loc, env);
+  sceneryGroup.add(buildLocation(layout, env));
+  stand = buildStand(layout, env, { decor: S.upgrades.decor });
   sceneryGroup.add(stand);
   env.scene.add(sceneryGroup);
-  env.setLocation(loc);
-  actors.setLocation(loc);
+  env.setLocation(layout, snap);
+  actors.setLocation(layout);
   signs.setSpecs(env.signs);
+  builtKey = sceneKey();
 }
 
 function moveTo(id) {
@@ -173,13 +197,14 @@ function handleEvent(e) {
       sfx.cash();
       actors.leaveCustomer(e.customerId, true);
       actors.leavePizza(e.pizzaId);
-      const at = actors.positionOf('customer', e.customerId) || [0.9, 1.3, 1.5];
+      const reg = layout.register;
+      const at = actors.positionOf('customer', e.customerId) || [reg[0], 1.6, reg[2]];
       const screen = env.toScreen([at[0], at[1] + 0.4, at[2]]);
       hud.float(screen, '+' + moneyFull(e.amount), 'gold');
       if (e.tip >= 0.5) {
         hud.float({ x: screen.x, y: screen.y - 26 }, t('toast.tip', { tip: moneyFull(e.tip) }), 'tip');
       }
-      fx.puff([0.9, 1.3, 1.5], 'gold', e.big ? 14 : 6);
+      fx.puff([reg[0], 1.5, reg[2] + 0.2], 'gold', e.big ? 16 : 7);
       if (e.big) env.shakeCam(0.12);
       track('sale', { total: Math.floor(e.total), customerType: e.customerType, wrongTopping: e.wrongTopping, auto: !!e.auto });
       if (!S.flags.firstSale) {
@@ -214,6 +239,11 @@ function handleEvent(e) {
       sfx.bell();
       hud.toast(t('toast.locationUnlocked', { location: t(cfg.locations[e.location].nameKey) }));
       track('location_unlocked', { location: e.location });
+      break;
+    case 'franchise_ready':
+      sfx.bell();
+      hud.toast(t('toast.franchiseReady'));
+      track('franchise_ready', { count: S.franchise.count });
       break;
     case 'tutorial_step':
       track('tutorial_step', { step: e.step });
@@ -298,7 +328,7 @@ function applyResult(r) {
 }
 
 function cfgStation(name) {
-  return currentLoc().stations[name];
+  return layout.stations[name];
 }
 
 function openShop() {
@@ -307,7 +337,12 @@ function openShop() {
       const r = buyUpgrade(S, key, cfg);
       if (!r.ok) return hud.toast(r.reason === 'cash' ? t('toast.notEnough') : t('toast.noPizza'));
       sfx.bell();
-      hud.toast(t('toast.bought', { item: t('upgrade.' + key + '.name') }));
+      if (key === 'decor') {
+        const steps = cfg.economy.upgrades.decor.steps;
+        hud.toast(t('toast.decorAdded', { item: t('decor.step.' + steps[Math.min(steps.length, S.upgrades.decor) - 1]) }));
+      } else {
+        hud.toast(t('toast.bought', { item: t('upgrade.' + key + '.name') }));
+      }
       if (r.first) track('first_purchase', { item: key, cost: r.cost });
       save();
     },
@@ -329,13 +364,16 @@ function openShop() {
 }
 
 function confirmFranchise() {
-  if (!canFranchise(S, cfg)) return hud.toast(t('franchise.locked', { target: moneyFull(cfg.economy.prestige.milestoneLifetimeCash) }));
+  if (!canFranchise(S, cfg)) return hud.toast(t('franchise.locked', { target: moneyFull(franchiseRequirement(S, cfg)), have: moneyFull(runCash(S)) }));
   const gain = franchiseGain(S, cfg);
+  const tierBefore = tierIndex(S, cfg);
   const res = franchise(S, cfg, newGame);
   S = res.state;
-  track('prestige', { points: S.franchise.points, gain, count: S.franchise.count, lifetimeCash: Math.floor(S.lifetimeCash) });
+  const tierAfter = tierIndex(S, cfg);
+  track('prestige', { points: S.franchise.points, gain, count: S.franchise.count, tier: cfg.economy.prestige.tiers[tierAfter].id, lifetimeCash: Math.floor(S.lifetimeCash) });
   sfx.bell();
   hud.toast(t('toast.franchised', { mult: (1 + cfg.economy.prestige.bonusPerPoint * S.franchise.points).toFixed(1) }));
+  if (tierAfter !== tierBefore) hud.toast(t('toast.tierUp', { tier: t('tier.' + cfg.economy.prestige.tiers[tierAfter].id) }));
   save();
 }
 
@@ -354,6 +392,12 @@ function settingsActions() {
         S.settings.notify = p === 'granted';
       }
       track('notify_opt_in', { on: S.settings.notify });
+      sheets.openSettings(S, settingsActions());
+    },
+    setGraphics: (v) => {
+      S.settings.graphics = v;
+      env.setQuality(v);
+      track('graphics_quality', { quality: v });
       sheets.openSettings(S, settingsActions());
     },
     reset: () => wipe(),
@@ -397,7 +441,7 @@ function debugActions() {
       S.savedAt -= 8 * 3600 * 1000;
       checkReturn();
     },
-    franchiseReady: () => { S.lifetimeCash = Math.max(S.lifetimeCash, cfg.economy.prestige.milestoneLifetimeCash); },
+    franchiseReady: () => { S.lifetimeCash = Math.max(S.lifetimeCash, (S.franchise.lifetimeAtLast || 0) + franchiseRequirement(S, cfg)); },
     wipe,
   };
 }
@@ -501,13 +545,19 @@ function frame(now) {
     if (steps === MAX_STEPS_PER_FRAME) acc = 0;
   }
 
+  // The stand grew, moved, or got a new decoration: rebuild the scenery.
+  if (builtKey !== sceneKey()) buildScenery(false);
+
+  const baking = S.pizzas.some((p) => p.stage === 'baking');
   actors.sync(S);
   actors.update(dt, S);
+  fx.setSmoke(env.smokeAt, baking ? 1 : 0.2);
+  fx.setSteam(actors.steamPoints());
   fx.update(dt);
   fx.setEvents(S.events.active);
   env.update(dt, S.dayClock);
   setNeonLevel(env, S.upgrades.neon);
-  setOvenGlow(env, S.pizzas.some((p) => p.stage === 'baking'));
+  setOvenGlow(env, baking, env.time);
   signs.update(env, S, cfg);
   updateStaff(env, S, performance.now() / 1000);
 
@@ -546,7 +596,7 @@ function updateHUD() {
     hud.setHighlight(null);
   }
   hud.setEvents(S.events.active.map((a) => ({ id: a.id, left: a.endsAt - S.gameTime })));
-  const sig = `${S.location}|${JSON.stringify(S.unlockedLocations)}|${Math.floor(S.cash)}|${JSON.stringify(S.upgrades)}|${JSON.stringify(S.staff)}|${S.franchise.points}|${S.lifetimeCash >= cfg.economy.prestige.milestoneLifetimeCash}`;
+  const sig = `${S.location}|${JSON.stringify(S.unlockedLocations)}|${Math.floor(S.cash)}|${JSON.stringify(S.upgrades)}|${JSON.stringify(S.staff)}|${S.franchise.points}|${S.franchise.count}|${canFranchise(S, cfg)}|${Math.floor(runCash(S) / 500)}`;
   if (sig !== sigLast) {
     sigLast = sig;
     sheets.refreshModal(sig);

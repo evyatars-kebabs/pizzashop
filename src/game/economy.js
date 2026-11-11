@@ -33,6 +33,33 @@ export function locationEconomy(state, cfg) {
   return loc?.economy ?? { trafficMult: 1, styleDemand: {} };
 }
 
+// Stand tier from the number of franchises: cart, big stand, pizza shop.
+export function tierIndex(state, cfg) {
+  const tiers = cfg.economy.prestige.tiers;
+  let idx = 0;
+  tiers.forEach((t, i) => { if (state.franchise.count >= t.minFranchises) idx = i; });
+  return idx;
+}
+
+export function tierOf(state, cfg) {
+  return cfg.economy.prestige.tiers[tierIndex(state, cfg)];
+}
+
+// Cash earned at the current stand (since the last franchise, or since the start).
+export function runCash(state) {
+  return Math.max(0, state.lifetimeCash - (state.franchise.lifetimeAtLast || 0));
+}
+
+// What the current stand must earn before it can franchise. Grows with every franchise.
+export function franchiseRequirement(state, cfg) {
+  const p = cfg.economy.prestige;
+  return Math.round(p.milestoneLifetimeCash * Math.pow(p.requirementGrowth, state.franchise.count));
+}
+
+export function franchiseReady(state, cfg) {
+  return runCash(state) >= franchiseRequirement(state, cfg);
+}
+
 export function prestigeMult(state, cfg) {
   return 1 + cfg.economy.prestige.bonusPerPoint * state.franchise.points;
 }
@@ -48,8 +75,9 @@ export function derive(state, cfg) {
   const traffic = up.decor.trafficPerLevel * lvl.decor + up.neon.trafficPerLevel * lvl.neon;
   const locEcon = locationEconomy(state, cfg);
   const spawnBase = e.customers.spawnBaseSeconds / ((1 + traffic) * locEcon.trafficMult);
-  const ovenSlots = up.oven.ovenSlotsBase + up.oven.ovenSlotsPerLevel * lvl.oven;
-  const maxQueue = up.counter.maxQueueBase + up.counter.maxQueuePerLevel * lvl.counter;
+  const tier = tierOf(state, cfg);
+  const ovenSlots = up.oven.ovenSlotsBase + up.oven.ovenSlotsPerLevel * lvl.oven + tier.ovenSlotsBonus;
+  const maxQueue = up.counter.maxQueueBase + up.counter.maxQueuePerLevel * lvl.counter + tier.maxQueueBonus;
   const cheeseMult = 1 + up.cheese.cheeseMultPerLevel * lvl.cheese;
   const pMult = prestigeMult(state, cfg);
   const cashierOrderSec = e.cashier.orderSecondsBase / (1 + e.cashier.orderSpeedPerLevel * cashierLvl);
@@ -73,7 +101,7 @@ export function derive(state, cfg) {
   const offlineEfficiency = Math.min(1, e.time.offlineBaseEfficiency + e.time.offlineEfficiencyPerStaffRole * staffRoles);
 
   return {
-    traffic, locEcon, spawnBase, ovenSlots, maxQueue, cheeseMult, prestigeMult: pMult,
+    traffic, locEcon, tier, spawnBase, ovenSlots, maxQueue, cheeseMult, prestigeMult: pMult,
     cashierOrderSec, cashierLvl, cookSpeed, cookLvl, idleRate, offlineEfficiency,
   };
 }
@@ -88,7 +116,7 @@ export function payment(style, q, stats, mods, wrongTopping, cfg) {
 }
 
 export function franchiseGain(state, cfg) {
-  return Math.floor(state.lifetimeCash / cfg.economy.prestige.pointsDivisor);
+  return Math.max(1, Math.floor(runCash(state) / cfg.economy.prestige.pointsDivisor));
 }
 
 export function nextGoal(state, cfg) {

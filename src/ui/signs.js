@@ -29,6 +29,8 @@ export function createSigns() {
       return `<div class="title">${esc(t('sign.menu.title'))}</div>${lines.join('')}`;
     }
     if (spec.kind === 'neon') return esc(t('sign.neon'));
+    if (spec.kind === 'shopname') return esc(t('app.title'));
+    if (spec.kind === 'franchise') return esc(t('sign.franchise', { count: state.franchise.count }));
     return esc(t('sign.sandwich'));
   }
 
@@ -47,7 +49,9 @@ export function createSigns() {
       }
       const p = env.toScreen(it.spec.pos);
       it.el.style.display = p.front ? '' : 'none';
-      it.el.style.left = p.x + 'px';
+      // Keep labels on screen: clamp so a sign near the edge is still readable.
+      const half = (it.el.offsetWidth || 100) / 2 + 6;
+      it.el.style.left = Math.min(p.w - half, Math.max(half, p.x)) + 'px';
       it.el.style.top = p.y + 'px';
     }
   }
