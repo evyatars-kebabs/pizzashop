@@ -8,6 +8,8 @@ Built with **Three.js** (vendored, no build step) and plain ES modules. The brie
 
 **To play:** open `index.html` in a browser. Double-clicking the file works; no server, Python or Node is needed. The whole game (code, Three.js and data) is in `game.bundle.js`.
 
+**To add it to your home screen:** serve the game from a web address (for example GitHub Pages; the install option does not appear when the file is opened from disk). Then use the browser's menu: "Install app" or "Add to Home Screen" on Android and desktop Chrome/Edge, and "Share" → "Add to Home Screen" on iPhone Safari. The game opens full screen in portrait, with its own icon (`icons/`, described by `manifest.webmanifest`).
+
 If the game cannot start it now says why on the loading screen. A hard reload (Ctrl+Shift+R) clears a stale cached copy.
 
 **To develop:** the source is in `src/` and `data/`. After changing either, rebuild the single file:
