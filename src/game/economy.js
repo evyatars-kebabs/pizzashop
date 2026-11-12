@@ -60,6 +60,11 @@ export function franchiseReady(state, cfg) {
   return runCash(state) >= franchiseRequirement(state, cfg);
 }
 
+// Ovens bake faster with every franchise: 1 = the starting speed.
+export function ovenSpeed(state, cfg) {
+  return 1 + (cfg.economy.prestige.ovenSpeedPerFranchise || 0) * state.franchise.count;
+}
+
 // More franchises bring more customers, without limit unless prestige.trafficMaxMult is set.
 // Returns the spawn-rate multiplier (1 = none yet).
 export function franchiseTraffic(state, cfg, count = state.franchise.count) {
@@ -82,6 +87,7 @@ export function derive(state, cfg) {
   const traffic = up.decor.trafficPerLevel * lvl.decor + up.neon.trafficPerLevel * lvl.neon;
   const locEcon = locationEconomy(state, cfg);
   const frTraffic = franchiseTraffic(state, cfg);
+  const bakeSpeed = ovenSpeed(state, cfg);
   const empireTraffic = up.marketing ? 1 + up.marketing.trafficMultPerLevel * (lvl.marketing || 0) : 1;
   const empirePay = up.pizzaSchool ? 1 + up.pizzaSchool.payMultPerLevel * (lvl.pizzaSchool || 0) : 1;
   const spawnBase = e.customers.spawnBaseSeconds / ((1 + traffic) * locEcon.trafficMult * frTraffic * empireTraffic);
@@ -101,7 +107,7 @@ export function derive(state, cfg) {
   const avgPrice = unlockedPrices.length
     ? unlockedPrices.reduce((a, b) => a + b, 0) / unlockedPrices.length
     : e.styles.margherita.basePrice;
-  const avgBake = 10;
+  const avgBake = Math.max(e.prestige.minBakeSeconds || 0, 10 / bakeSpeed);
   const demandPerSec = 1 / spawnBase;
   const capacityPerSec = ovenSlots / avgBake;
   const pizzasPerSec = Math.min(demandPerSec, capacityPerSec);
@@ -112,7 +118,7 @@ export function derive(state, cfg) {
   const offlineEfficiency = Math.min(1, e.time.offlineBaseEfficiency + e.time.offlineEfficiencyPerStaffRole * staffRoles);
 
   return {
-    traffic, locEcon, tier, frTraffic, empireTraffic, empirePay, spawnBase, ovenSlots, maxQueue, cheeseMult, prestigeMult: pMult,
+    traffic, locEcon, tier, frTraffic, empireTraffic, empirePay, bakeSpeed, spawnBase, ovenSlots, maxQueue, cheeseMult, prestigeMult: pMult,
     cashierOrderSec, cashierLvl, cookSpeed, cookLvl, idleRate, offlineEfficiency,
   };
 }

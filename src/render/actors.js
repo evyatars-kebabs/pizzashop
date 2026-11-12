@@ -333,7 +333,8 @@ export class Actors {
 
       // Colour follows the bake: pale dough and cheese, then golden.
       const style = this.cfg.economy.styles[p.style];
-      const bake = p.stage === 'baking' ? 1 - Math.max(0, p.bakeLeft) / (style ? style.bakeSeconds : 10) : p.stage === 'ready' ? 1 : 0;
+      const total = p.bakeTotal || (style ? style.bakeSeconds : 10);
+      const bake = p.stage === 'baking' ? 1 - Math.max(0, p.bakeLeft) / total : p.stage === 'ready' ? 1 : 0;
       const b = Math.min(1, Math.max(0, bake));
       v.crustMat.color.copy(CRUST_RAW).lerp(CRUST_BAKED, b);
       v.cheeseMat.color.copy(CHEESE_RAW).lerp(CHEESE_BAKED, b);

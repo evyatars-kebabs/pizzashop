@@ -1,6 +1,6 @@
 // Player and staff actions. All mutate the state object and return small result objects
 // so the UI and renderer can react. No DOM, no Three.js.
-import { derive, upgradeCost, payment, franchiseGain, franchiseReady } from './economy.js';
+import { derive, upgradeCost, payment, franchiseGain, franchiseReady, ovenSpeed } from './economy.js';
 import { activeModifiers } from './events.js';
 
 export function findCustomer(state, id) {
@@ -94,7 +94,10 @@ function bake(state, p, q, cfg, mode) {
   const style = cfg.economy.styles[p.style];
   p.q.bake = q;
   p.stage = 'baking';
-  p.bakeLeft = style.bakeSeconds * (q >= st.perfectBakeQuality ? st.perfectBakeSpeedMult : 1);
+  const minBake = cfg.economy.prestige.minBakeSeconds || 0;
+  const secs = Math.max(minBake, style.bakeSeconds / ovenSpeed(state, cfg));
+  p.bakeLeft = secs * (q >= st.perfectBakeQuality ? st.perfectBakeSpeedMult : 1);
+  p.bakeTotal = p.bakeLeft;
   p.work = 0;
   if (mode === 'manual') state.stats.manualLoad++;
   return { ok: true, type: 'stage', pizzaId: p.id, stage: 'baking', auto: mode !== 'manual', quality: q };

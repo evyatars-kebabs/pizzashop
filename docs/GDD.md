@@ -160,6 +160,8 @@ Franchising resets the current stand and starts again. The Franchise sheet spell
 
 Gain: `max(1, floor(earned here / 20000))` franchise points. Each point is a permanent +10% to payment.
 
+**Faster ovens with every franchise:** bake time is the style's bake time divided by `1 + 0.6 x franchises` (`prestige.ovenSpeedPerFranchise`), never below 1.5 s (`prestige.minBakeSeconds`). So two franchises bake about 2.2 times faster, and the oven stops getting quicker at the minimum.
+
 **More customers with every franchise:** the customer spawn rate is multiplied by `1 + 0.25 x franchises` (`prestige.trafficPerFranchise`), with no upper limit. So the street gets busier each time: +25%, +50%, +75% and so on. An optional `prestige.trafficMaxMult` can cap it. Customers the queue cannot hold walk off, so oven and counter upgrades decide how much of the extra traffic turns into sales. The Shop and the franchise sheet show the current and next bonus. Only cash earned at the current stand counts, so lifetime totals are never counted twice.
 
 Saves from before this rule are migrated (save version 2): a save that had already franchised starts its next run from zero.

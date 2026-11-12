@@ -109,6 +109,7 @@ Change `data/economy.json`, then reload. Some useful knobs:
 - `staff.*.baseCost`: when staff unlock.
 - `time.offlineCapSeconds` and `time.offlineBaseEfficiency`: the away-time reward.
 - `prestige.milestoneLifetimeCash` and `prestige.requirementGrowth`: what a stand must earn before each franchise, and how fast that grows.
+- `prestige.ovenSpeedPerFranchise` and `prestige.minBakeSeconds`: how much faster ovens bake per franchise, and the minimum bake time.
 - `prestige.trafficPerFranchise`: how many more customers each franchise brings (no limit; add `prestige.trafficMaxMult` to cap it).
 - `prestige.tiers`: how the place grows per franchise (size, visible staff, capacity bonuses, camera zoom).
 - `upgrades.decor.steps`: which decoration each decor level adds.

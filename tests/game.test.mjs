@@ -359,3 +359,29 @@ test('Empire upgrades reset with a franchise, and the gate applies again afterwa
   assert.equal(after.franchise.count, 2);
   assert.equal(buyUpgrade(after, 'pizzaSchool', cfg).ok, false, 'two franchises are now done, but nothing yet bought');
 });
+
+// ---- Oven speed ----
+test('ovens bake faster with each franchise, but never below the minimum', () => {
+  const { ovenSpeed } = economyMod;
+  const style = cfg.economy.styles.margherita;
+  const bakeSecondsAt = (franchises) => {
+    const s = newGame(cfg, NOW);
+    s.franchise.count = franchises;
+    s.cash = 1e9;
+    s.stats.manualLoad = 0;
+    s.nextId = 1;
+    s.customers.push({ id: 1, type: 'hungry', style: 'margherita', topping: 'basil', nameIdx: 1, patience: 90, maxPatience: 90, state: 'ordered' });
+    s.pizzas.push({ id: 2, customerId: 1, style: 'margherita', stage: 'load', work: 0, q: { dough: 1, top: 1, bake: 0 }, topping: 'basil', bakeLeft: 0, readyTimer: 0 });
+    applyManual(s, 2, 'load', { markerPos: 0.5 }, cfg);
+    return s.pizzas[0].bakeTotal;
+  };
+  const t0 = bakeSecondsAt(0);
+  // A centred tap is a perfect bake (x0.85), and franchises are zero, so this is the starting time.
+  assert.ok(Math.abs(t0 - style.bakeSeconds * cfg.economy.stages.perfectBakeSpeedMult) < 1e-9, 'starting bake time is unchanged');
+  const t2 = bakeSecondsAt(2);
+  assert.ok(t2 < t0 / 2, 'two franchises more than halve the bake time');
+  const t20 = bakeSecondsAt(20);
+  // The floor applies before the perfect-bake bonus, so a perfect bake at the floor is floor x0.85.
+  assert.ok(Math.abs(t20 - cfg.economy.prestige.minBakeSeconds * cfg.economy.stages.perfectBakeSpeedMult) < 1e-9, 'a very fast oven stops at the minimum');
+  assert.ok(ovenSpeed({ franchise: { count: 3 } }, cfg) > ovenSpeed({ franchise: { count: 2 } }, cfg));
+});

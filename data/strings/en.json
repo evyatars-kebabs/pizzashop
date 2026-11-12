@@ -198,5 +198,6 @@
   "upgrade.pizzaSchool.name": "Pizza school",
   "upgrade.pizzaSchool.desc": "+{pct}% pizza value",
   "upgrade.megaOven.name": "Industrial ovens",
-  "upgrade.megaOven.desc": "Bake {slots} more pizzas at once"
+  "upgrade.megaOven.desc": "Bake {slots} more pizzas at once",
+  "franchise.ovens": "Ovens: x{x} speed."
 }

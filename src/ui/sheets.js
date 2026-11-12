@@ -1,6 +1,6 @@
 // Modal sheets: shop, collect (offline earnings), franchise, settings, debug.
 import { t, money, moneyFull, duration } from '../core/i18n.js';
-import { upgradeCost, derive, franchiseGain, franchiseReady, franchiseRequirement, franchiseTraffic, runCash, tierIndex } from '../game/economy.js';
+import { upgradeCost, derive, franchiseGain, franchiseReady, franchiseRequirement, franchiseTraffic, ovenSpeed, runCash, tierIndex } from '../game/economy.js';
 
 const $ = (id) => document.getElementById(id);
 let refreshFn = null;
@@ -168,7 +168,7 @@ export function openShop(state, cfg, actions) {
         ? t('franchise.ready') + ' ' + t('franchise.gain', { points: franchiseGain(state, cfg) })
         : t('franchise.locked', { target: moneyFull(franchiseRequirement(state, cfg)), have: moneyFull(runCash(state)) })),
       el('small', '', t('franchise.now', { tier: t('tier.' + tiers[ti].id) }) + (nextTier ? '. ' + t('franchise.next', { tier: t('tier.' + nextTier.id) }) : '')),
-      el('small', 'lvl', t('franchise.points', { points: state.franchise.points }) + ' ' + t('franchise.traffic', { pct: Math.round((franchiseTraffic(state, cfg) - 1) * 100) })),
+      el('small', 'lvl', t('franchise.points', { points: state.franchise.points }) + ' ' + t('franchise.traffic', { pct: Math.round((franchiseTraffic(state, cfg) - 1) * 100) }) + ' ' + t('franchise.ovens', { x: ovenSpeed(state, cfg).toFixed(1) })),
     );
     fr.append(frInfo, button(t('action.franchise'), () => actions.franchise(), { disabled: !eligible }));
     body.append(fr);
