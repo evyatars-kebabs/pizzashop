@@ -162,6 +162,9 @@ export function autoLoad(state, p, cfg) {
 export function buyUpgrade(state, key, cfg, now = Date.now()) {
   const def = cfg.economy.upgrades[key];
   if (!def || def.enabled === false) return { ok: false, reason: 'locked' };
+  if (def.requires && state.franchise.count < (def.requires.franchises || 0)) {
+    return { ok: false, reason: 'needsFranchise', need: def.requires.franchises };
+  }
   const level = state.upgrades[key];
   if (level >= def.maxLevel) return { ok: false, reason: 'maxed' };
   const cost = upgradeCost(def, level);

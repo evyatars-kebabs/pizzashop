@@ -11,7 +11,7 @@ const cfg = { economy: load('data/economy.json') };
 const { newGame } = await import('../src/game/state.js');
 const { tick } = await import('../src/game/sim.js');
 const { takeOrder, applyManual, buyUpgrade, hireStaff, franchise, canFranchise } = await import('../src/game/actions.js');
-const { derive, upgradeCost, franchiseGain } = await import('../src/game/economy.js');
+const { derive, upgradeCost, franchiseGain, payment } = await import('../src/game/economy.js');
 const { offlineReport, applyOffline } = await import('../src/game/offline.js');
 const { migrate } = await import('../src/core/save.js');
 const { DEFAULT_STATE_PARTIAL } = await import('../src/game/state.js');
@@ -311,4 +311,51 @@ test('each franchise brings more customers, with no upper limit', () => {
     return runFor(g, 600).filter((e) => e.type === 'arrived' || e.type === 'turned_away').length;
   };
   assert.ok(count(4) > count(0) * 1.5);
+});
+
+// ---- Empire upgrades ----
+test('Empire upgrades cannot be bought before the required franchises', () => {
+  const s = newGame(cfg, NOW);
+  s.cash = 1e12;
+  assert.equal(buyUpgrade(s, 'marketing', cfg).reason, 'needsFranchise');
+  assert.equal(buyUpgrade(s, 'pizzaSchool', cfg).reason, 'needsFranchise');
+  assert.equal(buyUpgrade(s, 'megaOven', cfg).reason, 'needsFranchise');
+  assert.equal(s.upgrades.marketing, 0);
+  s.franchise.count = 1;
+  assert.equal(buyUpgrade(s, 'marketing', cfg).ok, true);
+  assert.equal(buyUpgrade(s, 'pizzaSchool', cfg).reason, 'needsFranchise', 'pizza school needs 2');
+  s.franchise.count = 2;
+  assert.equal(buyUpgrade(s, 'pizzaSchool', cfg).ok, true);
+  assert.equal(buyUpgrade(s, 'megaOven', cfg).reason, 'needsFranchise', 'industrial ovens need 3');
+});
+
+test('Empire upgrades give large boosts to customers, pay and oven capacity', () => {
+  const s = newGame(cfg, NOW);
+  s.franchise.count = 3;
+  s.cash = 1e12;
+  const base = derive(s, cfg);
+  const basePay = payment('margherita', 1, base, { cashMult: 1 }, false, cfg);
+  for (let i = 0; i < 5; i++) buyUpgrade(s, 'marketing', cfg);
+  for (let i = 0; i < 5; i++) buyUpgrade(s, 'pizzaSchool', cfg);
+  for (let i = 0; i < 4; i++) buyUpgrade(s, 'megaOven', cfg);
+  assert.equal(s.upgrades.marketing, 5);
+  const boosted = derive(s, cfg);
+  assert.ok(Math.abs(boosted.empireTraffic - 3.5) < 1e-9, 'marketing at level 5 is x3.5 customers');
+  assert.ok(boosted.spawnBase < base.spawnBase / 3.4, 'customers arrive about 3.5 times as often');
+  assert.ok(Math.abs(boosted.empirePay - 3) < 1e-9, 'pizza school at level 5 is x3 pay');
+  const boostedPay = payment('margherita', 1, boosted, { cashMult: 1 }, false, cfg);
+  assert.ok(Math.abs(boostedPay / basePay - 3) < 1e-9);
+  assert.equal(boosted.ovenSlots, base.ovenSlots + 8, 'industrial ovens add 2 slots per level, 4 levels');
+});
+
+test('Empire upgrades reset with a franchise, and the gate applies again afterwards', () => {
+  const s = newGame(cfg, NOW);
+  s.franchise.count = 1;
+  s.lifetimeCash = 25000;
+  s.cash = 1e12;
+  buyUpgrade(s, 'marketing', cfg);
+  const after = franchise(s, cfg, newGame, NOW).state;
+  assert.equal(after.upgrades.marketing, 0);
+  assert.equal(after.franchise.count, 2);
+  assert.equal(buyUpgrade(after, 'pizzaSchool', cfg).ok, false, 'two franchises are now done, but nothing yet bought');
 });

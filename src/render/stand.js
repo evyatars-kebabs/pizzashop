@@ -61,6 +61,7 @@ export function buildStand(L, env, opts = {}) {
   menuBoard(ctx);
   neonSign(ctx);
   decorate(ctx, opts.decor || 0);
+  empireExtras(ctx, opts.empire || {});
 
   g.add(ctx.S.mesh(VC));
   if (!ctx.F.empty) g.add(ctx.F.mesh(VC_FLAT));
@@ -640,6 +641,51 @@ const DECOR = {
     env.updaters.push((dt) => { m.rotation.y += dt * 0.9; });
   },
 };
+
+// Visible Empire upgrades. Each one adds one visible piece per level, so the stand shows
+// how far the player has pushed it. (The numbers come from the upgrades in economy.json.)
+const OVEN_Z = -0.1;
+function empireExtras(ctx, lv) {
+  const { S, M, F, warm, L, g } = ctx;
+  const { marketing = 0, pizzaSchool = 0, megaOven = 0 } = lv;
+
+  // Marketing: a coloured ad banner per level, hanging from the eave on the right.
+  const banners = ['#ef476f', '#ffd166', '#06d6a0', '#4ea8de', '#9b5de5'];
+  const ex = CX + L.W / 2 + 0.25;
+  for (let i = 0; i < marketing; i++) {
+    const x = ex + i * 0.42 - (marketing - 1) * 0.21 + 0.6;
+    const y = (ctx.eave ? ctx.eave.y : 3.2) - 0.7;
+    M.cylC(0.012, 0.9, IRON, [x, y + 0.45, ctx.eave ? ctx.eave.z : 0.4]);
+    S.box([0.36, 1.2, 0.03], banners[i % banners.length], [x, y - 0.6, (ctx.eave ? ctx.eave.z : 0.4) + 0.02]);
+    S.box([0.3, 0.06, 0.04], '#ffffff', [x, y - 0.36, (ctx.eave ? ctx.eave.z : 0.4) + 0.04]);
+  }
+
+  // Pizza school: gold-framed certificates on the back wall, one per level.
+  for (let i = 0; i < pizzaSchool; i++) {
+    const x = CX - 0.8 + i * 0.42;
+    const z = L.back + 0.16;
+    S.box([0.4, 0.5, 0.05], '#d4af37', [x, 1.45 + 0.25, z]);
+    S.box([0.32, 0.4, 0.04], '#fff8e7', [x, 1.45 + 0.25, z + 0.02]);
+    S.box([0.2, 0.04, 0.04], '#b5372a', [x, 1.45 + 0.34, z + 0.03]);
+    S.box([0.2, 0.03, 0.04], '#6b4428', [x, 1.45 + 0.2, z + 0.03]);
+  }
+
+  // Industrial ovens: extra brick ovens in a row to the right of the main oven.
+  for (let i = 0; i < megaOven; i++) {
+    const ox = L.ovenX + 1.35 + i * 1.35;
+    const oz = OVEN_Z;
+    S.box([1.1, 0.5, 1.0], STONE, [ox, 0, oz]);
+    g.add(texBox([1.05, 0.9, 0.95], 'brick', [ox, 0.5, oz], [1.2, 1]));
+    const dome = new THREE.Mesh(G.dome(14, 8), texMat('brick', 2, 1));
+    dome.scale.set(0.58, 0.5, 0.52);
+    dome.position.set(ox, 1.4, oz);
+    dome.castShadow = true;
+    g.add(dome);
+    S.box([0.72, 0.44, 0.05], '#140d0a', [ox, 0.66, oz + 0.52]);
+    warm.box([0.62, 0.3, 0.03], '#ffb35a', [ox, 0.72, oz + 0.55]);
+    M.cylC(0.04, 0.5, IRON, [ox + 0.36, 1.9, oz - 0.3]);
+  }
+}
 
 function decorate(ctx, level) {
   const steps = ctx.L.decorSteps || Object.keys(DECOR);

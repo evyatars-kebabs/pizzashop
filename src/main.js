@@ -105,7 +105,7 @@ function computeLayout() {
 
 // The scenery is rebuilt whenever one of these changes.
 function sceneKey() {
-  return `${S.location}|${tierIndex(S, cfg)}|${S.upgrades.decor}`;
+  return `${S.location}|${tierIndex(S, cfg)}|${S.upgrades.decor}|${S.upgrades.marketing}|${S.upgrades.pizzaSchool}|${S.upgrades.megaOven}`;
 }
 
 // Builds the street and the stand. Replaces whatever was there.
@@ -122,7 +122,10 @@ function buildScenery(snap = true) {
   env.signs = [];
   sceneryGroup = new THREE.Group();
   sceneryGroup.add(buildLocation(layout, env));
-  stand = buildStand(layout, env, { decor: S.upgrades.decor });
+  stand = buildStand(layout, env, {
+    decor: S.upgrades.decor,
+    empire: { marketing: S.upgrades.marketing, pizzaSchool: S.upgrades.pizzaSchool, megaOven: S.upgrades.megaOven },
+  });
   sceneryGroup.add(stand);
   env.scene.add(sceneryGroup);
   env.setLocation(layout, snap);

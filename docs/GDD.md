@@ -174,6 +174,18 @@ Saves from before this rule are migrated (save version 2): a save that had alrea
 
 Hiring is unchanged (levels 1 to 5), but each hired level up to the tier's limit adds another visible employee: extra cashiers at the counter, a waiter outside the shop, extra cooks at the oven and prep line.
 
+### Empire upgrades
+
+Three big upgrades that cannot be bought at all until the stand has franchised enough times. They reset with each franchise, like everything else, so each run has to buy them again.
+
+| Upgrade | Needs | Effect per level | Levels | Price (level 0 to 1) |
+|---|---|---|---|---|
+| Empire marketing | 1 franchise | +50% customers | 5 (up to x3.5) | 150,000 |
+| Pizza school | 2 franchises | +40% pizza value | 5 (up to x3) | 400,000 |
+| Industrial ovens | 3 franchises | +2 oven slots | 4 (up to +8) | 900,000 |
+
+Prices grow x2.5 per level. At one franchise the first marketing level takes roughly 65 hours of away time to afford, so the upgrades are a long-term goal that franchising opens. The Shop shows them in their own section, and locked ones say how many franchises they need. All values are in `data/economy.json` (`upgrades` with `"group": "empire"`).
+
 ### Decorations
 
 The decor upgrade has 10 levels. Each level still adds +5% foot traffic, and now also adds one clearly visible decoration (`upgrades.decor.steps`), named in the Shop and in a toast:

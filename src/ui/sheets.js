@@ -69,6 +69,9 @@ function upgradeVars(key, level, cfg) {
     case 'cheese': return { pct: Math.round(u.cheeseMultPerLevel * next * 100) };
     case 'decor': return { pct: Math.round(u.trafficPerLevel * next * 100), item: t('decor.step.' + (u.steps[level] || u.steps[u.steps.length - 1])) };
     case 'neon': return { pct: Math.round(u.trafficPerLevel * 100) };
+    case 'marketing': return { pct: Math.round(u.trafficMultPerLevel * next * 100) };
+    case 'pizzaSchool': return { pct: Math.round(u.payMultPerLevel * next * 100) };
+    case 'megaOven': return { slots: u.ovenSlotsPerLevel * next };
     default: return {};
   }
 }
@@ -78,21 +81,37 @@ export function openShop(state, cfg, actions) {
     const d = derive(state, cfg);
 
     body.append(el('h3', '', t('shop.upgrades')));
-    for (const key of Object.keys(cfg.economy.upgrades)) {
+    const upgradeRow = (key, empire) => {
       const u = cfg.economy.upgrades[key];
-      if (u.enabled === false) continue;
       const level = state.upgrades[key];
       const maxed = level >= u.maxLevel;
+      const needs = u.requires?.franchises || 0;
+      const locked = empire && state.franchise.count < needs;
       const cost = maxed ? 0 : upgradeCost(u, level);
-      const row = el('div', 'row');
+      const row = el('div', 'row' + (locked ? ' locked' : ''));
       const info = el('div', 'info');
       info.append(
         el('b', '', t('upgrade.' + key + '.name')),
-        el('small', '', maxed ? t('action.maxed') : t('upgrade.' + key + '.desc', upgradeVars(key, level, cfg))),
+        el('small', '', locked
+          ? t('shop.needsFranchise', { n: needs })
+          : (maxed ? t('action.maxed') : t('upgrade.' + key + '.desc', upgradeVars(key, level, cfg)))),
         el('small', 'lvl', `${level}/${u.maxLevel}`),
       );
-      row.append(info, button(maxed ? t('action.maxed') : t('action.buy', { cost: moneyFull(cost) }), () => actions.buy(key), { disabled: maxed || state.cash < cost }));
-      body.append(row);
+      const label = locked ? t('action.locked') : (maxed ? t('action.maxed') : t('action.buy', { cost: moneyFull(cost) }));
+      row.append(info, button(label, () => actions.buy(key), { disabled: maxed || locked || state.cash < cost }));
+      return row;
+    };
+    for (const key of Object.keys(cfg.economy.upgrades)) {
+      const u = cfg.economy.upgrades[key];
+      if (u.enabled === false || u.group === 'empire') continue;
+      body.append(upgradeRow(key, false));
+    }
+    body.append(el('h3', '', t('shop.empire')));
+    body.append(el('p', 'muted', t('shop.empireDesc')));
+    for (const key of Object.keys(cfg.economy.upgrades)) {
+      const u = cfg.economy.upgrades[key];
+      if (u.enabled === false || u.group !== 'empire') continue;
+      body.append(upgradeRow(key, true));
     }
 
     body.append(el('h3', '', t('shop.locations')));

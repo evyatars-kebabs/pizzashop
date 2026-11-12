@@ -189,5 +189,14 @@
   "franchise.nextCost": "The next franchise will need {target} earned at the new stand.",
   "toast.franchiseReady": "You can franchise now!",
   "franchise.traffic": "Customers: +{pct}% from franchises.",
-  "franchise.trafficNext": "After this franchise: +{pct}% customers."
+  "franchise.trafficNext": "After this franchise: +{pct}% customers.",
+  "shop.empire": "Empire",
+  "shop.empireDesc": "Big upgrades that open up only after franchising. Each franchise resets them, like everything else.",
+  "shop.needsFranchise": "Needs {n} franchise(s)",
+  "upgrade.marketing.name": "Empire marketing",
+  "upgrade.marketing.desc": "+{pct}% customers on top of everything else",
+  "upgrade.pizzaSchool.name": "Pizza school",
+  "upgrade.pizzaSchool.desc": "+{pct}% pizza value",
+  "upgrade.megaOven.name": "Industrial ovens",
+  "upgrade.megaOven.desc": "Bake {slots} more pizzas at once"
 }

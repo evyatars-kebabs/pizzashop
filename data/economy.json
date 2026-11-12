@@ -168,6 +168,36 @@
       "maxLevel": 5,
       "enabled": false,
       "_note": "Delivery scooter: placeholder for post-prototype delivery kid."
+    },
+    "marketing": {
+      "baseCost": 150000,
+      "growth": 2.5,
+      "maxLevel": 5,
+      "trafficMultPerLevel": 0.5,
+      "group": "empire",
+      "requires": {
+        "franchises": 1
+      }
+    },
+    "pizzaSchool": {
+      "baseCost": 400000,
+      "growth": 2.5,
+      "maxLevel": 5,
+      "payMultPerLevel": 0.4,
+      "group": "empire",
+      "requires": {
+        "franchises": 2
+      }
+    },
+    "megaOven": {
+      "baseCost": 900000,
+      "growth": 2.5,
+      "maxLevel": 4,
+      "ovenSlotsPerLevel": 2,
+      "group": "empire",
+      "requires": {
+        "franchises": 3
+      }
     }
   },
   "staff": {
@@ -363,5 +393,6 @@
       "skin.neon",
       "skin.copper"
     ]
-  }
+  },
+  "_empireNote": "Empire upgrades (upgrades with group \"empire\") need a number of franchises before they can be bought, and they reset with each franchise like everything else."
 }

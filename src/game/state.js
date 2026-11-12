@@ -13,7 +13,7 @@ export const DEFAULT_STATE_PARTIAL = {
   location: 'corner',
   // Locations unlocked so far. Carries over franchises.
   unlockedLocations: { corner: true, sideStreet: false },
-  upgrades: { oven: 0, counter: 0, cheese: 0, decor: 0, neon: 0, scooter: 0 },
+  upgrades: { oven: 0, counter: 0, cheese: 0, decor: 0, neon: 0, scooter: 0, marketing: 0, pizzaSchool: 0, megaOven: 0 },
   staff: { cashier: 0, cook: 0 },
   // Recipes carry over franchises.
   styles: { margherita: true, pepperoni: false, veggie: false, seasonal: false },

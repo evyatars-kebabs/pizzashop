@@ -82,9 +82,12 @@ export function derive(state, cfg) {
   const traffic = up.decor.trafficPerLevel * lvl.decor + up.neon.trafficPerLevel * lvl.neon;
   const locEcon = locationEconomy(state, cfg);
   const frTraffic = franchiseTraffic(state, cfg);
-  const spawnBase = e.customers.spawnBaseSeconds / ((1 + traffic) * locEcon.trafficMult * frTraffic);
+  const empireTraffic = up.marketing ? 1 + up.marketing.trafficMultPerLevel * (lvl.marketing || 0) : 1;
+  const empirePay = up.pizzaSchool ? 1 + up.pizzaSchool.payMultPerLevel * (lvl.pizzaSchool || 0) : 1;
+  const spawnBase = e.customers.spawnBaseSeconds / ((1 + traffic) * locEcon.trafficMult * frTraffic * empireTraffic);
   const tier = tierOf(state, cfg);
-  const ovenSlots = up.oven.ovenSlotsBase + up.oven.ovenSlotsPerLevel * lvl.oven + tier.ovenSlotsBonus;
+  const ovenSlots = up.oven.ovenSlotsBase + up.oven.ovenSlotsPerLevel * lvl.oven + tier.ovenSlotsBonus
+    + (up.megaOven ? up.megaOven.ovenSlotsPerLevel * (lvl.megaOven || 0) : 0);
   const maxQueue = up.counter.maxQueueBase + up.counter.maxQueuePerLevel * lvl.counter + tier.maxQueueBonus;
   const cheeseMult = 1 + up.cheese.cheeseMultPerLevel * lvl.cheese;
   const pMult = prestigeMult(state, cfg);
@@ -102,14 +105,14 @@ export function derive(state, cfg) {
   const demandPerSec = 1 / spawnBase;
   const capacityPerSec = ovenSlots / avgBake;
   const pizzasPerSec = Math.min(demandPerSec, capacityPerSec);
-  const payPerPizza = avgPrice * (e.pizzaQuality.payBase + e.pizzaQuality.payPerQuality * 0.8) * cheeseMult * pMult;
+  const payPerPizza = avgPrice * (e.pizzaQuality.payBase + e.pizzaQuality.payPerQuality * 0.8) * cheeseMult * pMult * empirePay;
   const idleRate = pizzasPerSec * payPerPizza * 1.1; // ~10% expected tips
 
   const staffRoles = (cashierLvl > 0 ? 1 : 0) + (cookLvl > 0 ? 1 : 0);
   const offlineEfficiency = Math.min(1, e.time.offlineBaseEfficiency + e.time.offlineEfficiencyPerStaffRole * staffRoles);
 
   return {
-    traffic, locEcon, tier, frTraffic, spawnBase, ovenSlots, maxQueue, cheeseMult, prestigeMult: pMult,
+    traffic, locEcon, tier, frTraffic, empireTraffic, empirePay, spawnBase, ovenSlots, maxQueue, cheeseMult, prestigeMult: pMult,
     cashierOrderSec, cashierLvl, cookSpeed, cookLvl, idleRate, offlineEfficiency,
   };
 }
@@ -120,7 +123,7 @@ export function payment(style, q, stats, mods, wrongTopping, cfg) {
   const base = e.styles[style].basePrice;
   const qualityMult = e.pizzaQuality.payBase + e.pizzaQuality.payPerQuality * q;
   const wrongMult = wrongTopping ? e.customers.wrongToppingPayMult : 1;
-  return base * qualityMult * stats.cheeseMult * stats.prestigeMult * mods.cashMult * wrongMult;
+  return base * qualityMult * stats.cheeseMult * stats.prestigeMult * (stats.empirePay || 1) * mods.cashMult * wrongMult;
 }
 
 export function franchiseGain(state, cfg) {
