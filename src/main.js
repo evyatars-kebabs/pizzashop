@@ -622,5 +622,7 @@ window.addEventListener('pagehide', () => save());
 
 boot().catch((err) => {
   console.error(err);
-  $('loading').textContent = 'Could not load the game. Serve this folder over http and reload.';
+  const why = err && err.message ? err.message : String(err);
+  if (window.__pizzaFail) window.__pizzaFail(why);
+  else $('loading').textContent = 'The game could not start: ' + why;
 });

@@ -6,14 +6,29 @@ Built with **Three.js** (vendored, no build step) and plain ES modules. The brie
 
 ## Run it
 
+**To play:** open `index.html` in a browser. Double-clicking the file works; no server, Python or Node is needed. The whole game (code, Three.js and data) is in `game.bundle.js`.
+
+If the game cannot start it now says why on the loading screen. A hard reload (Ctrl+Shift+R) clears a stale cached copy.
+
+**To develop:** the source is in `src/` and `data/`. After changing either, rebuild the single file:
+
 ```bash
-npm install        # only needed for the test runner and to refresh vendor/three.module.js
-npm start          # serves the folder at http://localhost:8080
+npm install
 ```
 
-Open <http://localhost:8080/index.html?debug=1> on a phone (same network) or in a desktop browser with device emulation set to portrait.
+```bash
+npm run build
+```
 
-`fetch()` needs HTTP, so opening the file directly will not load the data files.
+`npm run build` writes `game.bundle.js` and stamps its hash into `index.html`, so browsers never mix an old cached copy with a new one. Commit both files.
+
+For quick iteration without rebuilding, serve the folder and open `dev.html`, which loads the source modules and data files directly (this one does need a server, because of `fetch()`):
+
+```bash
+npm start
+```
+
+Then open <http://localhost:8080/dev.html?debug=1>.
 
 Run the logic tests:
 
@@ -38,7 +53,10 @@ On a wide window the action bar sits centred at the bottom, and dialogs open in 
 ## Project layout
 
 ```
-index.html               Shell: canvas, HUD, bottom action bar, overlays
+index.html               The game page. Loads game.bundle.js. Works when opened as a file.
+dev.html                 Development page: loads src/ modules and data/ directly (needs a server)
+game.bundle.js           Built single-file game (npm run build). Do not edit by hand.
+scripts/build.mjs        Build script
 styles.css               Mobile-first styles. Colours are tokens on :root.
 data/
   economy.json           ALL tunable values: costs, rates, timers, multipliers, events, tutorial, goals

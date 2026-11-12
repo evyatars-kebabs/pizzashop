@@ -8,9 +8,6 @@
   <title>Slice Street</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Ccircle cx=%2750%27 cy=%2750%27 r=%2746%27 fill=%27%23e5533d%27/%3E%3Cpath d=%27M50 12 L88 82 L12 82 Z%27 fill=%27%23ffd166%27/%3E%3C/svg%3E">
   <link rel="stylesheet" href="styles.css">
-  <script type="importmap">
-  { "imports": { "three": "./vendor/three.module.js" } }
-  </script>
 </head>
 <body>
   <canvas id="scene" aria-label="Pizza stand scene"></canvas>
@@ -65,6 +62,28 @@
   </div>
 
   <div id="loading">Loading…</div>
-  <script type="module" src="src/main.js"></script>
+  <script>
+    // If the game cannot start, say so instead of sitting on "Loading…".
+    (function () {
+      var box = document.getElementById('loading');
+      function fail(why) {
+        if (!box || box.classList.contains('hidden')) return;
+        box.innerHTML = '';
+        var p = document.createElement('div');
+        p.style.maxWidth = '420px';
+        p.textContent = 'The game could not start. Try a hard reload (Ctrl+Shift+R, or Cmd+Shift+R on a Mac). If that does not help: ' + why;
+        box.appendChild(p);
+      }
+      window.addEventListener('error', function (e) {
+        fail(e && e.message ? e.message : 'a file failed to load.');
+      }, true);
+      window.addEventListener('unhandledrejection', function (e) {
+        fail(e && e.reason && e.reason.message ? e.reason.message : 'an unexpected error.');
+      });
+      setTimeout(function () { fail('it is taking too long. Your browser may not support WebGL.'); }, 20000);
+      window.__pizzaFail = fail;
+    })();
+  </script>
+  <script src="game.bundle.js?v=a6296985"></script>
 </body>
 </html>
