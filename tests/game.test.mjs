@@ -280,7 +280,7 @@ test('the place grows with franchises: cart, stand, shop, with more capacity', (
   assert.equal(tierOf(s, cfg).id, 'shop');
 });
 
-test('each franchise brings more customers, up to the cap', () => {
+test('each franchise brings more customers, with no upper limit', () => {
   const { franchiseTraffic } = economyMod;
   const s = newGame(cfg, NOW);
   const base = derive(s, cfg).spawnBase;
@@ -293,7 +293,15 @@ test('each franchise brings more customers, up to the cap', () => {
   }
   assert.ok(Math.abs(base / last - (1 + cfg.economy.prestige.trafficPerFranchise * 4)) < 1e-9);
   s.franchise.count = 999;
-  assert.equal(franchiseTraffic(s, cfg), cfg.economy.prestige.trafficMaxMult);
+  assert.equal(franchiseTraffic(s, cfg), 1 + cfg.economy.prestige.trafficPerFranchise * 999);
+  s.franchise.count = 1000;
+  assert.ok(franchiseTraffic(s, cfg) > 1 + cfg.economy.prestige.trafficPerFranchise * 999, 'still growing');
+  // The sim stays stable at an extreme rate: the queue fills and the rest are turned away.
+  const busy = newGame(cfg, NOW);
+  busy.franchise.count = 1000;
+  const evs = runFor(busy, 30);
+  assert.ok(busy.customers.filter((c) => c.state === 'waiting').length <= derive(busy, cfg).maxQueue);
+  assert.ok(evs.some((e) => e.type === 'turned_away'));
   // More customers actually show up in play, not just on paper.
   const count = (franchises) => {
     const g = newGame(cfg, NOW);

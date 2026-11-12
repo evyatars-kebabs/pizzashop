@@ -44,6 +44,7 @@ let acc = 0;
 let last = performance.now();
 let saveTimer = 0;
 let sigLast = '';
+let lastTurnedAwayToast = -1e9;
 
 const ACTION_KEY = { customers: 'customers', stretch: 'stretch', top: 'top', oven: 'oven', serve: 'serve', shop: 'shop' };
 
@@ -220,10 +221,16 @@ function handleEvent(e) {
       env.shakeCam(0.04);
       track('customer_angry', { customerType: e.customerType });
       break;
-    case 'turned_away':
-      hud.toast(t('customer.turnedAway'), 'bad');
-      track('customer_turned_away', { queueFull: true });
+    case 'turned_away': {
+      // With many franchises customers arrive very fast, so say this at most every few seconds.
+      const nowMs = performance.now();
+      if (nowMs - lastTurnedAwayToast > 8000) {
+        lastTurnedAwayToast = nowMs;
+        hud.toast(t('customer.turnedAway'), 'bad');
+        track('customer_turned_away', { queueFull: true });
+      }
       break;
+    }
     case 'event_start':
       sfx.bell();
       hud.toast(t('toast.eventStart', { event: t('event.' + e.id + '.name') }));

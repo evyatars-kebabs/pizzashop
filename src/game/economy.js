@@ -60,7 +60,8 @@ export function franchiseReady(state, cfg) {
   return runCash(state) >= franchiseRequirement(state, cfg);
 }
 
-// More franchises bring more customers. Returns the spawn-rate multiplier (1 = none yet).
+// More franchises bring more customers, without limit unless prestige.trafficMaxMult is set.
+// Returns the spawn-rate multiplier (1 = none yet).
 export function franchiseTraffic(state, cfg, count = state.franchise.count) {
   const p = cfg.economy.prestige;
   return Math.min(p.trafficMaxMult ?? Infinity, 1 + (p.trafficPerFranchise || 0) * count);
