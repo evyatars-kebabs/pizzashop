@@ -108,7 +108,7 @@
   "collect.capped": "Away time is capped at {cap}.",
   "collect.boosted": "Doubled with the ad boost.",
   "franchise.title": "Franchise your stand",
-  "franchise.explain": "Start again from scratch and keep a permanent bonus. Each franchise adds +{bonus}% cash for good, and your place grows: cart, then a big stand, then a pizza shop with more staff. Every franchise has to be earned again, and each one needs more than the last.",
+  "franchise.explain": "Start again from scratch and keep permanent bonuses. Each franchise adds +{bonus}% cash and +{traffic}% customers for good, and your place grows: cart, then a big stand, then a pizza shop with more staff. Every franchise has to be earned again, and each one needs more than the last.",
   "franchise.resets": "Resets: cash, upgrades, staff, queue, pizzas, and you go back to the corner.",
   "franchise.keeps": "Keeps: franchise points, unlocked pizza styles (recipes), unlocked locations, the tutorial, settings, and lifetime stats.",
   "franchise.gain": "You will gain {points} franchise point(s).",
@@ -187,5 +187,7 @@
   "settings.graphics.low": "Low",
   "franchise.ready": "Ready to franchise.",
   "franchise.nextCost": "The next franchise will need {target} earned at the new stand.",
-  "toast.franchiseReady": "You can franchise now!"
+  "toast.franchiseReady": "You can franchise now!",
+  "franchise.traffic": "Customers: +{pct}% from franchises.",
+  "franchise.trafficNext": "After this franchise: +{pct}% customers."
 }

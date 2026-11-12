@@ -60,6 +60,12 @@ export function franchiseReady(state, cfg) {
   return runCash(state) >= franchiseRequirement(state, cfg);
 }
 
+// More franchises bring more customers. Returns the spawn-rate multiplier (1 = none yet).
+export function franchiseTraffic(state, cfg, count = state.franchise.count) {
+  const p = cfg.economy.prestige;
+  return Math.min(p.trafficMaxMult ?? Infinity, 1 + (p.trafficPerFranchise || 0) * count);
+}
+
 export function prestigeMult(state, cfg) {
   return 1 + cfg.economy.prestige.bonusPerPoint * state.franchise.points;
 }
@@ -74,7 +80,8 @@ export function derive(state, cfg) {
 
   const traffic = up.decor.trafficPerLevel * lvl.decor + up.neon.trafficPerLevel * lvl.neon;
   const locEcon = locationEconomy(state, cfg);
-  const spawnBase = e.customers.spawnBaseSeconds / ((1 + traffic) * locEcon.trafficMult);
+  const frTraffic = franchiseTraffic(state, cfg);
+  const spawnBase = e.customers.spawnBaseSeconds / ((1 + traffic) * locEcon.trafficMult * frTraffic);
   const tier = tierOf(state, cfg);
   const ovenSlots = up.oven.ovenSlotsBase + up.oven.ovenSlotsPerLevel * lvl.oven + tier.ovenSlotsBonus;
   const maxQueue = up.counter.maxQueueBase + up.counter.maxQueuePerLevel * lvl.counter + tier.maxQueueBonus;
@@ -101,7 +108,7 @@ export function derive(state, cfg) {
   const offlineEfficiency = Math.min(1, e.time.offlineBaseEfficiency + e.time.offlineEfficiencyPerStaffRole * staffRoles);
 
   return {
-    traffic, locEcon, tier, spawnBase, ovenSlots, maxQueue, cheeseMult, prestigeMult: pMult,
+    traffic, locEcon, tier, frTraffic, spawnBase, ovenSlots, maxQueue, cheeseMult, prestigeMult: pMult,
     cashierOrderSec, cashierLvl, cookSpeed, cookLvl, idleRate, offlineEfficiency,
   };
 }

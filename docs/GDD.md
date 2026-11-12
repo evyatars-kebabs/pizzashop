@@ -158,7 +158,9 @@ Franchising resets the current stand and starts again. The Franchise sheet spell
 - **Resets:** cash, upgrades, staff, queue, pizzas, and the stand goes back to the corner.
 - **Keeps:** franchise points, unlocked pizza styles (recipes), unlocked locations, the tutorial, settings, and lifetime stats.
 
-Gain: `max(1, floor(earned here / 20000))` franchise points. Each point is a permanent +10% to payment. Only cash earned at the current stand counts, so lifetime totals are never counted twice.
+Gain: `max(1, floor(earned here / 20000))` franchise points. Each point is a permanent +10% to payment.
+
+**More customers with every franchise:** the customer spawn rate is multiplied by `1 + 0.25 x franchises` (`prestige.trafficPerFranchise`), capped at x6 (`prestige.trafficMaxMult`). So the street gets busier each time: +25%, +50%, +75% and so on. The Shop and the franchise sheet show the current and next bonus. Only cash earned at the current stand counts, so lifetime totals are never counted twice.
 
 Saves from before this rule are migrated (save version 2): a save that had already franchised starts its next run from zero.
 

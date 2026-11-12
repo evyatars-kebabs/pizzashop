@@ -225,7 +225,8 @@ test('franchise keeps unlocked locations but sends the stand back to the corner'
 });
 
 // ---- Franchise tiers ----
-const { tierOf, franchiseRequirement, runCash } = await import('../src/game/economy.js');
+const economyMod = await import('../src/game/economy.js');
+const { tierOf, franchiseRequirement, runCash } = economyMod;
 
 test('every franchise has to be earned again, and each one needs more', () => {
   const s = newGame(cfg, NOW);
@@ -277,4 +278,29 @@ test('the place grows with franchises: cart, stand, shop, with more capacity', (
   assert.ok(tierOf(s, cfg).staffVisible > 1);
   s.franchise.count = 9;
   assert.equal(tierOf(s, cfg).id, 'shop');
+});
+
+test('each franchise brings more customers, up to the cap', () => {
+  const { franchiseTraffic } = economyMod;
+  const s = newGame(cfg, NOW);
+  const base = derive(s, cfg).spawnBase;
+  let last = base;
+  for (let n = 1; n <= 4; n++) {
+    s.franchise.count = n;
+    const now = derive(s, cfg).spawnBase;
+    assert.ok(now < last, 'customers arrive more often after franchise ' + n);
+    last = now;
+  }
+  assert.ok(Math.abs(base / last - (1 + cfg.economy.prestige.trafficPerFranchise * 4)) < 1e-9);
+  s.franchise.count = 999;
+  assert.equal(franchiseTraffic(s, cfg), cfg.economy.prestige.trafficMaxMult);
+  // More customers actually show up in play, not just on paper.
+  const count = (franchises) => {
+    const g = newGame(cfg, NOW);
+    g.rngSeed = 42;
+    g.franchise.count = franchises;
+    g.upgrades.counter = 5;
+    return runFor(g, 600).filter((e) => e.type === 'arrived' || e.type === 'turned_away').length;
+  };
+  assert.ok(count(4) > count(0) * 1.5);
 });

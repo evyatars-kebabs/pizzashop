@@ -220,7 +220,10 @@
       }
     ],
     "requirementGrowth": 1.6,
-    "_requirementNote": "Each franchise must be earned again: cash earned at the current stand must reach milestoneLifetimeCash * requirementGrowth^(franchises so far). The point gain is floor(cash earned at this stand / pointsDivisor)."
+    "_requirementNote": "Each franchise must be earned again: cash earned at the current stand must reach milestoneLifetimeCash * requirementGrowth^(franchises so far). The point gain is floor(cash earned at this stand / pointsDivisor).",
+    "trafficPerFranchise": 0.25,
+    "trafficMaxMult": 6,
+    "_trafficNote": "Each franchise brings more customers: spawn rate x (1 + trafficPerFranchise * franchises), capped at trafficMaxMult."
   },
   "events": {
     "rainyDay": {

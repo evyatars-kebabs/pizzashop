@@ -1,6 +1,6 @@
 // Modal sheets: shop, collect (offline earnings), franchise, settings, debug.
 import { t, money, moneyFull, duration } from '../core/i18n.js';
-import { upgradeCost, derive, franchiseGain, franchiseReady, franchiseRequirement, runCash, tierIndex } from '../game/economy.js';
+import { upgradeCost, derive, franchiseGain, franchiseReady, franchiseRequirement, franchiseTraffic, runCash, tierIndex } from '../game/economy.js';
 
 const $ = (id) => document.getElementById(id);
 let refreshFn = null;
@@ -149,7 +149,7 @@ export function openShop(state, cfg, actions) {
         ? t('franchise.ready') + ' ' + t('franchise.gain', { points: franchiseGain(state, cfg) })
         : t('franchise.locked', { target: moneyFull(franchiseRequirement(state, cfg)), have: moneyFull(runCash(state)) })),
       el('small', '', t('franchise.now', { tier: t('tier.' + tiers[ti].id) }) + (nextTier ? '. ' + t('franchise.next', { tier: t('tier.' + nextTier.id) }) : '')),
-      el('small', 'lvl', t('franchise.points', { points: state.franchise.points })),
+      el('small', 'lvl', t('franchise.points', { points: state.franchise.points }) + ' ' + t('franchise.traffic', { pct: Math.round((franchiseTraffic(state, cfg) - 1) * 100) })),
     );
     fr.append(frInfo, button(t('action.franchise'), () => actions.franchise(), { disabled: !eligible }));
     body.append(fr);
@@ -214,7 +214,8 @@ export function openFranchise(state, cfg, actions) {
     const tiers = cfg.economy.prestige.tiers;
     const nextTier = tiers.find((x) => x.minFranchises > state.franchise.count);
     body.append(
-      el('p', 'lead', t('franchise.explain', { bonus: Math.round(cfg.economy.prestige.bonusPerPoint * 100) })),
+      el('p', 'lead', t('franchise.explain', { bonus: Math.round(cfg.economy.prestige.bonusPerPoint * 100), traffic: Math.round((cfg.economy.prestige.trafficPerFranchise || 0) * 100) })),
+      el('p', '', t('franchise.trafficNext', { pct: Math.round((franchiseTraffic(state, cfg, state.franchise.count + 1) - 1) * 100) })),
       el('p', '', t('franchise.nextCost', { target: moneyFull(franchiseRequirement({ franchise: { count: state.franchise.count + 1 } }, cfg)) })),
       el('p', '', t('franchise.gain', { points: gain }) + (nextTier ? ' ' + t('franchise.next', { tier: t('tier.' + nextTier.id) }) + '.' : '')),
       el('p', 'muted', t('franchise.resets')),
