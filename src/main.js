@@ -348,6 +348,8 @@ function cfgStation(name) {
 }
 
 function openShop() {
+  // The Shop key and button toggle the shop: a second press closes it.
+  if (sheets.modalKind() === 'shop') return sheets.closeModal();
   sheets.openShop(S, cfg, {
     buy: (key) => {
       const r = buyUpgrade(S, key, cfg);
@@ -506,6 +508,10 @@ function wireKeyboard() {
       if (isMiniOpen()) return cancelMini();
       if (sheets.isModalOpen()) return $('modalClose').click();
       return;
+    }
+    if (e.key === '6' && sheets.modalKind() === 'shop') {
+      e.preventDefault();
+      return sheets.closeModal();
     }
     if (sheets.isModalOpen() || isMiniOpen() || pendingOffline) return;
     if (KEY_ACTIONS[e.key]) {

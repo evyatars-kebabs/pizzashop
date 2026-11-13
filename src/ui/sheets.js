@@ -12,6 +12,11 @@ export function isModalOpen() {
   return openKind !== null;
 }
 
+// Which sheet is open ('shop', 'settings', ...) or null.
+export function modalKind() {
+  return openKind;
+}
+
 export function closeModal() {
   const hook = onDismiss;
   onDismiss = null;
