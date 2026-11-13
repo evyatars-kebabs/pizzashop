@@ -29,8 +29,14 @@ function armGeometry(sleeve, skin) {
 
 // o: { shirt, pants, skin, hair, hairStyle: 'short'|'bun'|'long'|'bald', hat: 'none'|'cap'|'toque',
 //      hatColor, apron (colour or null), shoe, scale }
+// Body geometry is built once per look and shared, so a crowd does not build thousands of meshes.
+const bodyGeoCache = new Map();
+const BODY_GEO_LIMIT = 400;
+
 export function makePerson(o) {
   const group = new THREE.Group();
+  const key = JSON.stringify(o);
+  const cachedGeo = bodyGeoCache.get(key);
   const b = new Batch();
   const skin = o.skin || '#e0ac7e';
 
@@ -71,7 +77,9 @@ export function makePerson(o) {
   // Hips.
   b.add(G.capsule(0.17, 0.08), o.pants || '#3d4a66', [0, 0.66, 0], [0, 0, Math.PI / 2], [1, 1, 0.85]);
 
-  const body = b.mesh(VC);
+  const body = cachedGeo ? new THREE.Mesh(cachedGeo, VC) : b.mesh(VC);
+  if (!cachedGeo && bodyGeoCache.size < BODY_GEO_LIMIT) bodyGeoCache.set(key, body.geometry);
+  body.castShadow = true;
   group.add(body);
 
   const limbMat = VC;

@@ -222,5 +222,13 @@
   "mini.happy.miss": "So close! Come back in a few minutes.",
   "toast.bonusReady": "Happy hour is ready. Look for the x2 button.",
   "event.doubleCash.name": "Double money",
-  "event.doubleCash.desc": "Every sale pays double."
+  "event.doubleCash.desc": "Every sale pays double.",
+  "shop.shops": "More shops",
+  "shop.openShop": "Open another shop",
+  "shop.shopsDesc": "Each shop doubles your customers, employees and money per second. Open: {open} of {max}. Each extra shop doubles again.",
+  "shop.shopsLocked": "Franchise {n} time(s) to open another shop.",
+  "shop.allOpen": "All shops are open.",
+  "action.open": "Open {cost}",
+  "toast.shopOpened": "Shop {n} is open! Customers now split between your shops.",
+  "sign.shop": "Shop {n}"
 }

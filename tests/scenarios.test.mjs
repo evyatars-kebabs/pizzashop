@@ -283,3 +283,45 @@ test('happy hour never starts at random, and the ready notice comes once', () =>
   const readies = ev.filter((e) => e.type === 'bonus_ready').length;
   assert.ok(readies >= 1, 'the game tells the player when it is ready');
 });
+
+// ---- Shops and the crowd limits ----
+test('opening shops: needs franchising, doubles customers, staff and oven capacity, costs more each time, stops at the cap', () => {
+  const s = newGame(cfg, NOW);
+  s.cash = 1e15;
+  assert.equal(A.openShop(s, cfg).reason, 'needsFranchise');
+  s.franchise.count = 1;
+  s.staff.cashier = 1;
+  s.staff.cook = 1;
+  const one = E.derive(s, cfg);
+  const costs = [];
+  for (let i = 0; i < 3; i++) costs.push(A.openShop(s, cfg).cost);
+  assert.equal(s.shops, 4);
+  assert.ok(costs[1] > costs[0] * 2.5, 'costs grow');
+  assert.equal(A.openShop(s, cfg).reason, 'maxed');
+  const four = E.derive(s, cfg);
+  assert.ok(Math.abs(four.spawnBase - one.spawnBase / 8) < 1e-9, 'customers arrive 8 times as often');
+  assert.equal(four.cashierCount, one.cashierCount * 8);
+  assert.equal(four.cookCount, one.cookCount * 8);
+  assert.equal(four.ovenSlots, one.ovenSlots * 8);
+});
+
+test('the queue never grows past the hard cap, however big the counter and shops get', () => {
+  const s = newGame(cfg, NOW);
+  s.franchise.count = 3;
+  s.shops = 4;
+  s.upgrades.counter = 120;
+  assert.ok(E.derive(s, cfg).maxQueue <= cfg.economy.queueHardCap);
+});
+
+test('a crowd of 300 customers does not break the simulation', () => {
+  const s = newGame(cfg, NOW);
+  s.franchise.count = 3;
+  s.shops = 4;
+  s.upgrades.counter = 120;
+  s.staff.cashier = 1;
+  s.cash = 1e12;
+  for (let i = 0; i < 300; i++) s.customers.push({ id: 20000 + i, type: 'hungry', style: 'margherita', topping: 'basil', nameIdx: 1, patience: 999, maxPatience: 999, state: 'waiting' });
+  run(s, 60, 0.25);
+  assert.ok(s.customers.filter((c) => c.state === 'waiting').length <= cfg.economy.queueHardCap);
+  checkInvariants(s);
+});

@@ -430,5 +430,14 @@
     "spawnEverySeconds": 0.75,
     "targetLifetimeSeconds": 0.95,
     "_note": "A tap mini game that becomes available every intervalSeconds of game time. Hitting `needed` of `targets` doubles all money for the event duration."
-  }
+  },
+  "shops": {
+    "maxShops": 4,
+    "requiresFranchises": 1,
+    "baseCost": 200000,
+    "growth": 3,
+    "multiplierPerShop": 2,
+    "_note": "Each extra shop doubles customers, employees, oven capacity and money per second. Shops after the first cost baseCost x growth^(shops already open - 1)."
+  },
+  "queueHardCap": 40
 }

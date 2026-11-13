@@ -78,6 +78,20 @@ export function prestigeMult(state, cfg) {
 }
 
 // Derived stats for the current state. Pure; call freely.
+// Each open shop doubles customers, staff, oven capacity and money per second: 1, 2, 4, 8.
+export function shopMultiplier(state, cfg) {
+  const per = cfg.economy.shops?.multiplierPerShop || 2;
+  return Math.pow(per, Math.max(0, (state.shops || 1) - 1));
+}
+
+// Headcounts for every role, including recruits and every shop.
+export function staffCounts(state, cfg) {
+  const m = shopMultiplier(state, cfg);
+  const cashier = state.staff.cashier > 0 ? 1 + (state.staffing?.cashier || 0) : 0;
+  const cook = state.staff.cook > 0 ? 1 + (state.staffing?.cook || 0) : 0;
+  return { cashier: Math.round(cashier * m), cook: Math.round(cook * m) };
+}
+
 export function derive(state, cfg) {
   const e = cfg.economy;
   const up = e.upgrades;
@@ -91,11 +105,16 @@ export function derive(state, cfg) {
   const bakeSpeed = ovenSpeed(state, cfg);
   const empireTraffic = up.marketing ? 1 + up.marketing.trafficMultPerLevel * (lvl.marketing || 0) : 1;
   const empirePay = up.pizzaSchool ? 1 + up.pizzaSchool.payMultPerLevel * (lvl.pizzaSchool || 0) : 1;
-  const spawnBase = e.customers.spawnBaseSeconds / ((1 + traffic) * locEcon.trafficMult * frTraffic * empireTraffic);
+  const shopM = shopMultiplier(state, cfg);
+  const spawnBase = e.customers.spawnBaseSeconds / ((1 + traffic) * locEcon.trafficMult * frTraffic * empireTraffic * shopM);
   const tier = tierOf(state, cfg);
-  const ovenSlots = up.oven.ovenSlotsBase + up.oven.ovenSlotsPerLevel * lvl.oven + tier.ovenSlotsBonus
-    + (up.megaOven ? up.megaOven.ovenSlotsPerLevel * (lvl.megaOven || 0) : 0);
-  const maxQueue = up.counter.maxQueueBase + up.counter.maxQueuePerLevel * lvl.counter + tier.maxQueueBonus;
+  const ovenSlots = (up.oven.ovenSlotsBase + up.oven.ovenSlotsPerLevel * lvl.oven + tier.ovenSlotsBonus
+    + (up.megaOven ? up.megaOven.ovenSlotsPerLevel * (lvl.megaOven || 0) : 0)) * shopM;
+  // The queue is capped (queueHardCap) so a huge queue can never overload the game.
+  const maxQueue = Math.min(
+    (up.counter.maxQueueBase + up.counter.maxQueuePerLevel * lvl.counter + tier.maxQueueBonus) * shopM,
+    e.queueHardCap || 40,
+  );
   const cheeseMult = 1 + up.cheese.cheeseMultPerLevel * lvl.cheese;
   const pMult = prestigeMult(state, cfg);
   const cashierOrderSec = e.cashier.orderSecondsBase / (1 + e.cashier.orderSpeedPerLevel * cashierLvl);
@@ -117,8 +136,9 @@ export function derive(state, cfg) {
 
   const staffRoles = (cashierLvl > 0 ? 1 : 0) + (cookLvl > 0 ? 1 : 0);
   const recruits = (state.staffing?.cashier || 0) + (state.staffing?.cook || 0);
-  const cashierCount = cashierLvl > 0 ? 1 + (state.staffing?.cashier || 0) : 0;
-  const cookCount = cookLvl > 0 ? 1 + (state.staffing?.cook || 0) : 0;
+  const counts = staffCounts(state, cfg);
+  const cashierCount = counts.cashier;
+  const cookCount = counts.cook;
   const offlineEfficiency = Math.min(1, e.time.offlineBaseEfficiency + e.time.offlineEfficiencyPerStaffRole * staffRoles + (e.recruit?.offlineEfficiencyPerRecruit || 0) * recruits);
 
   return {

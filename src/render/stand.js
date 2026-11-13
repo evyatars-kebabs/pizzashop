@@ -3,6 +3,7 @@
 import * as THREE from 'three';
 import { Batch, VC, VC_FLAT, VC_SHINY, glowMat, uniqueMat, texBox, texMat, lightPool, G } from './assets.js';
 import { makePerson } from './people.js';
+import { staffCounts } from '../game/economy.js';
 
 const CX = 0.2;       // x centre of the stand
 const FRONT = 1.5;    // z of the body's front edge; the counter sits just in front of it
@@ -743,11 +744,12 @@ function staff(ctx) {
 
 // Called every frame: shows one person per employee (the first hire plus any recruits)
 // and animates them while there is work.
-export function updateStaff(env, state, time) {
+export function updateStaff(env, state, time, cfg) {
   const st = env.staff;
   if (!st) return;
-  const cashierCount = state.staff.cashier > 0 ? 1 + (state.staffing?.cashier || 0) : 0;
-  const cookCount = state.staff.cook > 0 ? 1 + (state.staffing?.cook || 0) : 0;
+  const counts = cfg ? staffCounts(state, cfg) : { cashier: 0, cook: 0 };
+  const cashierCount = counts.cashier;
+  const cookCount = counts.cook;
   const waiting = state.customers.some((x) => x.state === 'waiting');
   const ready = state.pizzas.some((p) => p.stage === 'ready');
   const prep = state.pizzas.some((p) => p.stage === 'dough' || p.stage === 'topping');

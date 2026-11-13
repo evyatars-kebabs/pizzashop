@@ -19,6 +19,8 @@ function newId(state) {
 export function takeOrder(state, customerId, cfg) {
   const c = findCustomer(state, customerId);
   if (!c || c.state !== 'waiting') return { ok: false };
+  // The kitchen can only hold so many pizzas at once; the order waits in the queue instead.
+  if (state.pizzas.length >= (cfg.economy.queueHardCap || 40)) return { ok: false, reason: 'kitchenFull' };
   c.state = 'ordered';
   const pizza = {
     id: newId(state),
@@ -263,6 +265,20 @@ export function moveLocation(state, id, cfg) {
 }
 
 // The happy-hour mini game can be played when its cooldown has passed and no double is running.
+// Opens another shop. Needs franchising; each shop costs more than the one before.
+export function openShop(state, cfg) {
+  const sc = cfg.economy.shops;
+  if (!sc) return { ok: false, reason: 'unknown' };
+  if (state.franchise.count < sc.requiresFranchises) return { ok: false, reason: 'needsFranchise', need: sc.requiresFranchises };
+  const open = state.shops || 1;
+  if (open >= sc.maxShops) return { ok: false, reason: 'maxed', cap: sc.maxShops };
+  const cost = Math.ceil(sc.baseCost * Math.pow(sc.growth, open - 1));
+  if (state.cash < cost) return { ok: false, reason: 'cash', cost };
+  state.cash -= cost;
+  state.shops = open + 1;
+  return { ok: true, type: 'shop', shops: state.shops, cost };
+}
+
 export function bonusAvailable(state, cfg) {
   return state.gameTime >= state.bonus.nextAt && !state.events.active.some((a) => a.id === 'doubleCash');
 }

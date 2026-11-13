@@ -17,6 +17,11 @@ const CHEESE_RAW = new THREE.Color('#fff0b8');
 const CHEESE_BAKED = new THREE.Color('#ffc94d');
 const MANUAL_STAGES = new Set(['dough', 'topping', 'load', 'ready']);
 
+// Only this many customers and pizzas are drawn. Everyone else still counts in the game; they are
+// just not drawn, so a huge crowd cannot overload the graphics.
+const VIEW_CUSTOMERS = 14;
+const VIEW_PIZZAS = 20;
+
 // Unlit, so order bubbles and patience bars stay readable at night.
 const UNLIT = new THREE.MeshBasicMaterial({ vertexColors: true, toneMapped: false });
 const BAR_BACK = new THREE.MeshBasicMaterial({ color: '#2b2d42', toneMapped: false });
@@ -77,20 +82,22 @@ export class Actors {
 
   // Creates/removes views to match state. Called once per frame.
   sync(state) {
-    const liveC = new Set(state.customers.map((c) => c.id));
+    const shownC = [...state.customers].sort((a, b) => a.id - b.id).slice(0, VIEW_CUSTOMERS);
+    const liveC = new Set(shownC.map((c) => c.id));
     for (const [id, v] of this.customers) {
       if (!liveC.has(id) && !v.leaving) this.removeView(this.customers, id);
     }
-    for (const c of state.customers) {
+    for (const c of shownC) {
       if (!this.customers.has(c.id)) this.customers.set(c.id, this.makeCustomer(c));
       this.customers.get(c.id).data = c;
     }
 
-    const livePz = new Set(state.pizzas.map((p) => p.id));
+    const shownP = [...state.pizzas].sort((a, b) => a.id - b.id).slice(0, VIEW_PIZZAS);
+    const livePz = new Set(shownP.map((p) => p.id));
     for (const [id, v] of this.pizzas) {
       if (!livePz.has(id) && !v.leaving) this.removeView(this.pizzas, id);
     }
-    for (const p of state.pizzas) {
+    for (const p of shownP) {
       if (!this.pizzas.has(p.id)) this.pizzas.set(p.id, this.makePizza(p));
       const v = this.pizzas.get(p.id);
       if (v.stage !== p.stage) {
@@ -123,6 +130,9 @@ export class Actors {
     if (v) {
       this.root.remove(v.group);
       map.delete(id);
+      // Release the materials this view owned (they are not shared).
+      if (v.fill) v.fill.material.dispose();
+      if (v.crustMat) { v.crustMat.dispose(); v.cheeseMat.dispose(); v.topMat.dispose(); }
     }
   }
 

@@ -70,6 +70,15 @@ function drainPatience(state, dt, mods, cfg, out) {
 }
 
 function spawn(state, dt, mods, d, daylight, cfg, out) {
+  // A queue larger than the counter (for example after a shop closes) sends the extras away.
+  const waitingAll = state.customers.filter((c) => c.state === 'waiting').sort((x, y) => x.id - y.id);
+  const extra = waitingAll.length - d.maxQueue;
+  if (extra > 0) {
+    const gone = new Set(waitingAll.slice(d.maxQueue).map((c) => c.id));
+    state.customers = state.customers.filter((c) => !gone.has(c.id));
+    state.stats.turnedAway += extra;
+    out.push({ type: 'turned_away' });
+  }
   const cc = cfg.economy.customers;
   const nightMult = cc.nightSpawnMult + (1 - cc.nightSpawnMult) * daylight;
   state.spawnTimer -= dt * mods.spawnMult * nightMult;

@@ -39,6 +39,8 @@ export function createSigns() {
       return `<div class="title">${esc(t('sign.menu.title'))}</div>${lines.join('')}`;
     }
     if (spec.kind === 'neon') return esc(t('sign.neon'));
+    if (spec.kind === 'shop') return esc(t('sign.shop', { n: spec.n }));
+    if (spec.kind === 'shop') return esc(t('sign.shop', { n: spec.n }));
     if (spec.kind === 'shopname') return esc(t('app.title'));
     if (spec.kind === 'franchise') return esc(t('sign.franchise', { count: state.franchise.count }));
     return esc(t('sign.sandwich'));

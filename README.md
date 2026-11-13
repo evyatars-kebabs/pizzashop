@@ -113,6 +113,8 @@ Change `data/economy.json`, then reload. Some useful knobs:
 - `upgrades.*.baseCost` and `growth`: the cost curve.
 - `staff.*.baseCost`: when staff unlock.
 - `time.offlineCapSeconds` and `time.offlineBaseEfficiency`: the away-time reward.
+- `shops`: how many shops can be open, what they cost, and how much each one multiplies.
+- `queueHardCap`: the most customers the queue and the kitchen can hold.
 - `happyHour`: how often the double-money mini game is available, how many coins, and how many to win.
 - `prestige.milestoneLifetimeCash` and `prestige.requirementExponent`: what a stand must earn before each franchise, and how fast that grows.
 - `prestige.ovenSpeedPerFranchise` and `prestige.minBakeSeconds`: how much faster ovens bake per franchise, and the minimum bake time.

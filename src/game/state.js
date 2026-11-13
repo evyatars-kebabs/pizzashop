@@ -17,6 +17,8 @@ export const DEFAULT_STATE_PARTIAL = {
   staff: { cashier: 0, cook: 0 },
   // Extra employees recruited after franchising (on top of the first hire of each role).
   staffing: { cashier: 0, cook: 0 },
+  // Shops open (the first is free). Each extra shop doubles customers, staff and income.
+  shops: 1,
   // Recipes carry over franchises.
   styles: { margherita: true, pepperoni: false, veggie: false, seasonal: false },
   // lifetimeAtLast: lifetime cash at the last franchise. Cash earned since then is what counts

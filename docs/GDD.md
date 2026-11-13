@@ -209,6 +209,12 @@ The **health inspector** from the brief is not in the prototype. It fits the sam
 
 ---
 
+### More shops
+
+After one franchise, the Shop's **More shops** section opens another shop, up to four in total. Each extra shop doubles customers, employees, oven capacity and money per second (2, 4, 8 times). The extra shops work in the background: they are not drawn on the street. Each costs more than the one before (`shops` in `economy.json`).
+
+**Crowd limits (why the game stopped crashing with lots of customers).** The queue never holds more than `queueHardCap` (40) customers, and extra customers are sent away. The kitchen holds at most that many pizzas at once. Only the first 14 customers and 20 pizzas are drawn, so a big crowd does not overload the graphics. Customers with the same look share one character model.
+
 ### Happy hour (double money)
 
 Every 8 minutes of game time, an **x2** button appears in the top bar. Tapping it starts a short mini game: five gold coins appear one at a time and fade after a moment. Tap at least two of them to double all money for 2 minutes (every sale and tip). The double shows as a chip with its time left, and the button is hidden while it runs. Missing is no punishment, only a wait for the next round. Values are in `data/economy.json` (`happyHour`, and `events.doubleCash`).

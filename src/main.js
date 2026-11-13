@@ -9,7 +9,7 @@ import { newGame } from './game/state.js';
 import { tick } from './game/sim.js';
 import { derive, nextGoal, franchiseGain, franchiseRequirement, runCash, tierIndex } from './game/economy.js';
 import {
-  takeOrder, applyManual, buyUpgrade, hireStaff, recruitStaff, franchise, canFranchise, findCustomer, moveLocation, bonusAvailable, completeBonus,
+  takeOrder, applyManual, buyUpgrade, hireStaff, recruitStaff, openShop as openAnotherShop, franchise, canFranchise, findCustomer, moveLocation, bonusAvailable, completeBonus,
 } from './game/actions.js';
 import { offlineReport, applyOffline } from './game/offline.js';
 import { startEvent } from './game/events.js';
@@ -106,7 +106,7 @@ function computeLayout() {
 
 // The scenery is rebuilt whenever one of these changes.
 function sceneKey() {
-  return `${S.location}|${tierIndex(S, cfg)}|${S.upgrades.decor}|${S.upgrades.marketing}|${S.upgrades.pizzaSchool}|${S.upgrades.megaOven}`;
+  return `${S.location}|${S.shops}|${tierIndex(S, cfg)}|${S.upgrades.decor}|${S.upgrades.marketing}|${S.upgrades.pizzaSchool}|${S.upgrades.megaOven}`;
 }
 
 // Builds the street and the stand. Replaces whatever was there.
@@ -362,6 +362,19 @@ function openShop() {
       if (r.first) track('first_purchase', { item: key, cost: r.cost });
       save();
     },
+    openShop: () => {
+      const r = openAnotherShop(S, cfg);
+      if (!r.ok) {
+        const msg = r.reason === 'cash' ? t('toast.notEnough')
+          : r.reason === 'needsFranchise' ? t('shop.shopsLocked', { n: r.need })
+          : t('shop.allOpen');
+        return hud.toast(msg);
+      }
+      sfx.bell();
+      hud.toast(t('toast.shopOpened', { n: r.shops }));
+      track('shop_opened', { shops: r.shops, cost: r.cost });
+      save();
+    },
     recruit: (role) => {
       const r = recruitStaff(S, role, cfg);
       if (!r.ok) {
@@ -612,7 +625,7 @@ function frame(now) {
   setNeonLevel(env, S.upgrades.neon);
   setOvenGlow(env, baking, env.time);
   signs.update(env, S, cfg);
-  updateStaff(env, S, performance.now() / 1000);
+  updateStaff(env, S, performance.now() / 1000, cfg);
 
   saveTimer += dt;
   if (saveTimer >= cfg.economy.time.autosaveSeconds) {

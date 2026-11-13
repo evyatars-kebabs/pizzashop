@@ -155,6 +155,23 @@ export function openShop(state, cfg, actions) {
       body.append(row);
     }
 
+    body.append(el('h3', '', t('shop.shops')));
+    const shopRule = cfg.economy.shops;
+    const openNow = state.shops || 1;
+    const unlockedShops = state.franchise.count >= shopRule.requiresFranchises;
+    const allOpen = openNow >= shopRule.maxShops;
+    const shopCost = allOpen ? 0 : Math.ceil(shopRule.baseCost * Math.pow(shopRule.growth, openNow - 1));
+    const shopRow = el('div', 'row' + (unlockedShops ? '' : ' locked'));
+    const shopInfo = el('div', 'info');
+    shopInfo.append(
+      el('b', '', t('shop.openShop')),
+      el('small', '', allOpen ? t('shop.allOpen') : !unlockedShops ? t('shop.shopsLocked', { n: shopRule.requiresFranchises }) : t('shop.shopsDesc', { open: openNow, max: shopRule.maxShops, mult: shopRule.multiplierPerShop })),
+      el('small', 'lvl', `${openNow}/${shopRule.maxShops}`),
+    );
+    const shopLabel = !unlockedShops ? t('action.locked') : allOpen ? t('action.maxed') : t('action.open', { cost: moneyFull(shopCost) });
+    shopRow.append(shopInfo, button(shopLabel, () => actions.openShop(), { disabled: !unlockedShops || allOpen || state.cash < shopCost, primary: unlockedShops && !allOpen }));
+    body.append(shopRow);
+
     body.append(el('h3', '', t('shop.recruit')));
     const rc = cfg.economy.recruit;
     const unlockedRecruit = state.franchise.count >= rc.requiresFranchises;
