@@ -252,8 +252,8 @@
         "recruitCap": 6
       }
     ],
-    "requirementGrowth": 1.6,
-    "_requirementNote": "Each franchise must be earned again: cash earned at the current stand must reach milestoneLifetimeCash * requirementGrowth^(franchises so far). The point gain is floor(cash earned at this stand / pointsDivisor).",
+    "requirementExponent": 1.3,
+    "_requirementNote": "Each franchise must be earned again. The cash a stand must earn before franchising is milestoneLifetimeCash x (franchises so far + 1) ^ requirementExponent, so it grows steadily instead of exponentially.",
     "trafficPerFranchise": 0.25,
     "_trafficNote": "Each franchise brings more customers, with no upper limit: spawn rate x (1 + trafficPerFranchise * franchises). Add \"trafficMaxMult\" here to cap it.",
     "ovenSpeedPerFranchise": 0.6,

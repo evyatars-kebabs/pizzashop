@@ -149,7 +149,7 @@ Example at the starting setup: about 5.7k from 8 hours away. With both staff: ab
 **Every franchise has to be earned.** The current stand must earn a set amount before it can franchise, counted from the last franchise (or from the start):
 
 ```
-requirement = milestoneLifetimeCash x requirementGrowth^(franchises so far)   // 20,000, 32,000, 51,200, ...
+requirement = milestoneLifetimeCash x (franchises so far + 1)^1.3   // 20,000, 49,000, 83,000, 121,000, ... about 1.7M after 30
 earned here = lifetimeCash - lifetimeCash at the last franchise
 ```
 

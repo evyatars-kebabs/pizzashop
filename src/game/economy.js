@@ -53,7 +53,8 @@ export function runCash(state) {
 // What the current stand must earn before it can franchise. Grows with every franchise.
 export function franchiseRequirement(state, cfg) {
   const p = cfg.economy.prestige;
-  return Math.round(p.milestoneLifetimeCash * Math.pow(p.requirementGrowth, state.franchise.count));
+  // Grows steadily: about 20k, 49k, 83k, 121k, 452k at 10 franchises, 1.7M at 30.
+  return Math.round(p.milestoneLifetimeCash * Math.pow(state.franchise.count + 1, p.requirementExponent ?? 1.3));
 }
 
 export function franchiseReady(state, cfg) {
