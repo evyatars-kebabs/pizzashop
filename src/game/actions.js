@@ -1,6 +1,6 @@
 // Player and staff actions. All mutate the state object and return small result objects
 // so the UI and renderer can react. No DOM, no Three.js.
-import { derive, upgradeCost, payment, franchiseGain, franchiseReady, ovenSpeed } from './economy.js';
+import { derive, upgradeCost, payment, franchiseGain, franchiseReady, ovenSpeed, tierOf } from './economy.js';
 import { activeModifiers } from './events.js';
 
 export function findCustomer(state, id) {
@@ -195,6 +195,22 @@ function firstPurchase(state) {
   if (state.flags.firstPurchase) return false;
   state.flags.firstPurchase = true;
   return true;
+}
+
+// Recruits an extra employee of a role. Needs franchising, the role hired, and room at this stand.
+export function recruitStaff(state, role, cfg) {
+  const rc = cfg.economy.recruit;
+  if (!rc || !rc[role]) return { ok: false, reason: 'unknown' };
+  if (state.franchise.count < rc.requiresFranchises) return { ok: false, reason: 'needsFranchise', need: rc.requiresFranchises };
+  if ((state.staff[role] || 0) < 1) return { ok: false, reason: 'needsHire' };
+  const cap = tierOf(state, cfg).recruitCap;
+  const have = state.staffing[role] || 0;
+  if (have >= cap) return { ok: false, reason: 'maxed', cap };
+  const cost = Math.ceil(rc[role].baseCost * Math.pow(rc[role].growth, have));
+  if (state.cash < cost) return { ok: false, reason: 'cash', cost };
+  state.cash -= cost;
+  state.staffing[role] = have + 1;
+  return { ok: true, type: 'recruited', role, cost, count: have + 1, cap };
 }
 
 export function canFranchise(state, cfg) {

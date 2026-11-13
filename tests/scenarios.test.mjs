@@ -177,3 +177,78 @@ test('save round trip and migration from the first save format', () => {
   assert.equal(m.franchise.lifetimeAtLast, 900, 'a franchised v1 save starts its next run from zero');
   assert.equal(m.settings.look, '3d', 'new settings get defaults');
 });
+
+// ---- Recruiting and parallel staff ----
+test('recruiting: needs franchising, the role hired, room at the stand, and costs more each time', () => {
+  const s = newGame(cfg, NOW);
+  s.cash = 1e12;
+  assert.equal(A.recruitStaff(s, 'cashier', cfg).reason, 'needsFranchise');
+  s.franchise.count = 1;
+  assert.equal(A.recruitStaff(s, 'cashier', cfg).reason, 'needsHire');
+  s.staff.cashier = 1;
+  const costs = [];
+  for (let i = 0; i < 2; i++) costs.push(A.recruitStaff(s, 'cashier', cfg).cost);
+  assert.equal(s.staffing.cashier, 2);
+  assert.ok(costs[1] > costs[0], 'each recruit costs more');
+  // The big stand (one franchise) holds 4 recruits; then it is full.
+  assert.equal(E.tierOf(s, cfg).id, 'stand');
+  assert.equal(E.tierOf(s, cfg).recruitCap, 4);
+  for (let i = 0; i < 2; i++) assert.equal(A.recruitStaff(s, 'cashier', cfg).ok, true);
+  assert.equal(A.recruitStaff(s, 'cashier', cfg).reason, 'maxed');
+  // The shop holds 6.
+  s.franchise.count = 2;
+  assert.equal(E.tierOf(s, cfg).recruitCap, 6);
+  assert.equal(A.recruitStaff(s, 'cashier', cfg).ok, true);
+});
+
+test('two cashiers take orders about twice as fast as one', () => {
+  const countOrders = (recruits) => {
+    const s = newGame(cfg, NOW);
+    s.franchise.count = 1;
+    s.staff.cashier = 1;
+    s.staffing.cashier = recruits;
+    s.upgrades.counter = 59;
+    s.cash = 1e9;
+    for (let i = 0; i < 40; i++) s.customers.push({ id: 5000 + i, type: 'hungry', style: 'margherita', topping: 'basil', nameIdx: 1, patience: 999, maxPatience: 999, state: 'waiting' });
+    const ev = run(s, 30, 0.1);
+    return ev.filter((e) => e.type === 'order_taken').length;
+  };
+  const one = countOrders(0);
+  const two = countOrders(1);
+  assert.ok(one > 0);
+  assert.ok(Math.abs(two / one - 2) < 0.15, `ratio ${two / one}`);
+});
+
+test('two cooks work on two pizzas at the same time', () => {
+  const s = newGame(cfg, NOW);
+  s.franchise.count = 1;
+  s.staff.cook = 1;
+  s.staffing.cook = 1;
+  s.nextId = 100;
+  for (const id of [1, 2]) {
+    s.customers.push({ id, type: 'hungry', style: 'margherita', topping: 'basil', nameIdx: 1, patience: 99, maxPatience: 99, state: 'ordered' });
+    s.pizzas.push({ id: 10 + id, customerId: id, style: 'margherita', stage: 'dough', work: 0, q: { dough: 0, top: 0, bake: 0 }, topping: null, bakeLeft: 0, readyTimer: 0 });
+  }
+  run(s, 1, 0.1);
+  assert.ok(s.pizzas.every((p) => p.work > 0.5), 'both pizzas are being worked on');
+});
+
+test('recruits raise offline efficiency; the first hires still count as before', () => {
+  const s = newGame(cfg, NOW);
+  s.staff.cashier = 1;
+  const base = E.derive(s, cfg).offlineEfficiency;
+  s.franchise.count = 1;
+  s.staffing.cashier = 2;
+  assert.ok(E.derive(s, cfg).offlineEfficiency > base);
+});
+
+test('basic upgrades go to 60 levels', () => {
+  const s = newGame(cfg, NOW);
+  s.cash = 1e15;
+  for (const k of ['oven', 'counter', 'cheese', 'decor']) {
+    assert.equal(cfg.economy.upgrades[k].maxLevel, 60, k);
+  }
+  for (let i = 0; i < 60; i++) A.buyUpgrade(s, 'oven', cfg);
+  assert.equal(s.upgrades.oven, 60);
+  assert.equal(A.buyUpgrade(s, 'oven', cfg).reason, 'maxed');
+});

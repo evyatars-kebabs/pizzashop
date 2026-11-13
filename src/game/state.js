@@ -15,6 +15,8 @@ export const DEFAULT_STATE_PARTIAL = {
   unlockedLocations: { corner: true, sideStreet: false },
   upgrades: { oven: 0, counter: 0, cheese: 0, decor: 0, neon: 0, scooter: 0, marketing: 0, pizzaSchool: 0, megaOven: 0 },
   staff: { cashier: 0, cook: 0 },
+  // Extra employees recruited after franchising (on top of the first hire of each role).
+  staffing: { cashier: 0, cook: 0 },
   // Recipes carry over franchises.
   styles: { margherita: true, pepperoni: false, veggie: false, seasonal: false },
   // lifetimeAtLast: lifetime cash at the last franchise. Cash earned since then is what counts
@@ -31,7 +33,7 @@ export const DEFAULT_STATE_PARTIAL = {
   customers: [],
   pizzas: [],
   nextId: 1,
-  cashierTimer: 0,
+  cashierTimers: [],
   cashierIdle: 0,
   cookIdle: 0,
   idleNotified: { cashier: false, cook: false },

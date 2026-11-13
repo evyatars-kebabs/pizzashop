@@ -1,6 +1,6 @@
 // Modal sheets: shop, collect (offline earnings), franchise, settings, debug.
 import { t, money, moneyFull, duration } from '../core/i18n.js';
-import { upgradeCost, derive, franchiseGain, franchiseReady, franchiseRequirement, franchiseTraffic, ovenSpeed, runCash, tierIndex } from '../game/economy.js';
+import { upgradeCost, derive, franchiseGain, franchiseReady, franchiseRequirement, franchiseTraffic, ovenSpeed, runCash, tierIndex, tierOf } from '../game/economy.js';
 
 const $ = (id) => document.getElementById(id);
 let refreshFn = null;
@@ -152,6 +152,27 @@ export function openShop(state, cfg, actions) {
       );
       const label = level === 0 ? t('action.hire', { cost: moneyFull(cost) }) : t('action.upgrade', { cost: moneyFull(cost) });
       row.append(info, button(maxed ? t('action.maxed') : label, () => actions.hire(role), { disabled: maxed || state.cash < cost, primary: level === 0 }));
+      body.append(row);
+    }
+
+    body.append(el('h3', '', t('shop.recruit')));
+    const rc = cfg.economy.recruit;
+    const unlockedRecruit = state.franchise.count >= rc.requiresFranchises;
+    if (!unlockedRecruit) body.append(el('p', 'muted', t('shop.recruitLocked')));
+    const cap = tierOf(state, cfg).recruitCap;
+    for (const role of ['cashier', 'cook']) {
+      const have = state.staffing[role] || 0;
+      const full = have >= cap;
+      const hired = state.staff[role] > 0;
+      const cost = full ? 0 : Math.ceil(rc[role].baseCost * Math.pow(rc[role].growth, have));
+      const row = el('div', 'row' + (unlockedRecruit ? '' : ' locked'));
+      const info = el('div', 'info');
+      info.append(
+        el('b', '', t('recruit.' + role + '.name')),
+        el('small', '', !hired ? t('recruit.needHire', { role: t('staff.' + role + '.name') }) : t('recruit.' + role + '.desc', { n: have, max: cap })),
+      );
+      const label = !unlockedRecruit ? t('action.locked') : full ? t('action.maxed') : t('action.recruit', { cost: moneyFull(cost) });
+      row.append(info, button(label, () => actions.recruit(role), { disabled: !unlockedRecruit || full || !hired || state.cash < cost, primary: unlockedRecruit && hired && !full }));
       body.append(row);
     }
 

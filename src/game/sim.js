@@ -101,20 +101,27 @@ function spawn(state, dt, mods, d, daylight, cfg, out) {
 }
 
 function runCashier(state, dt, d, cfg, out) {
-  if (d.cashierLvl === 0) return;
-  const waiting = state.customers.filter((c) => c.state === 'waiting').sort((a, b) => a.id - b.id);
+  const n = d.cashierCount;
+  if (n === 0) return;
+  const waitingNow = () => state.customers.filter((c) => c.state === 'waiting').sort((x, y) => x.id - y.id);
   const ready = state.pizzas.filter((p) => p.stage === 'ready');
-  if (waiting.length > 0) {
-    state.cashierTimer += dt;
-    if (state.cashierTimer >= d.cashierOrderSec) {
-      state.cashierTimer = 0;
-      const r = takeOrder(state, waiting[0].id, cfg);
-      if (r.ok) out.push({ ...r, auto: true });
+  while (state.cashierTimers.length < n) state.cashierTimers.push(0);
+  state.cashierTimers.length = n;
+  // Each cashier has their own order timer, so extra cashiers take orders at the same time.
+  for (let i = 0; i < n; i++) {
+    if (waitingNow().length > 0) {
+      state.cashierTimers[i] += dt;
+      if (state.cashierTimers[i] >= d.cashierOrderSec) {
+        state.cashierTimers[i] = 0;
+        const next = waitingNow()[0];
+        const r = takeOrder(state, next.id, cfg);
+        if (r.ok) out.push({ ...r, auto: true });
+      }
+    } else {
+      state.cashierTimers[i] = 0;
     }
-  } else {
-    state.cashierTimer = 0;
   }
-  if (waiting.length === 0 && ready.length === 0) {
+  if (waitingNow().length === 0 && ready.length === 0) {
     state.cashierIdle += dt;
     maybeIdleNotify(state, 'cashier', out);
   } else {
@@ -131,17 +138,21 @@ function runCashier(state, dt, d, cfg, out) {
 }
 
 function runCook(state, dt, d, cfg, out) {
-  if (d.cookLvl === 0) return;
+  const n = d.cookCount;
+  if (n === 0) return;
   const st = cfg.economy.stages;
-  const task = state.pizzas.filter((p) => p.stage === 'dough' || p.stage === 'topping').sort((a, b) => a.id - b.id)[0];
-  if (task) {
+  // Each cook works on a different pizza at the same time.
+  const tasks = state.pizzas.filter((p) => p.stage === 'dough' || p.stage === 'topping').sort((a, b) => a.id - b.id).slice(0, n);
+  if (tasks.length > 0) {
     state.cookIdle = 0;
     state.idleNotified.cook = false;
-    task.work += dt * d.cookSpeed;
-    const need = task.stage === 'dough' ? st.autoDoughSeconds : st.autoToppingSeconds;
-    if (task.work >= need) {
-      const r = autoStage(state, task, cfg);
-      if (r.ok) out.push({ ...r, auto: true });
+    for (const task of tasks) {
+      task.work += dt * d.cookSpeed;
+      const need = task.stage === 'dough' ? st.autoDoughSeconds : st.autoToppingSeconds;
+      if (task.work >= need) {
+        const r = autoStage(state, task, cfg);
+        if (r.ok) out.push({ ...r, auto: true });
+      }
     }
   } else {
     state.cookIdle += dt;

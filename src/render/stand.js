@@ -700,14 +700,13 @@ function decorate(ctx, level) {
 
 // ---------- Staff ----------
 
+// Room for the first hire plus the most recruits any stand allows (see recruitCap).
+const STAFF_SLOTS = 7;
+
 function staff(ctx) {
   const { g, env, L } = ctx;
-  const cap = L.tier.staffVisible;
   const y = L.floorY;
-  const [dx] = L.stations.dough;
-  const [lx] = L.stations.load;
-  const cashierSlots = [[CX + 0.45, y, 0.42, 0], [CX - 0.7, y, 0.38, 0], [CX + 1.75, 0, 2.75, -0.3]];
-  const cookSlots = [[dx + 0.05, y, -0.08, 0], [lx, y, -0.12, 0], [dx - 1.05, y, 0.3, 0.3]];
+  const W = L.W;
   const cashierLooks = [
     { shirt: '#ef476f', hat: 'cap', hatColor: '#ffd166', hair: '#3b2a1e', skin: '#c68a5c', hairStyle: 'short' },
     { shirt: '#4ea8de', hat: 'cap', hatColor: '#d8402f', hair: '#5a3a22', skin: '#f2c9a0', hairStyle: 'long' },
@@ -718,6 +717,9 @@ function staff(ctx) {
     { skin: '#f2c9a0', hair: '#7a2f1e' },
     { skin: '#e0ac7e', hair: '#2b1d14' },
   ];
+  // Cashiers line up behind the counter; cooks stand behind the prep line and the oven.
+  const cashierX = (i) => CX - W * 0.36 + (i * (W * 0.72)) / (STAFF_SLOTS - 1);
+  const cookX = (i) => CX - W * 0.42 + (i * (W * 0.5)) / (STAFF_SLOTS - 1);
   const place = (p, slot) => {
     p.group.position.set(slot[0], slot[1], slot[2]);
     p.group.rotation.y = slot[3];
@@ -728,24 +730,28 @@ function staff(ctx) {
   };
   const cashiers = [];
   const cooks = [];
-  for (let i = 0; i < cap; i++) {
-    cashiers.push(place(makePerson({ ...cashierLooks[i], pants: '#2f3e46', apron: CREAM }), cashierSlots[i]));
-    cooks.push(place(makePerson({ ...cookLooks[i], shirt: '#fdfdfd', pants: '#3d4a66', hat: 'toque', apron: '#e9e2d2', hairStyle: 'short' }), cookSlots[i]));
+  for (let i = 0; i < STAFF_SLOTS; i++) {
+    const look = cashierLooks[i % cashierLooks.length];
+    cashiers.push(place(makePerson({ ...look, pants: '#2f3e46', apron: CREAM }), [cashierX(i), y, 0.42, 0]));
+    const cl = cookLooks[i % cookLooks.length];
+    cooks.push(place(makePerson({ ...cl, shirt: '#fdfdfd', pants: '#3d4a66', hat: 'toque', apron: '#e9e2d2', hairStyle: 'short' }), [cookX(i), y, -0.3, 0]));
   }
   env.staff = { cashiers, cooks };
 }
 
-// Called every frame: shows as many employees as are hired (up to what this place can hold)
+// Called every frame: shows one person per employee (the first hire plus any recruits)
 // and animates them while there is work.
 export function updateStaff(env, state, time) {
   const st = env.staff;
   if (!st) return;
+  const cashierCount = state.staff.cashier > 0 ? 1 + (state.staffing?.cashier || 0) : 0;
+  const cookCount = state.staff.cook > 0 ? 1 + (state.staffing?.cook || 0) : 0;
   const waiting = state.customers.some((x) => x.state === 'waiting');
   const ready = state.pizzas.some((p) => p.stage === 'ready');
   const prep = state.pizzas.some((p) => p.stage === 'dough' || p.stage === 'topping');
   const ovenWork = state.pizzas.some((p) => p.stage === 'load' || p.stage === 'baking');
   st.cashiers.forEach((p, i) => {
-    p.group.visible = state.staff.cashier > i;
+    p.group.visible = i < cashierCount;
     if (!p.group.visible) return;
     const busy = i === 0 ? waiting : i === 1 ? ready || waiting : true;
     const ph = time * 8 + i * 1.7;
@@ -754,7 +760,7 @@ export function updateStaff(env, state, time) {
     p.group.position.y = p.baseY + (busy ? Math.abs(Math.sin(ph * 0.5)) * 0.02 : Math.sin(time * 1.4 + i) * 0.006);
   });
   st.cooks.forEach((p, i) => {
-    p.group.visible = state.staff.cook > i;
+    p.group.visible = i < cookCount;
     if (!p.group.visible) return;
     const busy = i === 1 ? ovenWork : prep;
     const ph = time * 9 + i * 2.1;

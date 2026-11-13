@@ -115,11 +115,14 @@ export function derive(state, cfg) {
   const idleRate = pizzasPerSec * payPerPizza * 1.1; // ~10% expected tips
 
   const staffRoles = (cashierLvl > 0 ? 1 : 0) + (cookLvl > 0 ? 1 : 0);
-  const offlineEfficiency = Math.min(1, e.time.offlineBaseEfficiency + e.time.offlineEfficiencyPerStaffRole * staffRoles);
+  const recruits = (state.staffing?.cashier || 0) + (state.staffing?.cook || 0);
+  const cashierCount = cashierLvl > 0 ? 1 + (state.staffing?.cashier || 0) : 0;
+  const cookCount = cookLvl > 0 ? 1 + (state.staffing?.cook || 0) : 0;
+  const offlineEfficiency = Math.min(1, e.time.offlineBaseEfficiency + e.time.offlineEfficiencyPerStaffRole * staffRoles + (e.recruit?.offlineEfficiencyPerRecruit || 0) * recruits);
 
   return {
     traffic, locEcon, tier, frTraffic, empireTraffic, empirePay, bakeSpeed, spawnBase, ovenSlots, maxQueue, cheeseMult, prestigeMult: pMult,
-    cashierOrderSec, cashierLvl, cookSpeed, cookLvl, idleRate, offlineEfficiency,
+    cashierOrderSec, cashierLvl, cashierCount, cookSpeed, cookLvl, cookCount, idleRate, offlineEfficiency,
   };
 }
 

@@ -9,7 +9,7 @@ import { newGame } from './game/state.js';
 import { tick } from './game/sim.js';
 import { derive, nextGoal, franchiseGain, franchiseRequirement, runCash, tierIndex } from './game/economy.js';
 import {
-  takeOrder, applyManual, buyUpgrade, hireStaff, franchise, canFranchise, findCustomer, moveLocation,
+  takeOrder, applyManual, buyUpgrade, hireStaff, recruitStaff, franchise, canFranchise, findCustomer, moveLocation,
 } from './game/actions.js';
 import { offlineReport, applyOffline } from './game/offline.js';
 import { startEvent } from './game/events.js';
@@ -358,6 +358,19 @@ function openShop() {
       if (r.first) track('first_purchase', { item: key, cost: r.cost });
       save();
     },
+    recruit: (role) => {
+      const r = recruitStaff(S, role, cfg);
+      if (!r.ok) {
+        const msg = r.reason === 'cash' ? t('toast.notEnough')
+          : r.reason === 'needsFranchise' ? t('shop.recruitLocked')
+          : r.reason === 'needsHire' ? t('recruit.needHire', { role: t('staff.' + role + '.name') })
+          : t('action.maxed');
+        return hud.toast(msg);
+      }
+      sfx.bell();
+      hud.toast(t('toast.recruited', { role: t('staff.' + role + '.name') }));
+      save();
+    },
     hire: (role) => {
       const r = hireStaff(S, role, cfg);
       if (!r.ok) return hud.toast(r.reason === 'cash' ? t('toast.notEnough') : t('toast.noPizza'));
@@ -614,7 +627,7 @@ function updateHUD() {
     hud.setHighlight(null);
   }
   hud.setEvents(S.events.active.map((a) => ({ id: a.id, left: a.endsAt - S.gameTime })));
-  const sig = `${S.location}|${JSON.stringify(S.unlockedLocations)}|${Math.floor(S.cash)}|${JSON.stringify(S.upgrades)}|${JSON.stringify(S.staff)}|${S.franchise.points}|${S.franchise.count}|${canFranchise(S, cfg)}|${Math.floor(runCash(S) / 500)}`;
+  const sig = `${S.location}|${JSON.stringify(S.unlockedLocations)}|${Math.floor(S.cash)}|${JSON.stringify(S.upgrades)}|${JSON.stringify(S.staff)}|${JSON.stringify(S.staffing)}|${S.franchise.points}|${S.franchise.count}|${canFranchise(S, cfg)}|${Math.floor(runCash(S) / 500)}`;
   if (sig !== sigLast) {
     sigLast = sig;
     sheets.refreshModal(sig);

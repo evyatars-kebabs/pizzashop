@@ -120,28 +120,28 @@
   "upgrades": {
     "oven": {
       "baseCost": 40,
-      "growth": 1.35,
-      "maxLevel": 25,
+      "growth": 1.2,
+      "maxLevel": 60,
       "ovenSlotsBase": 1,
       "ovenSlotsPerLevel": 1
     },
     "counter": {
       "baseCost": 60,
-      "growth": 1.35,
-      "maxLevel": 25,
+      "growth": 1.2,
+      "maxLevel": 60,
       "maxQueueBase": 3,
       "maxQueuePerLevel": 2
     },
     "cheese": {
       "baseCost": 80,
-      "growth": 1.25,
-      "maxLevel": 30,
+      "growth": 1.15,
+      "maxLevel": 60,
       "cheeseMultPerLevel": 0.1
     },
     "decor": {
       "baseCost": 120,
-      "growth": 1.3,
-      "maxLevel": 30,
+      "growth": 1.2,
+      "maxLevel": 60,
       "trafficPerLevel": 0.05,
       "steps": [
         "flowers",
@@ -226,7 +226,8 @@
         "staffVisible": 1,
         "ovenSlotsBonus": 0,
         "maxQueueBonus": 0,
-        "cameraZoom": 1.0
+        "cameraZoom": 1.0,
+        "recruitCap": 2
       },
       {
         "id": "stand",
@@ -236,7 +237,8 @@
         "staffVisible": 2,
         "ovenSlotsBonus": 1,
         "maxQueueBonus": 2,
-        "cameraZoom": 1.16
+        "cameraZoom": 1.16,
+        "recruitCap": 4
       },
       {
         "id": "shop",
@@ -246,7 +248,8 @@
         "staffVisible": 3,
         "ovenSlotsBonus": 2,
         "maxQueueBonus": 4,
-        "cameraZoom": 1.46
+        "cameraZoom": 1.46,
+        "recruitCap": 6
       }
     ],
     "requirementGrowth": 1.6,
@@ -397,5 +400,18 @@
       "skin.copper"
     ]
   },
-  "_empireNote": "Empire upgrades (upgrades with group \"empire\") need a number of franchises before they can be bought, and they reset with each franchise like everything else."
+  "_empireNote": "Empire upgrades (upgrades with group \"empire\") need a number of franchises before they can be bought, and they reset with each franchise like everything else.",
+  "recruit": {
+    "requiresFranchises": 1,
+    "cashier": {
+      "baseCost": 2500,
+      "growth": 1.6
+    },
+    "cook": {
+      "baseCost": 3500,
+      "growth": 1.6
+    },
+    "offlineEfficiencyPerRecruit": 0.02,
+    "_note": "Extra employees, bought after franchising. Each one needs the role hired first. Caps per stand size are in prestige.tiers (recruitCap)."
+  }
 }

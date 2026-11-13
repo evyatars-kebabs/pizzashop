@@ -41,6 +41,8 @@ Customer arrives -> joins queue -> player (or cashier) takes the order
 | Cashier | 150, growth 1.3, max level 20 | Takes orders from waiting customers and hands out finished pizzas after 1 s. | Order time 3 s / (1 + 0.5 x level) |
 | Cook | 250, growth 1.3, max level 20 | Stretches dough and adds toppings, one pizza at a time, then loads the oven. | Work speed 1 + 0.4 x level |
 
+**Recruiting extra staff (after franchising).** Once the stand has franchised at least once, the Shop's Recruit section lets you add extra cashiers and cooks. Each role must be hired first. Every recruit works alongside the others: each extra cashier takes orders on their own timer, and each extra cook works on a different pizza at the same time. The number you can recruit depends on the stand: 2 at the cart, 4 at the big stand, 6 at the shop (`prestige.tiers` → `recruitCap`). Every hired employee is visible at the stand. Recruit prices are in `economy.json` under `recruit`.
+
 With no staff the player does everything by hand. With both staff the stand runs with no input. Staff raise the offline efficiency (section 5).
 
 ---
@@ -53,10 +55,10 @@ All values are in `data/economy.json`. Formulas below use these names.
 
 | Item | Base cost | Growth | Max | Effect |
 |---|---|---|---|---|
-| Bigger oven | 40 | 1.35 | 25 | Oven slots = 1 + L. Pizzas bake in parallel. |
-| Wider counter | 60 | 1.35 | 25 | Queue size = 3 + 2L. Arrivals past that leave (no penalty, but it's lost income). |
-| Better cheese | 80 | 1.25 | 30 | Payment x (1 + 0.1 L). |
-| Pretty decor | 120 | 1.3 | 30 (decorations for the first 10) | Foot traffic +5% per level. |
+| Bigger oven | 40 | 1.2 | 60 | Oven slots = 1 + L. Pizzas bake in parallel. |
+| Wider counter | 60 | 1.2 | 60 | Queue size = 3 + 2L. Arrivals past that leave (no penalty, but it's lost income). |
+| Better cheese | 80 | 1.15 | 60 | Payment x (1 + 0.1 L). |
+| Pretty decor | 120 | 1.2 | 60 (decorations for the first 10) | Foot traffic +5% per level. |
 | Neon sign | 300 | 2.5 | 2 | Level 1: sign, +20% traffic. Level 2: ring, +20% more. |
 | Delivery scooter | 500 | 2.2 | 5 | **Disabled in the prototype.** Placeholder for the delivery kid. |
 
