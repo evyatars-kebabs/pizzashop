@@ -253,6 +253,8 @@ export function openSettings(state, actions) {
     body.append(
       toggleRow(t('settings.sound'), state.settings.sound, (v) => actions.setSound(v)),
       toggleRow(t('settings.notify'), state.settings.notify, (v) => actions.setNotify(v), t('settings.notifyDesc')),
+      choiceRow(t('settings.look'), t('settings.lookDesc'), ['3d', '2d'], state.settings.look || '3d',
+        (v) => actions.setLook(v), (v) => t('settings.look.' + v)),
       choiceRow(t('settings.graphics'), t('settings.graphicsDesc'), ['auto', 'high', 'low'], state.settings.graphics || 'auto',
         (v) => actions.setGraphics(v), (v) => t('settings.graphics.' + v)),
     );

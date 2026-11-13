@@ -199,5 +199,9 @@
   "upgrade.pizzaSchool.desc": "+{pct}% pizza value",
   "upgrade.megaOven.name": "Industrial ovens",
   "upgrade.megaOven.desc": "Bake {slots} more pizzas at once",
-  "franchise.ovens": "Ovens: x{x} speed."
+  "franchise.ovens": "Ovens: x{x} speed.",
+  "settings.look": "Art style",
+  "settings.lookDesc": "3D is the full look. 2D is flat storybook art, same game.",
+  "settings.look.3d": "3D",
+  "settings.look.2d": "2D"
 }

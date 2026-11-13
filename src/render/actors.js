@@ -59,6 +59,7 @@ const pizzaGeo = {
 
 export class Actors {
   constructor(env, layout, cfg) {
+    this.env = env;
     this.camera = env.camera;
     this.loc = layout;
     this.cfg = cfg;
@@ -157,6 +158,7 @@ export class Actors {
     const x = start[0] + 5 + (c.id % 3);
     const z = start[2] + 3.5;
     group.position.set(x, 0, z);
+    this.env.styleNew(group);
     this.root.add(group);
     return {
       group, person, overhead, bubble, fill, hit,
@@ -196,6 +198,7 @@ export class Actors {
     hit.userData = { kind: 'pizza', id: p.id };
     group.add(hit);
 
+    this.env.styleNew(group);
     this.root.add(group);
     return {
       group, crustMat, cheeseMat, topMat, ball, base, sauce, cheese, toppings, ring, hit,

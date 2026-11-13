@@ -2,6 +2,7 @@
 import * as THREE from 'three';
 import { daylightOf } from '../game/economy.js';
 import { Batch, G } from './assets.js';
+import { styleTree, unstyleTree } from './style.js';
 
 const v = new THREE.Vector3();
 const C = (hex) => new THREE.Color(hex);
@@ -51,7 +52,8 @@ export function createScene(canvas, layout) {
   renderer.toneMappingExposure = 1.05;
 
   const scene = new THREE.Scene();
-  scene.fog = new THREE.Fog(SKY.dayHorizon.clone(), 45, 150);
+  const fogRef = new THREE.Fog(SKY.dayHorizon.clone(), 45, 150);
+  scene.fog = fogRef;
 
   const camera = new THREE.PerspectiveCamera(layout.camera.fov, 1, 0.2, 400);
 
@@ -102,10 +104,12 @@ export function createScene(canvas, layout) {
   const stars = new THREE.Points(starGeo, starMat);
   stars.frustumCulled = false;
   scene.add(stars);
+  const skyParts = { sky, stars, moon: null, clouds: [] };
 
   const moon = new THREE.Mesh(G.sphere(), new THREE.MeshBasicMaterial({ color: '#f4f1de', fog: false }));
   moon.scale.setScalar(9);
   scene.add(moon);
+  skyParts.moon = moon;
 
   // --- Clouds: soft clumps drifting behind the skyline ---
   const cloudMat = new THREE.MeshLambertMaterial({ color: 0xffffff, fog: false });
@@ -122,6 +126,7 @@ export function createScene(canvas, layout) {
     m.userData.speed = 0.35 + Math.random() * 0.5;
     scene.add(m);
     clouds.push(m);
+    skyParts.clouds.push(m);
   }
 
   const base = { pos: new THREE.Vector3(), target: new THREE.Vector3(), fov: 46, zoom: 1 };
@@ -132,6 +137,8 @@ export function createScene(canvas, layout) {
   const env = {
     renderer, scene, camera, hemi, sun,
     daylight: 0.8, time: 0,
+    look: '3d',        // '3d' or '2d' (flat storybook look)
+    lastLayout: null,
     glowMats: [],      // emissive materials that brighten at night
     nightFades: [],    // materials whose opacity follows the night (userData.base = full opacity)
     updaters: [],      // per-frame callbacks registered by scenery: fn(dt, time, daylight)
@@ -143,7 +150,7 @@ export function createScene(canvas, layout) {
     camera.aspect = w / h;
     // Portrait phones need a wider view so the stand and queue both fit.
     const portrait = Math.max(0, 0.75 - camera.aspect);
-    camera.fov = base.fov + portrait * 40;
+    camera.fov = base.fov + portrait * (env.look === '2d' ? 6 : 40);
     camera.updateProjectionMatrix();
     recomputeGoal();
   }
@@ -160,15 +167,23 @@ export function createScene(canvas, layout) {
     if (!stationPos) return recomputeGoal();
     const s = new THREE.Vector3(...stationPos);
     goal.look.copy(s).add(new THREE.Vector3(0, 0.25, 0));
-    goal.pos.copy(s).add(new THREE.Vector3(0, 2.2, 4.2));
+    if (env.look === '2d') goal.pos.copy(s).add(new THREE.Vector3(0, 0.8, 24));
+    else goal.pos.copy(s).add(new THREE.Vector3(0, 2.2, 4.2));
   }
 
   // Switches framing to a layout (location + stand tier). snap=false glides there instead.
   function setLocation(l, snap = true) {
-    base.fov = l.camera.fov;
+    env.lastLayout = l;
     base.zoom = l.camera.zoom || 1;
-    base.pos.set(...l.camera.position);
     base.target.set(...l.camera.target);
+    if (env.look === '2d') {
+      // Near-orthographic and straight on: a long lens from far away.
+      base.fov = 13;
+      base.pos.copy(base.target).add(new THREE.Vector3(0, 1.6, 40));
+    } else {
+      base.fov = l.camera.fov;
+      base.pos.set(...l.camera.position);
+    }
     standLight.position.set(l.cx ?? 0.2, 2.7, 1.4);
     recomputeGoal();
     if (snap) {
@@ -230,7 +245,8 @@ export function createScene(canvas, layout) {
     skyMat.uniforms.sunDir.value.copy(sunDir);
     skyMat.uniforms.sunPower.value = Math.min(1, d * 1.6 + dusk * 0.6);
     skyMat.uniforms.sunColor.value.copy(sunHigh).lerp(sunLow, dusk);
-    scene.fog.color.copy(cHor);
+    if (scene.fog) scene.fog.color.copy(cHor);
+    if (env.look === '2d' && scene.background) scene.background.copy(cHor);
 
     // One shadow-casting light: the sun by day, the moon at night.
     const sunUp = sunDir.y > -0.02;
@@ -338,7 +354,29 @@ export function createScene(canvas, layout) {
     return { x: (v.x * 0.5 + 0.5) * w, y: (-v.y * 0.5 + 0.5) * h, front: v.z < 1, w, h };
   }
 
-  Object.assign(env, { update, focus, shakeCam, resize, toScreen, recomputeGoal, setLocation, setQuality });
+  // Switches the art style. '2d' hides the sky and clouds, drops shadows and fog, and
+  // replaces every lit material with a flat twin (src/render/style.js).
+  function setLook(mode) {
+    const flat = mode === '2d';
+    env.look = flat ? '2d' : '3d';
+    if (flat) styleTree(scene);
+    else unstyleTree(scene);
+    skyParts.sky.visible = !flat;
+    skyParts.stars.visible = !flat;
+    if (skyParts.moon) skyParts.moon.visible = !flat;
+    for (const c of skyParts.clouds) c.visible = !flat;
+    scene.fog = flat ? null : fogRef;
+    scene.background = flat ? new THREE.Color('#bfe6fb') : null;
+    setShadows(!flat && quality !== 'low');
+    if (env.lastLayout) setLocation(env.lastLayout, true);
+  }
+
+  // Anything built later (street, customers, pizzas) must follow the current look.
+  function styleNew(obj) {
+    if (env.look === '2d') styleTree(obj);
+  }
+
+  Object.assign(env, { update, focus, shakeCam, resize, toScreen, recomputeGoal, setLocation, setQuality, setLook, styleNew });
   setLocation(layout);
   return env;
 }

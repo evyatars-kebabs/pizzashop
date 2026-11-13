@@ -73,6 +73,7 @@ async function boot() {
 
   setSoundEnabled(S.settings.sound);
   env.setQuality(S.settings.graphics || 'auto');
+  env.setLook(S.settings.look || '3d');
   startSession();
   track('session_start_state', { fresh: !saved });
 
@@ -127,6 +128,7 @@ function buildScenery(snap = true) {
     empire: { marketing: S.upgrades.marketing, pizzaSchool: S.upgrades.pizzaSchool, megaOven: S.upgrades.megaOven },
   });
   sceneryGroup.add(stand);
+  env.styleNew(sceneryGroup);
   env.scene.add(sceneryGroup);
   env.setLocation(layout, snap);
   actors.setLocation(layout);
@@ -402,6 +404,12 @@ function settingsActions() {
         S.settings.notify = p === 'granted';
       }
       track('notify_opt_in', { on: S.settings.notify });
+      sheets.openSettings(S, settingsActions());
+    },
+    setLook: (v) => {
+      S.settings.look = v;
+      env.setLook(v);
+      track('art_style', { look: v });
       sheets.openSettings(S, settingsActions());
     },
     setGraphics: (v) => {

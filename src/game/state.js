@@ -36,7 +36,7 @@ export const DEFAULT_STATE_PARTIAL = {
   cookIdle: 0,
   idleNotified: { cashier: false, cook: false },
   spawnTimer: 4,
-  settings: { sound: true, notify: false, graphics: 'auto' },
+  settings: { sound: true, notify: false, graphics: 'auto', look: '3d' },
   cosmetics: { ovenSkin: 'skin.classic' },
 };
 

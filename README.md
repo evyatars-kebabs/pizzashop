@@ -89,6 +89,7 @@ src/
     assets.js            Materials, procedural textures, and the geometry batcher
     people.js            Character builder for customers and staff
     scene.js             Renderer, sky, day/night, camera, graphics quality
+    style.js             The 2D art style: flat, unlit twins of every material
     props.js             Builds a street from its JSON: buildings, trees, lamps, traffic
     stand.js             Cart / stand / shop tiers, decorations, neon sign, staff, layout
     actors.js            Customer and pizza views; picking
@@ -136,6 +137,6 @@ Change `data/economy.json`, then reload. Some useful knobs:
 
 ## Notes
 
-- Tested headless in Chromium with software WebGL (about 8 fps on High and 13 on Low at 390 x 844; that is not a device measurement). Not yet tested on real phones. Settings has a Graphics option (Auto / High / Low).
+- Tested headless in Chromium with software WebGL (about 8 fps on High and 13 on Low at 390 x 844; that is not a device measurement). Not yet tested on real phones. Settings has a Graphics option (Auto / High / Low) and an Art style option (3D or flat 2D).
 - Frame budget: target steady 60 fps on mid-range phones. Draw calls are kept low with shared materials and a single shadow light. Measure on a device before release.
 - For app-store builds, wrap this folder with a mobile shell (for example Capacitor). Lock orientation to portrait there.

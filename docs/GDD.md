@@ -217,6 +217,14 @@ The **health inspector** from the brief is not in the prototype. It fits the sam
 - **Performance design:** static geometry is merged into a few vertex-coloured meshes (about 40 draw calls for the empty cart scene, about 150 for the fully decorated shop with a queue), all materials use cheap Lambert shading, the shadow map refreshes every second frame, and there is a Graphics setting (Auto / High / Low). Auto lowers pixel density, then turns off shadows, if the frame rate stays low.
 - **Sound:** synthesized in code (cash, click, bell, pop, angry buzz). No licensed or copyrighted music.
 
+### Art style: 3D or 2D
+
+Settings → Art style chooses **3D** (the full look) or **2D** (flat storybook art). It is the same game with the same rules, so either style can be used at any time, and the choice is saved.
+
+- **2D:** every surface is drawn unlit with its own colours and textures (`src/render/style.js`), so there is no shading or shadow. The sky, stars, moon and clouds are hidden in favour of a flat background, the camera is near-orthographic and faces the stand straight on, and mini-game close-ups pull back so the station reads clearly.
+- **Why it's cheap:** no lights or shadows are needed in 2D, so it is the lighter option on slow phones.
+- **Not yet:** outlines, hand-drawn line work and a separate 2D art set. The current 2D look is the 3D models with the lighting removed.
+
 ## 9. Mobile UX
 
 - Portrait phones are the target. Checked at 390 x 844. Narrower and wider screens are not yet verified.
