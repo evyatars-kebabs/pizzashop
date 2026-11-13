@@ -20,12 +20,30 @@ export function t(key, vars = {}) {
 const fmt = new Intl.NumberFormat(undefined, { notation: 'compact', maximumFractionDigits: 1 });
 const fmtFull = new Intl.NumberFormat(undefined, { maximumFractionDigits: 0 });
 
+// Big amounts: 1B, 1.25T, 3Qa ... (billions, trillions, quadrillions, and so on).
+const BIG = [
+  [1e9, 'B'], [1e12, 'T'], [1e15, 'Qa'], [1e18, 'Qi'], [1e21, 'Sx'],
+  [1e24, 'Sp'], [1e27, 'Oc'], [1e30, 'No'], [1e33, 'Dc'],
+];
+
+// Returns the abbreviated form for amounts of a billion or more, otherwise null.
+export function abbrev(n) {
+  const a = Math.abs(n);
+  let hit = null;
+  for (const entry of BIG) if (a >= entry[0]) hit = entry;
+  if (!hit) return null;
+  const x = parseFloat((n / hit[0]).toFixed(2));
+  return x + hit[1];
+}
+
 export function money(n) {
-  return fmt.format(Math.floor(n));
+  const v = Math.floor(n);
+  return abbrev(v) ?? fmt.format(v);
 }
 
 export function moneyFull(n) {
-  return fmtFull.format(Math.floor(n));
+  const v = Math.floor(n);
+  return abbrev(v) ?? fmtFull.format(v);
 }
 
 export function duration(seconds) {
