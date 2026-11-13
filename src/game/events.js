@@ -19,7 +19,7 @@ export function updateEvents(state, dt, cfg, out) {
     return true;
   });
   if (state.events.active.length === 0 && state.gameTime >= state.events.nextAt) {
-    const entries = Object.entries(cfg.economy.events).map(([key, d]) => ({ key, weight: d.weight }));
+    const entries = Object.entries(cfg.economy.events).filter(([, d]) => d.weight > 0).map(([key, d]) => ({ key, weight: d.weight }));
     const id = pickWeighted(state, entries);
     startEvent(state, id, cfg);
     out.push({ type: 'event_start', id });

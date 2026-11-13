@@ -30,6 +30,8 @@ export const DEFAULT_STATE_PARTIAL = {
   },
   flags: { firstPurchase: false },
   events: { active: [], nextAt: 240 },
+  // The happy-hour mini game: available again once gameTime reaches nextAt.
+  bonus: { nextAt: 240, readyNotified: false },
   customers: [],
   pizzas: [],
   nextId: 1,

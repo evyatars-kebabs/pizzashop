@@ -9,7 +9,7 @@ import { newGame } from './game/state.js';
 import { tick } from './game/sim.js';
 import { derive, nextGoal, franchiseGain, franchiseRequirement, runCash, tierIndex } from './game/economy.js';
 import {
-  takeOrder, applyManual, buyUpgrade, hireStaff, recruitStaff, franchise, canFranchise, findCustomer, moveLocation,
+  takeOrder, applyManual, buyUpgrade, hireStaff, recruitStaff, franchise, canFranchise, findCustomer, moveLocation, bonusAvailable, completeBonus,
 } from './game/actions.js';
 import { offlineReport, applyOffline } from './game/offline.js';
 import { startEvent } from './game/events.js';
@@ -19,7 +19,7 @@ import { buildStand, layoutFor, setNeonLevel, setOvenGlow, updateStaff } from '.
 import { Actors } from './render/actors.js';
 import { FX } from './render/fx.js';
 import { createHUD, staticStrings } from './ui/hud.js';
-import { initMinigames, doughStep, toppingStep, ovenStep, isMiniOpen, cancelMini } from './ui/minigames.js';
+import { initMinigames, doughStep, toppingStep, ovenStep, happyHourStep, isMiniOpen, cancelMini } from './ui/minigames.js';
 import * as sheets from './ui/sheets.js';
 import { createSigns } from './ui/signs.js';
 
@@ -251,6 +251,10 @@ function handleEvent(e) {
       sfx.bell();
       hud.toast(t('toast.locationUnlocked', { location: t(cfg.locations[e.location].nameKey) }));
       track('location_unlocked', { location: e.location });
+      break;
+    case 'bonus_ready':
+      sfx.bell();
+      hud.toast(t('toast.bonusReady'));
       break;
     case 'franchise_ready':
       sfx.bell();
@@ -503,8 +507,26 @@ function wireKeyboard() {
   });
 }
 
+function openBonus() {
+  if (sheets.isModalOpen() || isMiniOpen() || pendingOffline || !bonusAvailable(S, cfg)) return;
+  sfx.click();
+  happyHourStep((res) => {
+    const r = completeBonus(S, res.hits, cfg);
+    if (r.won) {
+      sfx.bell();
+      hud.toast(t('mini.happy.win'));
+      track('happy_hour_won', { hits: r.hits });
+    } else {
+      hud.toast(t('mini.happy.miss'));
+      track('happy_hour_missed', { hits: r.hits });
+    }
+    save();
+  });
+}
+
 function wireUI() {
   wireKeyboard();
+  $('btnBonus').addEventListener('click', openBonus);
   $('btnSettings').addEventListener('click', () => sheets.openSettings(S, settingsActions()));
   $('btnDebug').addEventListener('click', () => sheets.openDebug(debugActions()));
   $('modalClose').addEventListener('click', () => sheets.closeModal());
@@ -627,6 +649,7 @@ function updateHUD() {
     hud.setHighlight(null);
   }
   hud.setEvents(S.events.active.map((a) => ({ id: a.id, left: a.endsAt - S.gameTime })));
+  $('btnBonus').classList.toggle('hidden', !bonusAvailable(S, cfg));
   const sig = `${S.location}|${JSON.stringify(S.unlockedLocations)}|${Math.floor(S.cash)}|${JSON.stringify(S.upgrades)}|${JSON.stringify(S.staff)}|${JSON.stringify(S.staffing)}|${S.franchise.points}|${S.franchise.count}|${canFranchise(S, cfg)}|${Math.floor(runCash(S) / 500)}`;
   if (sig !== sigLast) {
     sigLast = sig;

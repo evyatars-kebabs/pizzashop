@@ -19,6 +19,7 @@ const E = await import('../src/game/economy.js');
 const { offlineReport, applyOffline } = await import('../src/game/offline.js');
 const { startEvent } = await import('../src/game/events.js');
 const { migrate } = await import('../src/core/save.js');
+const EV = await import('../src/game/events.js');
 
 const NOW = 1_700_000_000_000;
 const finite = (n) => Number.isFinite(n);
@@ -242,13 +243,43 @@ test('recruits raise offline efficiency; the first hires still count as before',
   assert.ok(E.derive(s, cfg).offlineEfficiency > base);
 });
 
-test('basic upgrades go to 60 levels', () => {
+test('basic upgrades go to 120 levels', () => {
   const s = newGame(cfg, NOW);
   s.cash = 1e15;
   for (const k of ['oven', 'counter', 'cheese', 'decor']) {
-    assert.equal(cfg.economy.upgrades[k].maxLevel, 60, k);
+    assert.equal(cfg.economy.upgrades[k].maxLevel, 120, k);
   }
-  for (let i = 0; i < 60; i++) A.buyUpgrade(s, 'oven', cfg);
-  assert.equal(s.upgrades.oven, 60);
+  for (let i = 0; i < 120; i++) A.buyUpgrade(s, 'oven', cfg);
+  assert.equal(s.upgrades.oven, 120);
   assert.equal(A.buyUpgrade(s, 'oven', cfg).reason, 'maxed');
+});
+
+// ---- Happy hour ----
+test('happy hour: available after its cooldown, not during a double, and winning doubles money', () => {
+  const { bonusAvailable, completeBonus } = A;
+  const { activeModifiers } = EV;
+  const s = newGame(cfg, NOW);
+  assert.equal(bonusAvailable(s, cfg), false, 'not yet');
+  s.gameTime = s.bonus.nextAt;
+  assert.equal(bonusAvailable(s, cfg), true);
+  const lost = completeBonus(s, 1, cfg);
+  assert.equal(lost.won, false);
+  assert.equal(s.events.active.some((a) => a.id === 'doubleCash'), false);
+  assert.equal(bonusAvailable(s, cfg), false, 'cooldown starts');
+  assert.equal(s.bonus.nextAt, s.gameTime + cfg.economy.happyHour.intervalSeconds);
+  s.gameTime = s.bonus.nextAt;
+  const won = completeBonus(s, cfg.economy.happyHour.needed, cfg);
+  assert.equal(won.won, true);
+  assert.equal(activeModifiers(s, cfg).cashMult, 2, 'every sale pays double');
+  assert.equal(bonusAvailable(s, cfg), false, 'not again while the double runs');
+  run(s, cfg.economy.events.doubleCash.durationSeconds + 1, 1);
+  assert.equal(activeModifiers(s, cfg).cashMult, 1, 'the double ends after two minutes');
+});
+
+test('happy hour never starts at random, and the ready notice comes once', () => {
+  const s = newGame(cfg, NOW);
+  const ev = run(s, 3 * 3600, 1);
+  assert.ok(!ev.some((e) => e.type === 'event_start' && e.id === 'doubleCash'));
+  const readies = ev.filter((e) => e.type === 'bonus_ready').length;
+  assert.ok(readies >= 1, 'the game tells the player when it is ready');
 });

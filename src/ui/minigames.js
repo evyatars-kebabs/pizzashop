@@ -73,6 +73,68 @@ function onKey(cleanup, handler) {
   cleanup(() => window.removeEventListener('keydown', fn));
 }
 
+// Happy hour: tap the gold coins before they fade. Hitting enough of them doubles money.
+export function happyHourStep(onDone) {
+  const hh = cfg.economy.happyHour;
+  open({
+    station: null,
+    title: t('mini.happy.title'),
+    hint: t('mini.happy.hint', { needed: hh.needed }),
+    onDone,
+    build(body, { finish, frame, cleanup }) {
+      const board = el('div', 'happy-board');
+      const count = el('div', 'happy-count', t('mini.happy.count', { hits: 0, total: hh.targets }));
+      body.append(board, count);
+      let hits = 0;
+      let spawned = 0;
+      let timeToSpawn = 0.3;
+      let done = false;
+      const live = [];
+      const spawn = () => {
+        spawned++;
+        const b = el('button', 'coin-target');
+        b.setAttribute('aria-label', t('mini.happy.coin'));
+        b.style.left = 14 + Math.random() * 68 + '%';
+        b.style.top = 20 + Math.random() * 58 + '%';
+        const entry = { b, life: hh.targetLifetimeSeconds, gone: false };
+        b.addEventListener('pointerdown', (e) => {
+          e.preventDefault();
+          if (entry.gone) return;
+          entry.gone = true;
+          hits++;
+          b.remove();
+          count.textContent = t('mini.happy.count', { hits, total: hh.targets });
+        });
+        board.append(b);
+        live.push(entry);
+      };
+      frame((dt) => {
+        if (done) return;
+        if (spawned < hh.targets) {
+          timeToSpawn -= dt;
+          if (timeToSpawn <= 0) {
+            spawn();
+            timeToSpawn = hh.spawnEverySeconds;
+          }
+        }
+        for (let i = live.length - 1; i >= 0; i--) {
+          const e = live[i];
+          e.life -= dt;
+          if (e.gone || e.life <= 0) {
+            e.b.remove();
+            live.splice(i, 1);
+          }
+        }
+        if (spawned >= hh.targets && live.length === 0) {
+          done = true;
+          finish({ hits, total: hh.targets });
+        }
+      });
+      cleanup(() => { done = true; });
+    },
+  });
+}
+
 // 1) Dough: scroll the wheel or tap the arrow keys (touch and mouse drag still work).
 // Forgiving: the timer ends it with a lower score.
 export function doughStep(onDone) {

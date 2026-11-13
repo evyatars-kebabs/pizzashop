@@ -656,8 +656,10 @@ function empireExtras(ctx, lv) {
   // Marketing: a coloured ad banner per level, hanging from the eave on the right.
   const banners = ['#ef476f', '#ffd166', '#06d6a0', '#4ea8de', '#9b5de5'];
   const ex = CX + L.W / 2 + 0.25;
-  for (let i = 0; i < marketing; i++) {
-    const x = ex + i * 0.42 - (marketing - 1) * 0.21 + 0.6;
+  // Only the first few of each Empire upgrade are drawn, so the stand stays readable at high levels.
+  const shownBanners = Math.min(marketing, 5);
+  for (let i = 0; i < shownBanners; i++) {
+    const x = ex + i * 0.42 - (shownBanners - 1) * 0.21 + 0.6;
     const y = (ctx.eave ? ctx.eave.y : 3.2) - 0.7;
     M.cylC(0.012, 0.9, IRON, [x, y + 0.45, ctx.eave ? ctx.eave.z : 0.4]);
     S.box([0.36, 1.2, 0.03], banners[i % banners.length], [x, y - 0.6, (ctx.eave ? ctx.eave.z : 0.4) + 0.02]);
@@ -665,7 +667,7 @@ function empireExtras(ctx, lv) {
   }
 
   // Pizza school: gold-framed certificates on the back wall, one per level.
-  for (let i = 0; i < pizzaSchool; i++) {
+  for (let i = 0; i < Math.min(pizzaSchool, 5); i++) {
     const x = CX - 0.8 + i * 0.42;
     const z = L.back + 0.16;
     S.box([0.4, 0.5, 0.05], '#d4af37', [x, 1.45 + 0.25, z]);
@@ -675,7 +677,7 @@ function empireExtras(ctx, lv) {
   }
 
   // Industrial ovens: extra brick ovens in a row to the right of the main oven.
-  for (let i = 0; i < megaOven; i++) {
+  for (let i = 0; i < Math.min(megaOven, 4); i++) {
     const ox = L.ovenX + 1.35 + i * 1.35;
     const oz = OVEN_Z;
     S.box([1.1, 0.5, 1.0], STONE, [ox, 0, oz]);

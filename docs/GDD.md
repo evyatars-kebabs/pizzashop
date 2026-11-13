@@ -209,6 +209,10 @@ The **health inspector** from the brief is not in the prototype. It fits the sam
 
 ---
 
+### Happy hour (double money)
+
+Every 8 minutes of game time, an **x2** button appears in the top bar. Tapping it starts a short mini game: five gold coins appear one at a time and fade after a moment. Tap at least two of them to double all money for 2 minutes (every sale and tip). The double shows as a chip with its time left, and the button is hidden while it runs. Missing is no punishment, only a wait for the next round. Values are in `data/economy.json` (`happyHour`, and `events.doubleCash`).
+
 ## 8. Presentation
 
 - **Camera:** fixed third-person framing of the stand and queue. It widens on tall, narrow phones and pulls back as the stand grows. Taps on a station zoom the camera toward it and back.

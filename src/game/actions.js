@@ -1,6 +1,7 @@
 // Player and staff actions. All mutate the state object and return small result objects
 // so the UI and renderer can react. No DOM, no Three.js.
 import { derive, upgradeCost, payment, franchiseGain, franchiseReady, ovenSpeed, tierOf } from './economy.js';
+import { startEvent } from './events.js';
 import { activeModifiers } from './events.js';
 
 export function findCustomer(state, id) {
@@ -259,4 +260,19 @@ export function moveLocation(state, id, cfg) {
   state.cashierTimer = 0;
   state.spawnTimer = cfg.economy.customers.spawnBaseSeconds;
   return { ok: true, type: 'moved', location: id };
+}
+
+// The happy-hour mini game can be played when its cooldown has passed and no double is running.
+export function bonusAvailable(state, cfg) {
+  return state.gameTime >= state.bonus.nextAt && !state.events.active.some((a) => a.id === 'doubleCash');
+}
+
+// Ends a happy-hour game: starts the cooldown, and starts the double if enough targets were hit.
+export function completeBonus(state, hits, cfg) {
+  const hh = cfg.economy.happyHour;
+  state.bonus.nextAt = state.gameTime + hh.intervalSeconds;
+  state.bonus.readyNotified = false;
+  const won = hits >= hh.needed;
+  if (won) startEvent(state, 'doubleCash', cfg);
+  return { ok: true, won, hits };
 }

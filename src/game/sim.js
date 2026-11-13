@@ -19,6 +19,10 @@ export function tick(state, dt, cfg, out = []) {
 
   unlockStyles(state, cfg, out);
   unlockLocations(state, cfg, out);
+  if (!state.bonus.readyNotified && state.gameTime >= state.bonus.nextAt) {
+    state.bonus.readyNotified = true;
+    out.push({ type: 'bonus_ready' });
+  }
   if (!state.franchise.readyNotified && franchiseReady(state, cfg)) {
     state.franchise.readyNotified = true;
     out.push({ type: 'franchise_ready' });

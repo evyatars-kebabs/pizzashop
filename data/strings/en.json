@@ -212,5 +212,15 @@
   "recruit.cook.desc": "Each extra cook works on a different pizza at the same time. Recruited: {n} of {max}.",
   "recruit.needHire": "Hire a {role} first.",
   "action.recruit": "Recruit {cost}",
-  "toast.recruited": "Recruited an extra {role}."
+  "toast.recruited": "Recruited an extra {role}.",
+  "bonus.label": "Happy hour",
+  "mini.happy.title": "Happy hour",
+  "mini.happy.hint": "Tap the gold coins before they fade. Get {needed} to double all money for 2 minutes.",
+  "mini.happy.count": "Coins: {hits} of {total}",
+  "mini.happy.coin": "Gold coin",
+  "mini.happy.win": "Happy hour! Double money for 2 minutes.",
+  "mini.happy.miss": "So close! Come back in a few minutes.",
+  "toast.bonusReady": "Happy hour is ready. Look for the x2 button.",
+  "event.doubleCash.name": "Double money",
+  "event.doubleCash.desc": "Every sale pays double."
 }

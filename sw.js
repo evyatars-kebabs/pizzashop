@@ -1,11 +1,11 @@
 // Service worker for the installed app. Always tries the network first, so a new build is
 // picked up as soon as it is online, and keeps a copy so the game still opens offline.
 // The build script fills in this version's cache name and bundle address.
-const CACHE = 'slice-street-005804e1';
+const CACHE = 'slice-street-4e34f8dc';
 const FILES = [
   './',
   './index.html',
-  './game.bundle.js?v=005804e1',
+  './game.bundle.js?v=4e34f8dc',
   './styles.css',
   './manifest.webmanifest',
   './icons/icon-192.png',
