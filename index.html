@@ -91,6 +91,27 @@
       window.__pizzaFail = fail;
     })();
   </script>
+  <script>
+    // Keeps the installed app up to date. A new build is picked up on the next open, and the
+    // page reloads once it is safe: when the app is put away, or after two quiet minutes.
+    (function () {
+      if (!('serviceWorker' in navigator) || location.protocol === 'file:') return;
+      var waiting = false, timer = 0;
+      function reloadNow() { location.reload(); }
+      navigator.serviceWorker.addEventListener('controllerchange', function () {
+        if (waiting) return;
+        waiting = true;
+        if (document.hidden) return reloadNow();
+        document.addEventListener('visibilitychange', function () { if (document.hidden) reloadNow(); }, { once: true });
+        timer = setTimeout(reloadNow, 2 * 60 * 1000);
+      });
+      navigator.serviceWorker.register('sw.js').then(function (reg) {
+        function check() { reg.update().catch(function () {}); }
+        document.addEventListener('visibilitychange', function () { if (!document.hidden) check(); });
+        setInterval(check, 30 * 60 * 1000);
+      }).catch(function () {});
+    })();
+  </script>
   <script src="game.bundle.js?v=c3d4cc3f"></script>
 </body>
 </html>
