@@ -181,11 +181,16 @@ export function buyUpgrade(state, key, cfg, now = Date.now()) {
   return { ok: true, type: 'bought', key, cost, first: firstPurchase(state) };
 }
 
+// The first cashier is free during the tutorial (the first time a player learns the game).
+export function firstCashierFree(state, role, level) {
+  return role === 'cashier' && level === 0 && !state.tutorialDone;
+}
+
 export function hireStaff(state, role, cfg) {
   const def = cfg.economy.staff[role];
   const level = state.staff[role];
   if (level >= def.maxLevel) return { ok: false, reason: 'maxed' };
-  const cost = upgradeCost(def, level);
+  const cost = firstCashierFree(state, role, level) ? 0 : upgradeCost(def, level);
   if (state.cash < cost) return { ok: false, reason: 'cash', cost };
   state.cash -= cost;
   state.staff[role] = level + 1;

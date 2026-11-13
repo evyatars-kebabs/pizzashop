@@ -395,10 +395,6 @@
       "check": {
         "stat": "staffHired",
         "gte": 1
-      },
-      "ensureCash": {
-        "type": "staff",
-        "role": "cashier"
       }
     }
   ],

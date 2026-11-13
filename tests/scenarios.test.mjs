@@ -329,3 +329,15 @@ test('a crowd of 300 customers does not break the simulation', () => {
   assert.ok(s.customers.filter((c) => c.state === 'waiting').length <= cfg.economy.queueHardCap);
   checkInvariants(s);
 });
+
+test('the first cashier is free during the tutorial, and costs money afterwards', () => {
+  const s = newGame(cfg, NOW);
+  s.cash = 0;
+  assert.equal(A.hireStaff(s, 'cashier', cfg).ok, true, 'free while learning');
+  assert.equal(s.cash, 0);
+  assert.equal(s.staff.cashier, 1);
+  const t = newGame(cfg, NOW);
+  t.tutorialDone = true;
+  t.cash = 0;
+  assert.equal(A.hireStaff(t, 'cashier', cfg).reason, 'cash', 'normal price afterwards');
+});

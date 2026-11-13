@@ -1,6 +1,7 @@
 // Modal sheets: shop, collect (offline earnings), franchise, settings, debug.
 import { t, money, moneyFull, duration } from '../core/i18n.js';
 import { upgradeCost, derive, franchiseGain, franchiseReady, franchiseRequirement, franchiseTraffic, ovenSpeed, runCash, tierIndex, tierOf } from '../game/economy.js';
+import { firstCashierFree } from '../game/actions.js';
 
 const $ = (id) => document.getElementById(id);
 let refreshFn = null;
@@ -144,7 +145,8 @@ export function openShop(state, cfg, actions) {
       const def = cfg.economy.staff[role];
       const level = state.staff[role];
       const maxed = level >= def.maxLevel;
-      const cost = maxed ? 0 : upgradeCost(def, level);
+      const free = firstCashierFree(state, role, level);
+      const cost = maxed || free ? 0 : upgradeCost(def, level);
       const desc = role === 'cashier'
         ? t('staff.cashier.desc', { secs: d.cashierOrderSec.toFixed(1) })
         : t('staff.cook.desc', { speed: d.cookSpeed.toFixed(1) });
@@ -155,7 +157,7 @@ export function openShop(state, cfg, actions) {
         el('small', '', desc),
         el('small', 'lvl', level === 0 ? t('staff.notHired') : t('staff.level', { level })),
       );
-      const label = level === 0 ? t('action.hire', { cost: moneyFull(cost) }) : t('action.upgrade', { cost: moneyFull(cost) });
+      const label = free ? t('action.hireFree') : level === 0 ? t('action.hire', { cost: moneyFull(cost) }) : t('action.upgrade', { cost: moneyFull(cost) });
       row.append(info, button(maxed ? t('action.maxed') : label, () => actions.hire(role), { disabled: maxed || state.cash < cost, primary: level === 0 }));
       body.append(row);
     }
