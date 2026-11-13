@@ -229,12 +229,15 @@ const PROPS = {
 
   // A-frame sidewalk sign. Its wording is an HTML label (src/ui/signs.js), not part of the image.
   sandwichBoard(p, { solid, env }) {
+    // Scaled up so the words on the board are readable from the camera.
     const [x, , z] = p.pos;
+    const k = 1.6;
     for (const side of [-1, 1]) {
-      solid.boxC([0.8, 1.1, 0.05], '#3a2a1d', [x, 0.55, z + side * 0.17], [side * 0.3, 0, 0]);
-      solid.boxC([0.68, 0.8, 0.02], '#fff3c4', [x, 0.6, z + side * 0.215], [side * 0.3, 0, 0]);
+      solid.boxC([0.8 * k, 1.1 * k, 0.05 * k], '#3a2a1d', [x, 0.55 * k, z + side * 0.17 * k], [side * 0.3, 0, 0]);
+      solid.boxC([0.68 * k, 0.8 * k, 0.02 * k], '#fff3c4', [x, 0.6 * k, z + side * 0.215 * k], [side * 0.3, 0, 0]);
     }
-    env.signs.push({ id: 'sandwich', pos: [x, 1.35, z], kind: 'street' });
+    // The label is sized to the front face.
+    env.signs.push({ id: 'sandwich', pos: [x, 0.6 * k, z + 0.23 * k], size: [0.62 * k, 0.74 * k], kind: 'street' });
   },
 
   car(p, { group }) {

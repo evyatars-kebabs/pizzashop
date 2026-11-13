@@ -322,3 +322,9 @@ button.icon {
 .segmented .seg.on { background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.18); }
 
 .row.locked { opacity: .55; }
+
+/* Labels that sit inside a physical board: the text is fitted to the board, never outside it. */
+.sign-label.board { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; white-space: normal; overflow: hidden; box-shadow: none; border-radius: 3px; padding: 2px 4px; background: #f7f1e1; color: #2b2d42; }
+.sign-label.board .title { margin-bottom: 2px; }
+.sign-label.board .line { width: 100%; min-width: 0; }
+.sign-label.board.street { background: #fff3c4; width: auto; }

@@ -27,7 +27,7 @@ function runFor(state, seconds, step = 0.25) {
 test('upgrade cost curve is exponential and matches the formula', () => {
   const oven = cfg.economy.upgrades.oven;
   assert.equal(upgradeCost(oven, 0), 40);
-  assert.equal(upgradeCost(oven, 1), 68);
+  assert.equal(upgradeCost(oven, 1), Math.ceil(40 * oven.growth));
   assert.ok(upgradeCost(oven, 2) > upgradeCost(oven, 1));
 });
 

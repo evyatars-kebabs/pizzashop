@@ -210,8 +210,8 @@ const SHELL = {
     S.box([3.45, 0.7, 0.16], CREAM, [CX, 4.32, FRONT + 0.12]);
     for (const x of [CX - 1.6, CX + 1.6]) S.box([0.12, 0.5, 0.12], DARKWOOD, [x, 3.85, FRONT + 0.1]);
     ctx.env.signs.push({ id: 'name', pos: [CX, 4.68, FRONT + 0.25], kind: 'shopname' });
-    ctx.env.signs.push({ id: 'franchise', pos: [x1 - 0.1, 2.5, FRONT + 0.1], kind: 'franchise' });
-    S.box([0.5, 0.36, 0.05], '#d4af37', [x1 - 0.09, 2.3, FRONT + 0.02]);
+    ctx.env.signs.push({ id: 'franchise', pos: [x1 - 0.12, 2.55, FRONT + 0.05], size: [0.64, 0.44], kind: 'franchise' });
+    S.box([0.7, 0.5, 0.05], '#d4af37', [x1 - 0.12, 2.3, FRONT + 0.02]);
 
     Object.assign(ctx, {
       eave: { y: ey - 0.44, z: ez, x0: x0 - 0.45, x1: x1 + 0.45 },
@@ -290,8 +290,8 @@ const SHELL = {
     ctx.env.signs.push({ id: 'name', pos: [CX, top2 + 1.33, FRONT - 0.35], kind: 'shopname' });
 
     // Franchise plaque on the right pillar.
-    S.box([0.46, 0.34, 0.05], '#d4af37', [x1 - 0.27, 1.55, FRONT + 0.24]);
-    ctx.env.signs.push({ id: 'franchise', pos: [x1 - 0.27, 1.72, FRONT + 0.3], kind: 'franchise' });
+    S.box([0.64, 0.48, 0.05], '#d4af37', [x1 - 0.3, 1.5, FRONT + 0.24]);
+    ctx.env.signs.push({ id: 'franchise', pos: [x1 - 0.3, 1.74, FRONT + 0.27], size: [0.58, 0.42], kind: 'franchise' });
 
     const eave = awning(ctx, [W + 0.5, 0.08, 1.5], [CX, top1 + 0.12, FRONT + 0.72], 0.2);
     scallops(ctx, x0 - 0.25, x1 + 0.25, eave.y - 0.2, eave.z);
@@ -403,16 +403,20 @@ function workLine(ctx) {
   }
 }
 
-// Standing menu board beside the stand. Its text is an HTML label (src/ui/signs.js).
+// Standing menu board beside the stand. Its text is an HTML label (src/ui/signs.js), sized to the
+// cream panel. Scaled up so the words are readable from the camera.
 function menuBoard(ctx) {
   const { S, L, env } = ctx;
+  const k = 1.5;
   const x = CX - L.W / 2 - 0.75;
   const z = 3.5;
-  for (const sx of [-0.5, 0.5]) S.box([0.08, 1.2, 0.08], IRON, [x + sx, 0, z]);
-  S.box([1.36, 1.0, 0.08], '#2b2d42', [x, 1.0, z]);
-  S.box([1.2, 0.84, 0.03], '#f7f1e1', [x, 1.08, z + 0.045]);
-  TOPPING_COLORS.forEach((c, i) => S.cylC(0.075, 0.03, c, [x - 0.4 + i * 0.2, 0.78, z + 0.06], [Math.PI / 2, 0, 0]));
-  env.signs.push({ id: 'menu', pos: [x, 2.25, z], kind: 'menu' });
+  const bottom = 1.0 * k;
+  const h = 1.0 * k;
+  const cy = bottom + h / 2;
+  for (const sx of [-0.5, 0.5]) S.box([0.08 * k, bottom + 0.2, 0.08 * k], IRON, [x + sx * k, 0, z]);
+  S.box([1.36 * k, h, 0.08], '#2b2d42', [x, bottom, z]);
+  S.box([1.2 * k, 0.84 * k, 0.03], '#f7f1e1', [x, cy - 0.42 * k, z + 0.045]);
+  env.signs.push({ id: 'menu', pos: [x, cy, z + 0.06], size: [1.6, 1.16], kind: 'menu' });
 }
 
 // Neon sign. Level 1 = pink sign, level 2 adds a cyan ring and stars.

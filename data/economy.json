@@ -120,28 +120,28 @@
   "upgrades": {
     "oven": {
       "baseCost": 40,
-      "growth": 1.7,
-      "maxLevel": 5,
+      "growth": 1.35,
+      "maxLevel": 25,
       "ovenSlotsBase": 1,
       "ovenSlotsPerLevel": 1
     },
     "counter": {
       "baseCost": 60,
-      "growth": 1.8,
-      "maxLevel": 5,
+      "growth": 1.35,
+      "maxLevel": 25,
       "maxQueueBase": 3,
       "maxQueuePerLevel": 2
     },
     "cheese": {
       "baseCost": 80,
-      "growth": 1.9,
-      "maxLevel": 10,
+      "growth": 1.25,
+      "maxLevel": 30,
       "cheeseMultPerLevel": 0.1
     },
     "decor": {
       "baseCost": 120,
-      "growth": 2.0,
-      "maxLevel": 10,
+      "growth": 1.3,
+      "maxLevel": 30,
       "trafficPerLevel": 0.05,
       "steps": [
         "flowers",
@@ -203,13 +203,13 @@
   "staff": {
     "cashier": {
       "baseCost": 150,
-      "growth": 1.8,
-      "maxLevel": 5
+      "growth": 1.3,
+      "maxLevel": 20
     },
     "cook": {
       "baseCost": 250,
-      "growth": 1.9,
-      "maxLevel": 5
+      "growth": 1.3,
+      "maxLevel": 20
     }
   },
   "prestige": {

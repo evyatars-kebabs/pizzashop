@@ -4,6 +4,16 @@ import { t, moneyFull } from '../core/i18n.js';
 
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 
+// Largest font size (up to 22px) at which the text fits inside the label.
+function fitText(el) {
+  el.style.fontSize = '22px';
+  let fs = 22;
+  while ((el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth) && fs > 4) {
+    fs -= 0.5;
+    el.style.fontSize = fs + 'px';
+  }
+}
+
 export function createSigns() {
   const layer = document.getElementById('signs');
   let items = [];
@@ -13,7 +23,7 @@ export function createSigns() {
     layer.innerHTML = '';
     items = specs.map((spec) => {
       const el = document.createElement('div');
-      el.className = 'sign-label ' + spec.kind;
+      el.className = 'sign-label ' + spec.kind + (spec.size ? ' board' : '');
       layer.appendChild(el);
       return { spec, el, html: '' };
     });
@@ -49,6 +59,25 @@ export function createSigns() {
       }
       const p = env.toScreen(it.spec.pos);
       it.el.style.display = p.front ? '' : 'none';
+      if (it.spec.size) {
+        // Sized to its board: measure the board on screen, then shrink the text until it fits.
+        const [sw, sh] = it.spec.size;
+        const pos = it.spec.pos;
+        const r = env.toScreen([pos[0] + sw / 2, pos[1], pos[2]]);
+        const u = env.toScreen([pos[0], pos[1] + sh / 2, pos[2]]);
+        const w = 2 * Math.abs(r.x - p.x);
+        const h = 2 * Math.abs(u.y - p.y);
+        it.el.style.left = p.x + 'px';
+        it.el.style.top = p.y + 'px';
+        it.el.style.width = w + 'px';
+        it.el.style.height = h + 'px';
+        const key = Math.round(w) + 'x' + Math.round(h) + '|' + it.html;
+        if (key !== it.fitKey) {
+          it.fitKey = key;
+          fitText(it.el);
+        }
+        continue; // the next sign still needs updating
+      }
       // Keep labels on screen: clamp so a sign near the edge is still readable.
       const half = (it.el.offsetWidth || 100) / 2 + 6;
       it.el.style.left = Math.min(p.w - half, Math.max(half, p.x)) + 'px';

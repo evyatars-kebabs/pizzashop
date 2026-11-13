@@ -123,7 +123,7 @@ test('every upgrade can be bought up to its maximum without going negative', () 
     assert.equal(s.upgrades[k], cfg.economy.upgrades[k].maxLevel, k + ' stops at its maximum');
   }
   for (const role of ['cashier', 'cook']) {
-    for (let i = 0; i < 8; i++) A.hireStaff(s, role, cfg);
+    for (let i = 0; i < cfg.economy.staff[role].maxLevel + 2; i++) A.hireStaff(s, role, cfg);
     assert.equal(s.staff[role], cfg.economy.staff[role].maxLevel);
   }
   assert.ok(s.cash >= 0 && finite(s.cash));

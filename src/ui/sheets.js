@@ -67,7 +67,7 @@ function upgradeVars(key, level, cfg) {
     case 'oven': return { slots: u.ovenSlotsBase + u.ovenSlotsPerLevel * next };
     case 'counter': return { slots: u.maxQueueBase + u.maxQueuePerLevel * next };
     case 'cheese': return { pct: Math.round(u.cheeseMultPerLevel * next * 100) };
-    case 'decor': return { pct: Math.round(u.trafficPerLevel * next * 100), item: t('decor.step.' + (u.steps[level] || u.steps[u.steps.length - 1])) };
+    case 'decor': return { pct: Math.round(u.trafficPerLevel * next * 100), item: level < u.steps.length ? '. Adds: ' + t('decor.step.' + u.steps[level]) : '' };
     case 'neon': return { pct: Math.round(u.trafficPerLevel * 100) };
     case 'marketing': return { pct: Math.round(u.trafficMultPerLevel * next * 100) };
     case 'pizzaSchool': return { pct: Math.round(u.payMultPerLevel * next * 100) };
