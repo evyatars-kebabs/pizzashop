@@ -33,7 +33,7 @@ test('upgrade cost curve is exponential and matches the formula', () => {
 
 test('a new game starts with cash and no staff', () => {
   const s = newGame(cfg, NOW);
-  assert.equal(s.cash, cfg.economy.startingCash);
+  assert.equal(s.cash, cfg.economy.beginner.startingCash);
   assert.equal(s.staff.cashier, 0);
   assert.equal(s.staff.cook, 0);
 });
@@ -105,6 +105,7 @@ test('a cashier and a cook keep the stand running with no input', () => {
 
 test('an unattended customer eventually gets angry and the penalty never drops cash below zero', () => {
   const s = newGame(cfg, NOW);
+  s.tutorialDone = true;
   s.cash = 1;
   s.customers.push({ id: 5, type: 'grumpy', style: 'margherita', topping: 'basil', nameIdx: 2, patience: 3, maxPatience: 45, state: 'waiting' });
   const events = runFor(s, 10);
@@ -283,6 +284,7 @@ test('the place grows with franchises: cart, stand, shop, with more capacity', (
 test('each franchise brings more customers, with no upper limit', () => {
   const { franchiseTraffic } = economyMod;
   const s = newGame(cfg, NOW);
+  s.tutorialDone = true;
   const base = derive(s, cfg).spawnBase;
   let last = base;
   for (let n = 1; n <= 4; n++) {
@@ -298,6 +300,7 @@ test('each franchise brings more customers, with no upper limit', () => {
   assert.ok(franchiseTraffic(s, cfg) > 1 + cfg.economy.prestige.trafficPerFranchise * 999, 'still growing');
   // The sim stays stable at an extreme rate: the queue fills and the rest are turned away.
   const busy = newGame(cfg, NOW);
+  busy.tutorialDone = true;
   busy.franchise.count = 1000;
   const evs = runFor(busy, 30);
   assert.ok(busy.customers.filter((c) => c.state === 'waiting').length <= derive(busy, cfg).maxQueue);
@@ -305,6 +308,7 @@ test('each franchise brings more customers, with no upper limit', () => {
   // More customers actually show up in play, not just on paper.
   const count = (franchises) => {
     const g = newGame(cfg, NOW);
+    g.tutorialDone = true;
     g.rngSeed = 42;
     g.franchise.count = franchises;
     g.upgrades.counter = 5;

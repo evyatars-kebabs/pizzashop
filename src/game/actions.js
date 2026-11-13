@@ -234,6 +234,8 @@ export function franchise(state, cfg, newGameFn, now = Date.now()) {
   fresh.styles = { ...state.styles };
   fresh.tutorialStep = state.tutorialStep;
   fresh.tutorialDone = state.tutorialDone;
+  // A franchise starts the normal economy, not the first-time one.
+  fresh.cash = cfg.economy.startingCash;
   fresh.stats = { ...state.stats };
   fresh.lifetimeCash = state.lifetimeCash;
   fresh.settings = { ...state.settings };

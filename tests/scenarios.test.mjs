@@ -107,6 +107,7 @@ test('long play (2 game hours) with everything running keeps earning and never b
 
 test('the player-only path (no staff) keeps running, with customers leaving when they wait too long', () => {
   const s = newGame(cfg, NOW);
+  s.tutorialDone = true;
   s.rngSeed = 5;
   const ev = run(s, 1800, 0.5);
   assert.ok(ev.some((e) => e.type === 'arrived'));
@@ -259,6 +260,8 @@ test('happy hour: available after its cooldown, not during a double, and winning
   const { bonusAvailable, completeBonus } = A;
   const { activeModifiers } = EV;
   const s = newGame(cfg, NOW);
+  s.tutorialDone = true;
+  s.events.nextAt = 1e9; // no random events in this test
   assert.equal(bonusAvailable(s, cfg), false, 'not yet');
   s.gameTime = s.bonus.nextAt;
   assert.equal(bonusAvailable(s, cfg), true);
@@ -315,6 +318,7 @@ test('the queue never grows past the hard cap, however big the counter and shops
 
 test('a crowd of 300 customers does not break the simulation', () => {
   const s = newGame(cfg, NOW);
+  s.tutorialDone = true;
   s.franchise.count = 3;
   s.shops = 4;
   s.upgrades.counter = 120;

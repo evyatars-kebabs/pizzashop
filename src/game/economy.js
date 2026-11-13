@@ -106,7 +106,10 @@ export function derive(state, cfg) {
   const empireTraffic = up.marketing ? 1 + up.marketing.trafficMultPerLevel * (lvl.marketing || 0) : 1;
   const empirePay = up.pizzaSchool ? 1 + up.pizzaSchool.payMultPerLevel * (lvl.pizzaSchool || 0) : 1;
   const shopM = shopMultiplier(state, cfg);
-  const spawnBase = e.customers.spawnBaseSeconds / ((1 + traffic) * locEcon.trafficMult * frTraffic * empireTraffic * shopM);
+  const beginner = !state.tutorialDone;
+  const beginnerSpawn = beginner ? (e.beginner?.spawnMult || 1) : 1;
+  const beginnerPay = beginner ? (e.beginner?.payMult || 1) : 1;
+  const spawnBase = e.customers.spawnBaseSeconds * beginnerSpawn / ((1 + traffic) * locEcon.trafficMult * frTraffic * empireTraffic * shopM);
   const tier = tierOf(state, cfg);
   const ovenSlots = (up.oven.ovenSlotsBase + up.oven.ovenSlotsPerLevel * lvl.oven + tier.ovenSlotsBonus
     + (up.megaOven ? up.megaOven.ovenSlotsPerLevel * (lvl.megaOven || 0) : 0)) * shopM;
@@ -142,7 +145,7 @@ export function derive(state, cfg) {
   const offlineEfficiency = Math.min(1, e.time.offlineBaseEfficiency + e.time.offlineEfficiencyPerStaffRole * staffRoles + (e.recruit?.offlineEfficiencyPerRecruit || 0) * recruits);
 
   return {
-    traffic, locEcon, tier, frTraffic, empireTraffic, empirePay, bakeSpeed, spawnBase, ovenSlots, maxQueue, cheeseMult, prestigeMult: pMult,
+    traffic, locEcon, tier, frTraffic, empireTraffic, empirePay, beginnerPay, bakeSpeed, spawnBase, ovenSlots, maxQueue, cheeseMult, prestigeMult: pMult,
     cashierOrderSec, cashierLvl, cashierCount, cookSpeed, cookLvl, cookCount, idleRate, offlineEfficiency,
   };
 }
@@ -153,7 +156,7 @@ export function payment(style, q, stats, mods, wrongTopping, cfg) {
   const base = e.styles[style].basePrice;
   const qualityMult = e.pizzaQuality.payBase + e.pizzaQuality.payPerQuality * q;
   const wrongMult = wrongTopping ? e.customers.wrongToppingPayMult : 1;
-  return base * qualityMult * stats.cheeseMult * stats.prestigeMult * (stats.empirePay || 1) * mods.cashMult * wrongMult;
+  return base * qualityMult * stats.cheeseMult * stats.prestigeMult * (stats.empirePay || 1) * (stats.beginnerPay || 1) * mods.cashMult * wrongMult;
 }
 
 export function franchiseGain(state, cfg) {

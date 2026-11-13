@@ -230,5 +230,7 @@
   "shop.allOpen": "All shops are open.",
   "action.open": "Open {cost}",
   "toast.shopOpened": "Shop {n} is open! Customers now split between your shops.",
-  "sign.shop": "Shop {n}"
+  "sign.shop": "Shop {n}",
+  "tut.locked": "Not yet. Follow the tutorial banner first.",
+  "tut.progress": "Tutorial {n} of {total}."
 }

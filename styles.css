@@ -334,3 +334,6 @@ button.bonus { background: #ffd166; color: #3a2a1d; font-weight: 900; font-size:
 .happy-board { position: relative; height: 230px; margin: 10px 0 4px; border-radius: 20px; background: radial-gradient(circle at 50% 40%, #fff7d6, #f5dfa0); overflow: hidden; touch-action: none; }
 .coin-target { position: absolute; width: 66px; height: 66px; margin: -33px 0 0 -33px; border-radius: 50%; border: 0; cursor: pointer; background: radial-gradient(circle at 35% 30%, #fff6b8, #f2b233 60%, #c98a1b); box-shadow: 0 4px 0 #a8701a, 0 6px 14px rgba(0,0,0,.25); animation: pop .2s ease-out; }
 .happy-count { font-weight: 800; font-size: 16px; }
+
+/* Tutorial: the actions that are not the current step are dimmed. */
+#actions button.tut-off { opacity: .35; filter: grayscale(.7); }

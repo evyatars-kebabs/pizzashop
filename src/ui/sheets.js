@@ -259,6 +259,8 @@ export function openCollect(report, cfg, actions) {
       const ad = button(t('action.adDouble'), async () => {
         ad.disabled = true;
         const ok = await actions.watchAd();
+        // The sheet may have been closed while the ad played; then there is nothing to update.
+        if (openKind !== 'collect') return;
         if (ok) multiplier = 2;
         refreshFn();
       });

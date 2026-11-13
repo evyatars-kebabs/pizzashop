@@ -42,13 +42,14 @@ export const DEFAULT_STATE_PARTIAL = {
   cookIdle: 0,
   idleNotified: { cashier: false, cook: false },
   spawnTimer: 4,
+  tutorialSpawnTimer: 1.5,
   settings: { sound: true, notify: false, graphics: 'auto', look: '3d' },
   cosmetics: { ovenSkin: 'skin.classic' },
 };
 
 export function newGame(cfg, now = Date.now()) {
   const s = structuredClone(DEFAULT_STATE_PARTIAL);
-  s.cash = cfg.economy.startingCash;
+  s.cash = cfg.economy.beginner?.startingCash ?? cfg.economy.startingCash;
   s.dayClock = cfg.economy.time.startDayClock;
   s.rngSeed = (now % 2147483647) | 0 || 1;
   s.createdAt = now;

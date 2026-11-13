@@ -1,6 +1,6 @@
 // The live simulation tick. Pure: takes state + dt, mutates state, returns a list of
 // events for the renderer, audio and UI to react to.
-import { derive, daylightOf, unlockMet, franchiseReady } from './economy.js';
+import { derive, daylightOf, unlockMet, franchiseReady, upgradeCost } from './economy.js';
 import { updateEvents, activeModifiers } from './events.js';
 import { nextRandom, pickWeighted } from '../core/rng.js';
 import { takeOrder, autoStage, autoLoad, serve } from './actions.js';
@@ -56,6 +56,8 @@ function unlockLocations(state, cfg, out) {
 }
 
 function drainPatience(state, dt, mods, cfg, out) {
+  // During the tutorial nobody gets impatient: the first customers wait as long as needed.
+  if (!state.tutorialDone) return;
   for (const c of [...state.customers]) {
     c.patience -= dt * mods.patienceDrainMult;
     if (c.patience <= 0) {
@@ -70,6 +72,7 @@ function drainPatience(state, dt, mods, cfg, out) {
 }
 
 function spawn(state, dt, mods, d, daylight, cfg, out) {
+  if (!state.tutorialDone) return spawnTutorial(state, dt, mods, d, cfg, out);
   // A queue larger than the counter (for example after a shop closes) sends the extras away.
   const waitingAll = state.customers.filter((c) => c.state === 'waiting').sort((x, y) => x.id - y.id);
   const extra = waitingAll.length - d.maxQueue;
@@ -92,6 +95,14 @@ function spawn(state, dt, mods, d, daylight, cfg, out) {
       out.push({ type: 'turned_away' });
       continue;
     }
+    addCustomer(state, mods, d, cfg, out);
+  }
+}
+
+// Creates one arriving customer (random type, style and topping).
+function addCustomer(state, mods, d, cfg, out) {
+  const cc = cfg.economy.customers;
+  {
     const type = pickWeighted(state, Object.entries(cc.types).map(([key, t]) => ({ key, weight: t.weight })));
     const styleEntries = Object.keys(cfg.economy.styles)
       .filter((k) => state.styles[k])
@@ -111,6 +122,15 @@ function spawn(state, dt, mods, d, daylight, cfg, out) {
     state.customers.push(c);
     out.push({ type: 'arrived', customerId: c.id });
   }
+}
+
+// Tutorial: one customer at a time, a short pause after each one is served.
+function spawnTutorial(state, dt, mods, d, cfg, out) {
+  if (state.customers.length > 0) return;
+  state.tutorialSpawnTimer -= dt;
+  if (state.tutorialSpawnTimer > 0) return;
+  state.tutorialSpawnTimer = cfg.economy.beginner.tutorialSpawnDelaySeconds;
+  addCustomer(state, mods, d, cfg, out);
 }
 
 function runCashier(state, dt, d, cfg, out) {
@@ -201,6 +221,17 @@ function runBake(state, dt, out) {
   }
 }
 
+// A tutorial step may need money (the first upgrade, the first cashier). Top the cash up so the
+// player is never stuck waiting for it.
+function ensureTutorialCash(state, step, cfg) {
+  if (!step || !step.ensureCash) return;
+  const e = step.ensureCash;
+  const def = e.type === 'upgrade' ? cfg.economy.upgrades[e.key] : cfg.economy.staff[e.role];
+  const level = e.type === 'upgrade' ? state.upgrades[e.key] : state.staff[e.role];
+  const cost = upgradeCost(def, level);
+  if (state.cash < cost) state.cash = cost;
+}
+
 function checkTutorial(state, cfg, out) {
   if (state.tutorialDone) return;
   const steps = cfg.economy.tutorial;
@@ -209,6 +240,7 @@ function checkTutorial(state, cfg, out) {
     if ((state.stats[check.stat] || 0) < check.gte) break;
     state.tutorialStep++;
     out.push({ type: 'tutorial_step', step: state.tutorialStep });
+    ensureTutorialCash(state, steps[state.tutorialStep], cfg);
   }
   if (state.tutorialStep >= steps.length) {
     state.tutorialDone = true;

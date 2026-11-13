@@ -382,6 +382,10 @@
       "check": {
         "stat": "upgradesBought",
         "gte": 1
+      },
+      "ensureCash": {
+        "type": "upgrade",
+        "key": "oven"
       }
     },
     {
@@ -391,6 +395,10 @@
       "check": {
         "stat": "staffHired",
         "gte": 1
+      },
+      "ensureCash": {
+        "type": "staff",
+        "role": "cashier"
       }
     }
   ],
@@ -439,5 +447,12 @@
     "multiplierPerShop": 2,
     "_note": "Each extra shop doubles customers, employees, oven capacity and money per second. Shops after the first cost baseCost x growth^(shops already open - 1)."
   },
-  "queueHardCap": 40
+  "queueHardCap": 40,
+  "beginner": {
+    "startingCash": 60,
+    "spawnMult": 1.5,
+    "payMult": 1.25,
+    "tutorialSpawnDelaySeconds": 1.5,
+    "_note": "Easier first time: until the tutorial is finished, customers arrive one at a time and wait patiently, arrive a little less often, and pay more."
+  }
 }

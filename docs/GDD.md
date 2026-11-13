@@ -104,7 +104,14 @@ At the start this is about 0.40 cash per second.
 
 ## 4. Progression
 
-**Early game (first 10 minutes).** A seven-step guided tutorial, one step at a time:
+**Early game (first 10 minutes).** A seven-step **forcing** tutorial. Until it is finished:
+
+- Only the step's action works. Other buttons are dimmed, and tapping or pressing a key for anything else shows "Not yet. Follow the tutorial banner first."
+- Customers arrive one at a time, after a short pause, and nobody gets impatient. Customers arrive 1.5 times less often, pay 25% more, and start with 60 cash instead of 30.
+- A step that needs money (the first upgrade, the first cashier) tops the cash up, so nobody is stuck waiting.
+- The happy-hour button stays hidden until the tutorial is done.
+
+The steps are:
 
 1. Tap a customer to take their order.
 2. Swipe the dough to stretch it.

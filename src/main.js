@@ -295,7 +295,23 @@ function firstPizza(stage) {
   return S.pizzas.filter((p) => p.stage === stage).sort((a, b) => a.id - b.id)[0];
 }
 
+// During the tutorial only the current step's action works. Shop and settings are always open.
+function tutorialAllows(action) {
+  if (S.tutorialDone || action === 'shop' || action === 'settings') return true;
+  const step = cfg.economy.tutorial[S.tutorialStep];
+  return !step || step.highlight === action;
+}
+
+const STAGE_ACTION = { dough: 'stretch', topping: 'top', load: 'oven', ready: 'serve' };
+
+// Says why an input was ignored during the tutorial, once, without spamming.
+function tutorialBlocked() {
+  hud.toast(t('tut.locked'), 'bad');
+  sfx.angry();
+}
+
 function onAction(name) {
+  if (!tutorialAllows(name)) return tutorialBlocked();
   sfx.click();
   if (name === 'customers') return doTakeOrder();
   if (name === 'shop') return openShop();
@@ -436,7 +452,7 @@ function settingsActions() {
         S.settings.notify = p === 'granted';
       }
       track('notify_opt_in', { on: S.settings.notify });
-      sheets.openSettings(S, settingsActions());
+      if (sheets.modalKind() === 'settings') sheets.openSettings(S, settingsActions());
     },
     setLook: (v) => {
       S.settings.look = v;
@@ -514,6 +530,7 @@ function wireKeyboard() {
       return sheets.closeModal();
     }
     if (sheets.isModalOpen() || isMiniOpen() || pendingOffline) return;
+    if (KEY_ACTIONS[e.key] && !tutorialAllows(KEY_ACTIONS[e.key])) return tutorialBlocked();
     if (KEY_ACTIONS[e.key]) {
       e.preventDefault();
       return onAction(KEY_ACTIONS[e.key]);
@@ -527,7 +544,7 @@ function wireKeyboard() {
 }
 
 function openBonus() {
-  if (sheets.isModalOpen() || isMiniOpen() || pendingOffline || !bonusAvailable(S, cfg)) return;
+  if (sheets.isModalOpen() || isMiniOpen() || pendingOffline || !S.tutorialDone || !bonusAvailable(S, cfg)) return;
   sfx.click();
   happyHourStep((res) => {
     const r = completeBonus(S, res.hits, cfg);
@@ -573,13 +590,19 @@ function wireCanvas() {
     if (!hit) return;
     if (hit.kind === 'customer') {
       const c = findCustomer(S, hit.id);
-      if (c && c.state === 'waiting') return doTakeOrder(c.id);
+      if (c && c.state === 'waiting') {
+        if (!tutorialAllows('customers')) return tutorialBlocked();
+        return doTakeOrder(c.id);
+      }
       return;
     }
     if (hit.kind === 'pizza') {
       const p = S.pizzas.find((x) => x.id === hit.id);
       if (!p) return;
-      if (['dough', 'topping', 'load', 'ready'].includes(p.stage)) doStage(p.stage, p.id);
+      if (['dough', 'topping', 'load', 'ready'].includes(p.stage)) {
+        if (!tutorialAllows(STAGE_ACTION[p.stage])) return tutorialBlocked();
+        doStage(p.stage, p.id);
+      }
     }
   });
   canvas.addEventListener('pointercancel', () => { down = null; });
@@ -661,14 +684,20 @@ function updateHUD() {
   });
   const step = cfg.economy.tutorial[S.tutorialStep];
   if (!S.tutorialDone && step) {
-    hud.setHint(t(step.textKey));
+    hud.setHint(t('tut.progress', { n: S.tutorialStep + 1, total: cfg.economy.tutorial.length }) + '  ' + t(step.textKey));
     hud.setHighlight(step.highlight);
+    // Only the step's action is lit; everything else is dimmed until the tutorial is done.
+    for (const a of ['customers', 'stretch', 'top', 'oven', 'serve', 'shop']) {
+      const btn = document.querySelector(`#actions [data-action="${a}"]`);
+      if (btn) btn.classList.toggle('tut-off', !tutorialAllows(a));
+    }
   } else {
+    document.querySelectorAll('#actions .tut-off').forEach((b) => b.classList.remove('tut-off'));
     hud.setHint(null);
     hud.setHighlight(null);
   }
   hud.setEvents(S.events.active.map((a) => ({ id: a.id, left: a.endsAt - S.gameTime })));
-  $('btnBonus').classList.toggle('hidden', !bonusAvailable(S, cfg));
+  $('btnBonus').classList.toggle('hidden', !S.tutorialDone || !bonusAvailable(S, cfg));
   const sig = `${S.location}|${JSON.stringify(S.unlockedLocations)}|${Math.floor(S.cash)}|${JSON.stringify(S.upgrades)}|${JSON.stringify(S.staff)}|${JSON.stringify(S.staffing)}|${S.franchise.points}|${S.franchise.count}|${canFranchise(S, cfg)}|${Math.floor(runCash(S) / 500)}`;
   if (sig !== sigLast) {
     sigLast = sig;
