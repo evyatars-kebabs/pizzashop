@@ -233,5 +233,8 @@
   "sign.shop": "Shop {n}",
   "tut.locked": "Not yet. Follow the tutorial banner first.",
   "tut.progress": "Tutorial {n} of {total}.",
-  "action.hireFree": "Hire free"
+  "action.hireFree": "Hire free",
+  "action.buyN": "Buy {n} · {cost}",
+  "action.amountMax": "Max",
+  "toast.boughtN": "Bought {n} × {item}."
 }

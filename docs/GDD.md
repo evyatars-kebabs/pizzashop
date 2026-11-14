@@ -51,7 +51,7 @@ With no staff the player does everything by hand. With both staff the stand runs
 
 All values are in `data/economy.json`. Formulas below use these names.
 
-**Upgrade and staff cost.** To go from level L to L+1, pay `ceil(baseCost x growth^L)`.
+**Upgrade and staff cost.** To go from level L to L+1, pay `ceil(baseCost x growth^L)`. The Shop has a 1, 5, 10 or Max selector that buys that many levels at once, stopping at the top level or when the cash runs out.
 
 | Item | Base cost | Growth | Max | Effect |
 |---|---|---|---|---|

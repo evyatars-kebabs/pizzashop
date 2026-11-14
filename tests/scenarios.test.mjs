@@ -341,3 +341,45 @@ test('the first cashier is free during the tutorial, and costs money afterwards'
   t.cash = 0;
   assert.equal(A.hireStaff(t, 'cashier', cfg).reason, 'cash', 'normal price afterwards');
 });
+
+// ---- Buying several levels at once ----
+test('buy 1, 5, 10 or max levels: the price adds up, and it stops at the top level or when cash runs out', () => {
+  const def = cfg.economy.upgrades.oven;
+  const sum = (from, n) => { let t = 0; for (let i = 0; i < n; i++) t += Math.ceil(def.baseCost * Math.pow(def.growth, from + i)); return t; };
+  const s = newGame(cfg, NOW);
+  s.cash = 1e15;
+  const r5 = A.buyUpgrade(s, 'oven', cfg, 5);
+  assert.equal(r5.bought, 5);
+  assert.equal(r5.cost, sum(0, 5));
+  assert.equal(s.upgrades.oven, 5);
+  const r10 = A.buyUpgrade(s, 'oven', cfg, 10);
+  assert.equal(r10.bought, 10);
+  assert.equal(r10.cost, sum(5, 10));
+  const rmax = A.buyUpgrade(s, 'oven', cfg, 'max');
+  assert.equal(s.upgrades.oven, def.maxLevel, 'max goes to the top level');
+  assert.equal(rmax.bought, def.maxLevel - 15);
+  assert.equal(A.buyUpgrade(s, 'oven', cfg, 'max').reason, 'maxed');
+  // Cash runs out part-way: buy as many as the cash covers, never go negative.
+  const poor = newGame(cfg, NOW);
+  poor.cash = sum(0, 3) + 1;
+  const r = A.buyUpgrade(poor, 'oven', cfg, 'max');
+  assert.equal(r.bought, 3);
+  assert.ok(poor.cash >= 0 && poor.cash < def.baseCost * Math.pow(def.growth, 3));
+  // Nothing affordable: no purchase.
+  const broke = newGame(cfg, NOW);
+  broke.cash = 0;
+  assert.equal(A.buyUpgrade(broke, 'oven', cfg, 10).reason, 'cash');
+});
+
+test('hiring several staff at once; the first cashier is still free when the tutorial is running', () => {
+  const s = newGame(cfg, NOW);
+  s.cash = 0;
+  const r = A.hireStaff(s, 'cashier', cfg, 5);
+  assert.equal(r.ok, true);
+  assert.equal(s.staff.cashier, 1, 'only the free first cashier fits when there is no cash');
+  const t = newGame(cfg, NOW);
+  t.tutorialDone = true;
+  t.cash = 1e9;
+  A.hireStaff(t, 'cook', cfg, 10);
+  assert.equal(t.staff.cook, 10);
+});

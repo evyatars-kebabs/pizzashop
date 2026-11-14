@@ -1,5 +1,21 @@
 // Pure economy formulas. Everything here reads tunables from cfg.economy (data/economy.json).
 
+// How many levels a purchase covers, from `level` up: `amount` is 1, 5, 10 or 'max'.
+// Stops at the top level, or earlier when the cash runs out. costAt(lv) is the price of level lv.
+export function quoteLevels(def, level, amount, cash, costAt = (lv) => upgradeCost(def, lv)) {
+  const want = amount === 'max' ? Infinity : amount;
+  const cap = Math.min(want, def.maxLevel - level);
+  let total = 0;
+  let n = 0;
+  for (let i = 0; i < cap; i++) {
+    const c = costAt(level + i);
+    if (total + c > cash) break;
+    total += c;
+    n++;
+  }
+  return { n, cost: total };
+}
+
 export function upgradeCost(def, level) {
   return Math.ceil(def.baseCost * Math.pow(def.growth, level));
 }

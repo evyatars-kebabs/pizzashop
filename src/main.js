@@ -367,15 +367,15 @@ function openShop() {
   // The Shop key and button toggle the shop: a second press closes it.
   if (sheets.modalKind() === 'shop') return sheets.closeModal();
   sheets.openShop(S, cfg, {
-    buy: (key) => {
-      const r = buyUpgrade(S, key, cfg);
+    buy: (key, amount = 1) => {
+      const r = buyUpgrade(S, key, cfg, amount);
       if (!r.ok) return hud.toast(r.reason === 'cash' ? t('toast.notEnough') : t('toast.noPizza'));
       sfx.bell();
       if (key === 'decor') {
         const steps = cfg.economy.upgrades.decor.steps;
         hud.toast(t('toast.decorAdded', { item: t('decor.step.' + steps[Math.min(steps.length, S.upgrades.decor) - 1]) }));
       } else {
-        hud.toast(t('toast.bought', { item: t('upgrade.' + key + '.name') }));
+        hud.toast(r.bought > 1 ? t('toast.boughtN', { n: r.bought, item: t('upgrade.' + key + '.name') }) : t('toast.bought', { item: t('upgrade.' + key + '.name') }));
       }
       if (r.first) track('first_purchase', { item: key, cost: r.cost });
       save();
@@ -406,8 +406,8 @@ function openShop() {
       hud.toast(t('toast.recruited', { role: t('staff.' + role + '.name') }));
       save();
     },
-    hire: (role) => {
-      const r = hireStaff(S, role, cfg);
+    hire: (role, amount = 1) => {
+      const r = hireStaff(S, role, cfg, amount);
       if (!r.ok) return hud.toast(r.reason === 'cash' ? t('toast.notEnough') : t('toast.noPizza'));
       sfx.bell();
       hud.toast(t('toast.hired', { role: t('staff.' + role + '.name') }));

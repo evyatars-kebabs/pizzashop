@@ -1,6 +1,6 @@
 // Player and staff actions. All mutate the state object and return small result objects
 // so the UI and renderer can react. No DOM, no Three.js.
-import { derive, upgradeCost, payment, franchiseGain, franchiseReady, ovenSpeed, tierOf } from './economy.js';
+import { derive, upgradeCost, payment, franchiseGain, franchiseReady, ovenSpeed, tierOf, quoteLevels } from './economy.js';
 import { startEvent } from './events.js';
 import { activeModifiers } from './events.js';
 
@@ -165,7 +165,7 @@ export function autoLoad(state, p, cfg) {
   return bake(state, p, cfg.economy.stages.autoLoadQuality, cfg, 'auto');
 }
 
-export function buyUpgrade(state, key, cfg, now = Date.now()) {
+export function buyUpgrade(state, key, cfg, amount = 1, now = Date.now()) {
   const def = cfg.economy.upgrades[key];
   if (!def || def.enabled === false) return { ok: false, reason: 'locked' };
   if (def.requires && state.franchise.count < (def.requires.franchises || 0)) {
@@ -173,12 +173,12 @@ export function buyUpgrade(state, key, cfg, now = Date.now()) {
   }
   const level = state.upgrades[key];
   if (level >= def.maxLevel) return { ok: false, reason: 'maxed' };
-  const cost = upgradeCost(def, level);
-  if (state.cash < cost) return { ok: false, reason: 'cash', cost };
-  state.cash -= cost;
-  state.upgrades[key] = level + 1;
-  state.stats.upgradesBought++;
-  return { ok: true, type: 'bought', key, cost, first: firstPurchase(state) };
+  const q = quoteLevels(def, level, amount, state.cash);
+  if (q.n === 0) return { ok: false, reason: 'cash', cost: upgradeCost(def, level) };
+  state.cash -= q.cost;
+  state.upgrades[key] = level + q.n;
+  state.stats.upgradesBought += q.n;
+  return { ok: true, type: 'bought', key, cost: q.cost, bought: q.n, first: firstPurchase(state) };
 }
 
 // The first cashier is free during the tutorial (the first time a player learns the game).
@@ -186,16 +186,17 @@ export function firstCashierFree(state, role, level) {
   return role === 'cashier' && level === 0 && !state.tutorialDone;
 }
 
-export function hireStaff(state, role, cfg) {
+export function hireStaff(state, role, cfg, amount = 1) {
   const def = cfg.economy.staff[role];
   const level = state.staff[role];
   if (level >= def.maxLevel) return { ok: false, reason: 'maxed' };
-  const cost = firstCashierFree(state, role, level) ? 0 : upgradeCost(def, level);
-  if (state.cash < cost) return { ok: false, reason: 'cash', cost };
-  state.cash -= cost;
-  state.staff[role] = level + 1;
+  const costAt = (lv) => (firstCashierFree(state, role, lv) ? 0 : upgradeCost(def, lv));
+  const q = quoteLevels(def, level, amount, state.cash, costAt);
+  if (q.n === 0) return { ok: false, reason: 'cash', cost: costAt(level) };
+  state.cash -= q.cost;
+  state.staff[role] = level + q.n;
   if (level === 0) state.stats.staffHired++;
-  return { ok: true, type: 'hired', role, cost, first: firstPurchase(state) };
+  return { ok: true, type: 'hired', role, cost: q.cost, bought: q.n, first: firstPurchase(state) };
 }
 
 // Returns true only the first time (for analytics "first_purchase").

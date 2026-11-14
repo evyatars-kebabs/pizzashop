@@ -1,12 +1,17 @@
 // Modal sheets: shop, collect (offline earnings), franchise, settings, debug.
 import { t, money, moneyFull, duration } from '../core/i18n.js';
-import { upgradeCost, derive, franchiseGain, franchiseReady, franchiseRequirement, franchiseTraffic, ovenSpeed, runCash, tierIndex, tierOf } from '../game/economy.js';
+import { upgradeCost, derive, franchiseGain, franchiseReady, franchiseRequirement, franchiseTraffic, ovenSpeed, quoteLevels, runCash, tierIndex, tierOf } from '../game/economy.js';
 import { firstCashierFree } from '../game/actions.js';
 
 const $ = (id) => document.getElementById(id);
 let refreshFn = null;
 let openKind = null;
 let lastSig = '';
+// How many levels the Shop buys at once: 1, 5, 10 or 'max'.
+let buyAmount = 1;
+export function getBuyAmount() {
+  return buyAmount;
+}
 let onDismiss = null;
 
 export function isModalOpen() {
@@ -65,6 +70,27 @@ function button(label, onClick, { disabled = false, primary = false } = {}) {
   return b;
 }
 
+// The four amounts: 1, 5, 10 and the most that can be afforded.
+function amountSelector(rerender) {
+  const wrap = el('div', 'segmented amount');
+  for (const v of [1, 5, 10, 'max']) {
+    const b = el('button', 'seg' + (buyAmount === v ? ' on' : ''), v === 'max' ? t('action.amountMax') : '×' + v);
+    b.addEventListener('click', () => {
+      buyAmount = v;
+      rerender();
+    });
+    wrap.append(b);
+  }
+  return wrap;
+}
+
+// Button text for buying n levels for `cost`. With nothing affordable it quotes one level.
+function buyLabel(n, cost, oneCost) {
+  if (n === 0) return t('action.buy', { cost: moneyFull(oneCost) });
+  if (buyAmount === 1) return t('action.buy', { cost: moneyFull(cost) });
+  return t('action.buyN', { n, cost: moneyFull(cost) });
+}
+
 // Next-level values for upgrade descriptions.
 function upgradeVars(key, level, cfg) {
   const u = cfg.economy.upgrades[key];
@@ -87,13 +113,15 @@ export function openShop(state, cfg, actions) {
     const d = derive(state, cfg);
 
     body.append(el('h3', '', t('shop.upgrades')));
+    body.append(amountSelector(() => refreshFn()));
     const upgradeRow = (key, empire) => {
       const u = cfg.economy.upgrades[key];
       const level = state.upgrades[key];
       const maxed = level >= u.maxLevel;
       const needs = u.requires?.franchises || 0;
       const locked = empire && state.franchise.count < needs;
-      const cost = maxed ? 0 : upgradeCost(u, level);
+      const q = locked || maxed ? { n: 0, cost: 0 } : quoteLevels(u, level, buyAmount, state.cash);
+      const cost = q.cost || upgradeCost(u, level);
       const row = el('div', 'row' + (locked ? ' locked' : ''));
       const info = el('div', 'info');
       info.append(
@@ -103,8 +131,8 @@ export function openShop(state, cfg, actions) {
           : (maxed ? t('action.maxed') : t('upgrade.' + key + '.desc', upgradeVars(key, level, cfg)))),
         el('small', 'lvl', `${level}/${u.maxLevel}`),
       );
-      const label = locked ? t('action.locked') : (maxed ? t('action.maxed') : t('action.buy', { cost: moneyFull(cost) }));
-      row.append(info, button(label, () => actions.buy(key), { disabled: maxed || locked || state.cash < cost }));
+      const label = locked ? t('action.locked') : (maxed ? t('action.maxed') : buyLabel(q.n, q.cost, cost));
+      row.append(info, button(label, () => actions.buy(key, buyAmount), { disabled: maxed || locked || q.n === 0 }));
       return row;
     };
     for (const key of Object.keys(cfg.economy.upgrades)) {
@@ -146,7 +174,9 @@ export function openShop(state, cfg, actions) {
       const level = state.staff[role];
       const maxed = level >= def.maxLevel;
       const free = firstCashierFree(state, role, level);
-      const cost = maxed || free ? 0 : upgradeCost(def, level);
+      const costAt = (lv) => (firstCashierFree(state, role, lv) ? 0 : upgradeCost(def, lv));
+      const q = maxed ? { n: 0, cost: 0 } : quoteLevels(def, level, buyAmount, state.cash, costAt);
+      const cost = q.cost || costAt(level);
       const desc = role === 'cashier'
         ? t('staff.cashier.desc', { secs: d.cashierOrderSec.toFixed(1) })
         : t('staff.cook.desc', { speed: d.cookSpeed.toFixed(1) });
@@ -157,8 +187,8 @@ export function openShop(state, cfg, actions) {
         el('small', '', desc),
         el('small', 'lvl', level === 0 ? t('staff.notHired') : t('staff.level', { level })),
       );
-      const label = free ? t('action.hireFree') : level === 0 ? t('action.hire', { cost: moneyFull(cost) }) : t('action.upgrade', { cost: moneyFull(cost) });
-      row.append(info, button(maxed ? t('action.maxed') : label, () => actions.hire(role), { disabled: maxed || state.cash < cost, primary: level === 0 }));
+      const label = free && buyAmount === 1 ? t('action.hireFree') : buyLabel(q.n, q.cost, costAt(level));
+      row.append(info, button(maxed ? t('action.maxed') : label, () => actions.hire(role, buyAmount), { disabled: maxed || q.n === 0, primary: level === 0 }));
       body.append(row);
     }
 
