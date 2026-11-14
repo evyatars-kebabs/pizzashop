@@ -2,7 +2,7 @@
 // from this template, so adding a field only needs a default here (plus a migration if it
 // changes the meaning of existing data).
 export const DEFAULT_STATE_PARTIAL = {
-  schemaVersion: 2,
+  schemaVersion: 3,
   rngSeed: 1234567,
   cash: 0,
   lifetimeCash: 0,
@@ -10,10 +10,16 @@ export const DEFAULT_STATE_PARTIAL = {
   dayClock: 0.3,
   savedAt: 0,
   createdAt: 0,
-  location: 'corner',
-  // Locations unlocked so far. Carries over franchises.
-  unlockedLocations: { corner: true, sideStreet: false },
-  upgrades: { oven: 0, counter: 0, cheese: 0, decor: 0, neon: 0, scooter: 0, marketing: 0, pizzaSchool: 0, megaOven: 0 },
+  // The city you are in. Every franchise starts back in the first city.
+  city: 'riccione',
+  // Cities reached in this franchise run (the map shows these).
+  cityVisited: ['riccione'],
+  // The street behind the stand (the city's background layout id).
+  location: 'cityRiccione',
+  // Decorations installed in the current city. Moving to a city removes them; the decor
+  // upgrade keeps its level, so they can be put back for free (Map > Decorate again).
+  decorShown: 0,
+  upgrades: { oven: 0, counter: 0, cheese: 0, decor: 0, neon: 0, scooter: 0, marketing: 0, pizzaSchool: 0, megaOven: 0, terrace: 0, delivery: 0, trattoria: 0, rooftop: 0 },
   staff: { cashier: 0, cook: 0 },
   // Extra employees recruited after franchising (on top of the first hire of each role).
   staffing: { cashier: 0, cook: 0 },

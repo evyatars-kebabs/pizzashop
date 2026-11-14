@@ -65,9 +65,9 @@ styles.css               Mobile-first styles. Colours are tokens on :root.
 data/
   economy.json           ALL tunable values: costs, rates, timers, multipliers, events, tutorial, goals
   strings/en.json        ALL player-facing text. Keys only in code.
-  locations/index.json   Which location files to load
-  locations/corner.json  Location layout: ground, props, stations, camera, queue, economy
-  locations/sideStreet.json  Second street: unlock, traffic and demand multipliers, layout
+  locations/index.json   Which city street layouts to load
+  locations/cityRiccione.json (and the other city*.json)  Street behind the stand for each city: buildings, props, camera, queue
+  economy.json "cities"  The city list: order, franchises and cost to reach, income multiplier, map position, decorations, upgrade
 docs/
   GDD.md                 Game design document: loop, economy formulas, progression, milestones
   ASSETS.md              Placeholder art and audio list
@@ -131,7 +131,7 @@ Change `data/economy.json`, then reload. Some useful knobs:
 - **An event:** add it under `events`, then add `event.<id>.name` and `.desc`. Modifiers (`spawnMult`, `patienceDrainMult`, `cashMult`, `styleDemand`) apply automatically. Add visuals in `src/render/fx.js` if it needs them.
 - **An Empire upgrade:** add an upgrade with `"group": "empire"` and a `"requires": {"franchises": N}`, give its effect a field in `src/game/economy.js` (`derive`), and add its name, description and any label cases to `src/ui/sheets.js` and `data/strings/en.json`.
 - **A decoration:** add an id to `upgrades.decor.steps`, a `decor.step.<id>` string, and a builder with that id in `DECOR` (`src/render/stand.js`).
-- **A location:** copy `data/locations/corner.json` to `data/locations/<id>.json` with a new `id`, change the props, stations and `economy` (`trafficMult`, `styleDemand`), set its `unlock`, add the id to `data/locations/index.json`, and add `location.<id>.name` and `.desc` strings. It appears in the Shop's Locations list automatically.
+- **A city:** add an entry to `cities.list` in `data/economy.json` (`order`, `requiresFranchises`, `relocationCost`, `multiplier`, `background`, `map`, `decorSteps`, and an optional `upgrade`), copy a `data/locations/city*.json` street with a new `id`, add it to `data/locations/index.json` and `src/bundle-data.js`, add `city.<id>.name` and `.desc` strings, and add its decorations to `src/render/stand.js`. The Map sheet picks it up automatically.
 - **A save-format change:** bump `SAVE_VERSION` in `src/core/save.js`, add a migration for the old version, and add any new field to `DEFAULT_STATE_PARTIAL` in `src/game/state.js`.
 
 ## Analytics and monetization hooks

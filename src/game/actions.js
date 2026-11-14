@@ -1,6 +1,6 @@
 // Player and staff actions. All mutate the state object and return small result objects
 // so the UI and renderer can react. No DOM, no Three.js.
-import { derive, upgradeCost, payment, franchiseGain, franchiseReady, ovenSpeed, tierOf, quoteLevels } from './economy.js';
+import { derive, upgradeCost, payment, franchiseGain, franchiseReady, ovenSpeed, tierOf, quoteLevels, cityById, nextCity, decorStepsFor } from './economy.js';
 import { startEvent } from './events.js';
 import { activeModifiers } from './events.js';
 
@@ -171,12 +171,18 @@ export function buyUpgrade(state, key, cfg, amount = 1, now = Date.now()) {
   if (def.requires && state.franchise.count < (def.requires.franchises || 0)) {
     return { ok: false, reason: 'needsFranchise', need: def.requires.franchises };
   }
+  // City upgrades appear once the city has been reached in this franchise run.
+  if (def.requires?.city && !(state.cityVisited || []).includes(def.requires.city)) {
+    return { ok: false, reason: 'needsCity', city: def.requires.city };
+  }
   const level = state.upgrades[key];
   if (level >= def.maxLevel) return { ok: false, reason: 'maxed' };
   const q = quoteLevels(def, level, amount, state.cash);
   if (q.n === 0) return { ok: false, reason: 'cash', cost: upgradeCost(def, level) };
   state.cash -= q.cost;
   state.upgrades[key] = level + q.n;
+  // Buying decor also puts the new decoration up in the current city.
+  if (key === 'decor') state.decorShown = (state.decorShown || 0) + q.n;
   state.stats.upgradesBought += q.n;
   return { ok: true, type: 'bought', key, cost: q.cost, bought: q.n, first: firstPurchase(state) };
 }
@@ -230,7 +236,6 @@ export function canFranchise(state, cfg) {
 export function franchise(state, cfg, newGameFn, now = Date.now()) {
   const gain = franchiseGain(state, cfg);
   const fresh = newGameFn(cfg, now);
-  fresh.unlockedLocations = { ...state.unlockedLocations };
   fresh.franchise = {
     points: state.franchise.points + gain,
     count: state.franchise.count + 1,
@@ -260,16 +265,42 @@ export function unlockedStyles(state, cfg) {
 }
 
 // Moves the stand to another unlocked location. The queue and cooking pizzas do not come along.
-export function moveLocation(state, id, cfg) {
-  if (!cfg.locations?.[id]) return { ok: false, reason: 'unknown' };
-  if (!state.unlockedLocations[id]) return { ok: false, reason: 'locked' };
-  if (state.location === id) return { ok: false, reason: 'current' };
-  state.location = id;
+// Travel to a city. The next city costs its relocation fee and needs its franchises; cities
+// already reached are free to revisit. Shops, upgrades and staff come along. Decorations are
+// taken down (the decor level stays, so they can be put back for free with redecorate).
+export function moveCity(state, cfg, id) {
+  const city = cityById(cfg, id);
+  if (!city) return { ok: false, reason: 'unknown' };
+  if (state.city === id) return { ok: false, reason: 'current' };
+  const first = !(state.cityVisited || []).includes(id);
+  let cost = 0;
+  if (first) {
+    const next = nextCity(state, cfg);
+    if (!next || next.id !== id) return { ok: false, reason: 'order', next: next?.id || null };
+    if (state.franchise.count < city.requiresFranchises) return { ok: false, reason: 'needsFranchise', need: city.requiresFranchises };
+    if (state.cash < city.relocationCost) return { ok: false, reason: 'cash', cost: city.relocationCost };
+    cost = city.relocationCost;
+    state.cash -= cost;
+    state.cityVisited = [...(state.cityVisited || []), id];
+  }
+  state.city = id;
+  state.location = city.background;
+  state.decorShown = 0;
   state.customers = [];
   state.pizzas = [];
   state.cashierTimer = 0;
   state.spawnTimer = cfg.economy.customers.spawnBaseSeconds;
-  return { ok: true, type: 'moved', location: id };
+  return { ok: true, type: 'moved', city: id, cost, first };
+}
+
+// Puts back every decoration the decor upgrade has paid for in this city. Free.
+export function redecorate(state, cfg) {
+  const steps = decorStepsFor(state, cfg).length;
+  const target = Math.min(state.upgrades.decor, steps);
+  const n = target - (state.decorShown || 0);
+  if (n <= 0) return { ok: false, reason: 'none' };
+  state.decorShown = target;
+  return { ok: true, type: 'decorated', n };
 }
 
 // The happy-hour mini game can be played when its cooldown has passed and no double is running.

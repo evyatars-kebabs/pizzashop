@@ -7,9 +7,9 @@ import { track, startSession, endSession } from './core/analytics.js';
 import { sfx, setSoundEnabled } from './core/audio.js';
 import { newGame } from './game/state.js';
 import { tick } from './game/sim.js';
-import { derive, nextGoal, franchiseGain, franchiseRequirement, runCash, tierIndex } from './game/economy.js';
+import { derive, nextGoal, franchiseGain, franchiseRequirement, runCash, tierIndex, cityOf, decorStepsFor, mapUnlocked } from './game/economy.js';
 import {
-  takeOrder, applyManual, buyUpgrade, hireStaff, recruitStaff, openShop as openAnotherShop, franchise, canFranchise, findCustomer, moveLocation, bonusAvailable, completeBonus,
+  takeOrder, applyManual, buyUpgrade, hireStaff, recruitStaff, openShop as openAnotherShop, franchise, canFranchise, findCustomer, moveCity, redecorate, bonusAvailable, completeBonus,
 } from './game/actions.js';
 import { offlineReport, applyOffline } from './game/offline.js';
 import { startEvent } from './game/events.js';
@@ -56,7 +56,7 @@ async function boot() {
   const saved = readSave();
   const now = Date.now();
   S = saved || newGame(cfg, now);
-  if (!cfg.locations[S.location]) S.location = 'corner';
+  if (!cfg.locations[S.location]) S.location = cityOf(S, cfg).background;
 
   layout = computeLayout();
   env = createScene($('scene'), layout);
@@ -100,13 +100,13 @@ function currentLoc() {
 function computeLayout() {
   const idx = tierIndex(S, cfg);
   const l = layoutFor(currentLoc(), cfg.economy.prestige.tiers[idx], idx);
-  l.decorSteps = cfg.economy.upgrades.decor.steps;
+  l.decorSteps = decorStepsFor(S, cfg);
   return l;
 }
 
 // The scenery is rebuilt whenever one of these changes.
 function sceneKey() {
-  return `${S.location}|${S.shops}|${tierIndex(S, cfg)}|${S.upgrades.decor}|${S.upgrades.marketing}|${S.upgrades.pizzaSchool}|${S.upgrades.megaOven}`;
+  return `${S.location}|${S.shops}|${tierIndex(S, cfg)}|${S.decorShown}|${S.upgrades.marketing}|${S.upgrades.pizzaSchool}|${S.upgrades.megaOven}`;
 }
 
 // Builds the street and the stand. Replaces whatever was there.
@@ -124,7 +124,7 @@ function buildScenery(snap = true) {
   sceneryGroup = new THREE.Group();
   sceneryGroup.add(buildLocation(layout, env));
   stand = buildStand(layout, env, {
-    decor: S.upgrades.decor,
+    decor: S.decorShown,
     empire: { marketing: S.upgrades.marketing, pizzaSchool: S.upgrades.pizzaSchool, megaOven: S.upgrades.megaOven },
   });
   sceneryGroup.add(stand);
@@ -137,12 +137,27 @@ function buildScenery(snap = true) {
 }
 
 function moveTo(id) {
-  const r = moveLocation(S, id, cfg);
-  if (!r.ok) return hud.toast(t('toast.noPizza'));
+  const r = moveCity(S, cfg, id);
+  if (!r.ok) {
+    if (r.reason === 'cash') return hud.toast(t('toast.notEnough'));
+    if (r.reason === 'needsFranchise') return hud.toast(t('map.needFranchises', { n: r.need }));
+    if (r.reason === 'order') return hud.toast(t('map.notNext'));
+    return;
+  }
   buildScenery();
   sfx.whoosh();
-  hud.toast(t('toast.locationMoved', { location: t(currentLoc().nameKey) }));
-  track('location_move', { to: id });
+  hud.toast(t('toast.cityMoved', { city: t('city.' + r.city + '.name') }));
+  track(r.first ? 'city_reached' : 'city_visit', { city: r.city, cost: r.cost });
+  save();
+}
+
+// Puts the decorations back for free after a move.
+function redecorateHere() {
+  const r = redecorate(S, cfg);
+  if (!r.ok) return hud.toast(t('map.decorFull'));
+  buildScenery(false);
+  sfx.bell();
+  hud.toast(t('toast.decorBack'));
   save();
 }
 
@@ -246,11 +261,6 @@ function handleEvent(e) {
       break;
     case 'style_unlocked':
       hud.toast(t('toast.unlocked', { style: t('style.' + e.style) }));
-      break;
-    case 'location_unlocked':
-      sfx.bell();
-      hud.toast(t('toast.locationUnlocked', { location: t(cfg.locations[e.location].nameKey) }));
-      track('location_unlocked', { location: e.location });
       break;
     case 'bonus_ready':
       sfx.bell();
@@ -372,8 +382,8 @@ function openShop() {
       if (!r.ok) return hud.toast(r.reason === 'cash' ? t('toast.notEnough') : t('toast.noPizza'));
       sfx.bell();
       if (key === 'decor') {
-        const steps = cfg.economy.upgrades.decor.steps;
-        hud.toast(t('toast.decorAdded', { item: t('decor.step.' + steps[Math.min(steps.length, S.upgrades.decor) - 1]) }));
+        const steps = decorStepsFor(S, cfg);
+        hud.toast(t('toast.decorAdded', { item: t('decor.step.' + steps[Math.max(0, Math.min(steps.length, S.decorShown) - 1)]) }));
       } else {
         hud.toast(r.bought > 1 ? t('toast.boughtN', { n: r.bought, item: t('upgrade.' + key + '.name') }) : t('toast.bought', { item: t('upgrade.' + key + '.name') }));
       }
@@ -415,7 +425,9 @@ function openShop() {
       save();
     },
     franchise: () => sheets.openFranchise(S, cfg, { confirmFranchise }),
+    openMap: () => sheets.openMap(S, cfg, mapActions()),
     move: (id) => moveTo(id),
+    redecorate: () => redecorateHere(),
     stub: (name) => {
       track('monetization_stub_tap', { name });
       hud.toast(t('toast.comingSoon'));
@@ -435,6 +447,14 @@ function confirmFranchise() {
   hud.toast(t('toast.franchised', { mult: (1 + cfg.economy.prestige.bonusPerPoint * S.franchise.points).toFixed(1) }));
   if (tierAfter !== tierBefore) hud.toast(t('toast.tierUp', { tier: t('tier.' + cfg.economy.prestige.tiers[tierAfter].id) }));
   save();
+}
+
+// Actions the map sheet can take: travel to a city, or put the decorations back.
+function mapActions() {
+  return {
+    move: (id) => moveTo(id),
+    redecorate: () => redecorateHere(),
+  };
 }
 
 function settingsActions() {
@@ -564,6 +584,7 @@ function wireUI() {
   wireKeyboard();
   $('btnBonus').addEventListener('click', openBonus);
   $('btnSettings').addEventListener('click', () => sheets.openSettings(S, settingsActions()));
+  $('btnMap').addEventListener('click', () => sheets.openMap(S, cfg, mapActions()));
   $('btnDebug').addEventListener('click', () => sheets.openDebug(debugActions()));
   $('modalClose').addEventListener('click', () => sheets.closeModal());
   $('modal').addEventListener('pointerdown', (e) => { if (e.target.id === 'modal') sheets.closeModal(); });
@@ -698,7 +719,8 @@ function updateHUD() {
   }
   hud.setEvents(S.events.active.map((a) => ({ id: a.id, left: a.endsAt - S.gameTime })));
   $('btnBonus').classList.toggle('hidden', !S.tutorialDone || !bonusAvailable(S, cfg));
-  const sig = `${S.location}|${JSON.stringify(S.unlockedLocations)}|${Math.floor(S.cash)}|${JSON.stringify(S.upgrades)}|${JSON.stringify(S.staff)}|${JSON.stringify(S.staffing)}|${S.franchise.points}|${S.franchise.count}|${canFranchise(S, cfg)}|${Math.floor(runCash(S) / 500)}`;
+  $('btnMap').classList.toggle('hidden', !mapUnlocked(S, cfg));
+  const sig = `${S.location}|${S.city}|${(S.cityVisited || []).join(",")}|${S.decorShown}|${Math.floor(S.cash)}|${JSON.stringify(S.upgrades)}|${JSON.stringify(S.staff)}|${JSON.stringify(S.staffing)}|${S.franchise.points}|${S.franchise.count}|${canFranchise(S, cfg)}|${Math.floor(runCash(S) / 500)}`;
   if (sig !== sigLast) {
     sigLast = sig;
     sheets.refreshModal(sig);

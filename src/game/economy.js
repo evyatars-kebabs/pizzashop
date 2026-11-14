@@ -49,6 +49,38 @@ export function locationEconomy(state, cfg) {
   return loc?.economy ?? { trafficMult: 1, styleDemand: {} };
 }
 
+// Cities in travel order: the first is where every franchise starts.
+export function cityList(cfg) {
+  return [...cfg.economy.cities.list].sort((a, b) => a.order - b.order);
+}
+
+export function cityById(cfg, id) {
+  return cityList(cfg).find((c) => c.id === id);
+}
+
+// The city the stand is in. Its multiplier scales all income.
+export function cityOf(state, cfg) {
+  return cityById(cfg, state.city) || cityList(cfg)[0];
+}
+
+// The decorations this city offers, then the shared ones. The decor upgrade's level says
+// how many are installed (state.decorShown), and moving cities takes them down again.
+export function decorStepsFor(state, cfg) {
+  return [...(cityOf(state, cfg).decorSteps || []), ...cfg.economy.upgrades.decor.steps];
+}
+
+// The next city to travel to: the first one after the furthest city reached.
+export function nextCity(state, cfg) {
+  const list = cityList(cfg);
+  const reached = Math.max(0, ...list.filter((c) => (state.cityVisited || []).includes(c.id)).map((c) => c.order));
+  return list.find((c) => c.order === reached + 1) || null;
+}
+
+// Lifetime cash that opens the map (it stays open after that).
+export function mapUnlocked(state, cfg) {
+  return state.lifetimeCash >= (cfg.economy.cities.mapUnlockLifetime || 0);
+}
+
 // Stand tier from the number of franchises: cart, big stand, pizza shop.
 export function tierIndex(state, cfg) {
   const tiers = cfg.economy.prestige.tiers;
@@ -67,10 +99,16 @@ export function runCash(state) {
 }
 
 // What the current stand must earn before it can franchise. Grows with every franchise.
+export function isEarlyFranchising(state, cfg) {
+  return state.franchise.count < (cfg.economy.earlyFranchises?.count ?? 0);
+}
+
 export function franchiseRequirement(state, cfg) {
   const p = cfg.economy.prestige;
   // Grows steadily: about 20k, 49k, 83k, 121k, 452k at 10 franchises, 1.7M at 30.
-  return Math.round(p.milestoneLifetimeCash * Math.pow(state.franchise.count + 1, p.requirementExponent ?? 1.3));
+  const base = p.milestoneLifetimeCash * Math.pow(state.franchise.count + 1, p.requirementExponent ?? 1.3);
+  const early = isEarlyFranchising(state, cfg) ? (cfg.economy.earlyFranchises.requirementMult ?? 1) : 1;
+  return Math.round(base * early);
 }
 
 export function franchiseReady(state, cfg) {
@@ -115,20 +153,29 @@ export function derive(state, cfg) {
   const cashierLvl = state.staff.cashier;
   const cookLvl = state.staff.cook;
 
-  const traffic = up.decor.trafficPerLevel * lvl.decor + up.neon.trafficPerLevel * lvl.neon;
+  const city = cityOf(state, cfg);
+  const cityUp = (key, per) => (up[key] ? per(up[key]) * (lvl[key] || 0) : 0);
+  const traffic = up.decor.trafficPerLevel * lvl.decor + up.neon.trafficPerLevel * lvl.neon
+    + cityUp('terrace', (u) => u.trafficPerLevel) + cityUp('rooftop', (u) => u.trafficPerLevel);
   const locEcon = locationEconomy(state, cfg);
   const frTraffic = franchiseTraffic(state, cfg);
   const bakeSpeed = ovenSpeed(state, cfg);
   const empireTraffic = up.marketing ? 1 + up.marketing.trafficMultPerLevel * (lvl.marketing || 0) : 1;
-  const empirePay = up.pizzaSchool ? 1 + up.pizzaSchool.payMultPerLevel * (lvl.pizzaSchool || 0) : 1;
+  // Empire and city bonuses: pizza school, delivery, and the city's own multiplier.
+  const empirePay = (up.pizzaSchool ? 1 + up.pizzaSchool.payMultPerLevel * (lvl.pizzaSchool || 0) : 1)
+    * (1 + cityUp('delivery', (u) => u.payMultPerLevel)) * city.multiplier;
   const shopM = shopMultiplier(state, cfg);
   const beginner = !state.tutorialDone;
   const beginnerSpawn = beginner ? (e.beginner?.spawnMult || 1) : 1;
-  const beginnerPay = beginner ? (e.beginner?.payMult || 1) : 1;
-  const spawnBase = e.customers.spawnBaseSeconds * beginnerSpawn / ((1 + traffic) * locEcon.trafficMult * frTraffic * empireTraffic * shopM);
+  const early = isEarlyFranchising(state, cfg) ? (e.earlyFranchises || {}) : null;
+  const earlyPay = early?.payMult || 1;
+  const earlyCustomers = early?.customerMult || 1;
+  const beginnerPay = (beginner ? (e.beginner?.payMult || 1) : 1) * earlyPay;
+  const spawnBase = e.customers.spawnBaseSeconds * beginnerSpawn / ((1 + traffic) * locEcon.trafficMult * frTraffic * empireTraffic * shopM * earlyCustomers);
   const tier = tierOf(state, cfg);
   const ovenSlots = (up.oven.ovenSlotsBase + up.oven.ovenSlotsPerLevel * lvl.oven + tier.ovenSlotsBonus
-    + (up.megaOven ? up.megaOven.ovenSlotsPerLevel * (lvl.megaOven || 0) : 0)) * shopM;
+    + (up.megaOven ? up.megaOven.ovenSlotsPerLevel * (lvl.megaOven || 0) : 0)
+    + cityUp('trattoria', (u) => u.ovenSlotsPerLevel)) * shopM;
   // The queue is capped (queueHardCap) so a huge queue can never overload the game.
   const maxQueue = Math.min(
     (up.counter.maxQueueBase + up.counter.maxQueuePerLevel * lvl.counter + tier.maxQueueBonus) * shopM,
@@ -161,7 +208,7 @@ export function derive(state, cfg) {
   const offlineEfficiency = Math.min(1, e.time.offlineBaseEfficiency + e.time.offlineEfficiencyPerStaffRole * staffRoles + (e.recruit?.offlineEfficiencyPerRecruit || 0) * recruits);
 
   return {
-    traffic, locEcon, tier, frTraffic, empireTraffic, empirePay, beginnerPay, bakeSpeed, spawnBase, ovenSlots, maxQueue, cheeseMult, prestigeMult: pMult,
+    traffic, locEcon, tier, frTraffic, empireTraffic, empirePay, cityMult: city.multiplier, beginnerPay, bakeSpeed, spawnBase, ovenSlots, maxQueue, cheeseMult, prestigeMult: pMult,
     cashierOrderSec, cashierLvl, cashierCount, cookSpeed, cookLvl, cookCount, idleRate, offlineEfficiency,
   };
 }

@@ -171,58 +171,137 @@ test('tutorial advances on stats and completes', () => {
 test('save migration fills in missing fields from the template', () => {
   const old = { schemaVersion: 0, cash: 12 };
   const m = migrate(old);
-  assert.equal(m.schemaVersion, 2);
+  assert.equal(m.schemaVersion, 3);
   assert.equal(m.cash, 12);
   assert.deepEqual(Object.keys(m.stats).sort(), Object.keys(DEFAULT_STATE_PARTIAL.stats).sort());
 });
 
-// ---- Locations ----
-const locCfg = {
+// ---- Cities ----
+const CITY_IDS = ['riccione', 'ravenna', 'florence', 'milan', 'rome'];
+const cityCfg = {
   economy: cfg.economy,
-  locations: {
-    corner: load('data/locations/corner.json'),
-    sideStreet: load('data/locations/sideStreet.json'),
-  },
+  locations: Object.fromEntries(['cityRiccione', 'cityRavenna', 'cityFlorence', 'cityMilan', 'cityRome'].map((id) => [id, load('data/locations/' + id + '.json')])),
 };
-const { moveLocation } = await import('../src/game/actions.js');
+const { moveCity, redecorate } = await import('../src/game/actions.js');
+const { mapUnlocked, cityOf, nextCity, decorStepsFor } = await import('../src/game/economy.js');
 
-test('the side street has more traffic than the corner', () => {
-  const corner = newGame(locCfg, NOW);
-  const side = newGame(locCfg, NOW);
-  side.location = 'sideStreet';
-  const a = derive(corner, locCfg).spawnBase;
-  const b = derive(side, locCfg).spawnBase;
-  assert.ok(b < a, 'side street spawns more often');
-  assert.ok(Math.abs(a / b - 1.35) < 1e-9, 'by the configured trafficMult');
+// A save that has reached the given cities, with cash to spare.
+function inCity(id, reached = [id], franchises = 0) {
+  const s = newGame(cityCfg, NOW);
+  s.city = id;
+  s.location = 'city' + id[0].toUpperCase() + id.slice(1);
+  s.cityVisited = reached;
+  s.franchise.count = franchises;
+  s.cash = 1e12;
+  return s;
+}
+
+test('each city multiplies income by its multiplier', () => {
+  const base = derive(inCity('riccione'), cityCfg).empirePay;
+  assert.equal(derive(inCity('ravenna', ['riccione', 'ravenna']), cityCfg).empirePay / base, 1.5);
+  assert.equal(derive(inCity('rome', CITY_IDS), cityCfg).empirePay / base, 7);
 });
 
-test('a location unlocks at its lifetime cash threshold and emits one event', () => {
-  const s = newGame(locCfg, NOW);
-  s.lifetimeCash = 3000;
-  const run = () => { const out = []; tick(s, 0.25, locCfg, out); return out.filter((e) => e.type === 'location_unlocked'); };
-  assert.equal(run().length, 1);
-  assert.equal(s.unlockedLocations.sideStreet, true);
-  assert.equal(run().length, 0);
+test('the next city costs its relocation fee and needs its franchises; order is enforced', () => {
+  const s = inCity('riccione');
+  assert.equal(nextCity(s, cityCfg).id, 'ravenna');
+  s.cash = 0;
+  assert.equal(moveCity(s, cityCfg, 'ravenna').reason, 'needsFranchise');
+  s.franchise.count = 1;
+  assert.equal(moveCity(s, cityCfg, 'ravenna').reason, 'cash');
+  assert.equal(moveCity(s, cityCfg, 'florence').reason, 'order');
+  s.cash = 1e12;
+  const before = s.cash;
+  const r = moveCity(s, cityCfg, 'ravenna');
+  assert.equal(r.ok, true);
+  assert.equal(r.first, true);
+  assert.equal(before - s.cash, cityCfg.economy.cities.list.find((c) => c.id === 'ravenna').relocationCost);
+  assert.equal(s.city, 'ravenna');
+  assert.equal(s.location, 'cityRavenna');
+  assert.deepEqual(s.cityVisited, ['riccione', 'ravenna']);
 });
 
-test('moving to a locked location fails; moving to an unlocked one clears the queue', () => {
-  const s = newGame(locCfg, NOW);
+test('a city cannot be skipped, and reached cities are free to revisit', () => {
+  const s = inCity('riccione', ['riccione'], 9);
+  assert.equal(moveCity(s, cityCfg, 'florence').reason, 'order');
+  moveCity(s, cityCfg, 'ravenna');
+  const cash = s.cash;
+  assert.equal(moveCity(s, cityCfg, 'riccione').cost, 0);
+  assert.equal(s.cash, cash);
+  assert.equal(moveCity(s, cityCfg, 'riccione').reason, 'current');
+});
+
+test('moving takes the decorations down but keeps the decor level; redecorate puts them back for free', () => {
+  const s = inCity('riccione', ['riccione'], 1);
+  s.upgrades.decor = 4;
+  s.decorShown = 4;
+  moveCity(s, cityCfg, 'ravenna');
+  assert.equal(s.decorShown, 0);
+  assert.equal(s.upgrades.decor, 4);
+  const cash = s.cash;
+  const r = redecorate(s, cityCfg);
+  assert.equal(r.ok, true);
+  assert.equal(r.n, 4);
+  assert.equal(s.decorShown, 4);
+  assert.equal(s.cash, cash);
+  assert.equal(redecorate(s, cityCfg).reason, 'none');
+});
+
+test('moving keeps the shops, upgrades and staff, and clears the queue', () => {
+  const s = inCity('riccione', ['riccione'], 1);
+  s.shops = 2;
+  s.upgrades.oven = 5;
+  s.staff.cashier = 2;
   s.customers.push({ id: 7, type: 'hungry', style: 'margherita', topping: 'basil', nameIdx: 1, patience: 50, maxPatience: 90, state: 'waiting' });
-  assert.equal(moveLocation(s, 'sideStreet', locCfg).reason, 'locked');
-  s.unlockedLocations.sideStreet = true;
-  assert.equal(moveLocation(s, 'sideStreet', locCfg).ok, true);
-  assert.equal(s.location, 'sideStreet');
+  moveCity(s, cityCfg, 'ravenna');
+  assert.equal(s.shops, 2);
+  assert.equal(s.upgrades.oven, 5);
+  assert.equal(s.staff.cashier, 2);
   assert.equal(s.customers.length, 0);
 });
 
-test('franchise keeps unlocked locations but sends the stand back to the corner', () => {
-  const s = newGame(locCfg, NOW);
-  s.unlockedLocations.sideStreet = true;
-  s.location = 'sideStreet';
-  s.lifetimeCash = 25000;
-  const { state: f } = franchise(s, locCfg, newGame, NOW);
-  assert.equal(f.location, 'corner');
-  assert.equal(f.unlockedLocations.sideStreet, true);
+test('a city upgrade needs the city to be reached in this run, then works like the others', () => {
+  const s = inCity('riccione', ['riccione'], 1);
+  assert.equal(buyUpgrade(s, 'terrace', cityCfg).reason, 'needsCity');
+  moveCity(s, cityCfg, 'ravenna');
+  assert.equal(buyUpgrade(s, 'terrace', cityCfg).ok, true);
+  assert.equal(s.upgrades.terrace, 1);
+  assert.ok(derive(s, cityCfg).traffic > derive(inCity('ravenna', ['riccione', 'ravenna'], 1), cityCfg).traffic);
+});
+
+test('a franchise sends the stand back to Riccione and starts the map run again', () => {
+  const s = inCity('milan', CITY_IDS.slice(0, 4), 4);
+  s.lifetimeCash = 1e9;
+  const { state: f } = franchise(s, cityCfg, newGame, NOW);
+  assert.equal(f.city, 'riccione');
+  assert.equal(f.location, 'cityRiccione');
+  assert.deepEqual(f.cityVisited, ['riccione']);
+  assert.equal(f.decorShown, 0);
+});
+
+test('the map opens once lifetime cash reaches the threshold', () => {
+  const s = inCity('riccione');
+  s.lifetimeCash = cityCfg.economy.cities.mapUnlockLifetime - 1;
+  assert.equal(mapUnlocked(s, cityCfg), false);
+  s.lifetimeCash = cityCfg.economy.cities.mapUnlockLifetime;
+  assert.equal(mapUnlocked(s, cityCfg), true);
+});
+
+test('a save from before cities starts in Riccione with its decorations still up', () => {
+  const old = { schemaVersion: 2, cash: 5, location: 'sideStreet', upgrades: { decor: 3 }, unlockedLocations: { corner: true } };
+  const m = migrate(old);
+  assert.equal(m.schemaVersion, 3);
+  assert.equal(m.location, 'cityRiccione');
+  assert.equal(m.city, 'riccione');
+  assert.deepEqual(m.cityVisited, ['riccione']);
+  assert.equal(m.decorShown, 3);
+  assert.equal(m.unlockedLocations, undefined);
+});
+
+test('each city shows its own decorations before the shared ones', () => {
+  const s = inCity('florence', CITY_IDS.slice(0, 3));
+  assert.deepEqual(decorStepsFor(s, cityCfg).slice(0, 3), ['lilies', 'banners', 'statuette']);
+  assert.equal(cityOf(s, cityCfg).id, 'florence');
 });
 
 // ---- Franchise tiers ----
@@ -232,7 +311,8 @@ const { tierOf, franchiseRequirement, runCash } = economyMod;
 test('every franchise has to be earned again, and each one needs more', () => {
   const s = newGame(cfg, NOW);
   const need0 = franchiseRequirement(s, cfg);
-  assert.equal(need0, cfg.economy.prestige.milestoneLifetimeCash);
+  // The first franchises are boosted: half the usual amount.
+  assert.equal(need0, cfg.economy.prestige.milestoneLifetimeCash * cfg.economy.earlyFranchises.requirementMult);
   assert.equal(canFranchise(s, cfg), false);
   s.lifetimeCash = need0;
   const ev = runFor(s, 1);
@@ -259,7 +339,7 @@ test('every franchise has to be earned again, and each one needs more', () => {
 test('an old save that already franchised does not get a free franchise', () => {
   const old = { schemaVersion: 1, lifetimeCash: 90000, cash: 10, franchise: { points: 3, count: 2, unlocked: true } };
   const m = migrate(old);
-  assert.equal(m.schemaVersion, 2);
+  assert.equal(m.schemaVersion, 3);
   assert.equal(m.franchise.lifetimeAtLast, 90000);
   assert.equal(canFranchise(m, cfg), false);
   assert.equal(m.franchise.unlocked, undefined);
@@ -285,15 +365,17 @@ test('each franchise brings more customers, with no upper limit', () => {
   const { franchiseTraffic } = economyMod;
   const s = newGame(cfg, NOW);
   s.tutorialDone = true;
+  // The early boost ends at the third franchise, so compare from there on.
+  s.franchise.count = 3;
   const base = derive(s, cfg).spawnBase;
   let last = base;
-  for (let n = 1; n <= 4; n++) {
+  for (let n = 4; n <= 7; n++) {
     s.franchise.count = n;
     const now = derive(s, cfg).spawnBase;
     assert.ok(now < last, 'customers arrive more often after franchise ' + n);
     last = now;
   }
-  assert.ok(Math.abs(base / last - (1 + cfg.economy.prestige.trafficPerFranchise * 4)) < 1e-9);
+  assert.ok(Math.abs(base / last - (1 + cfg.economy.prestige.trafficPerFranchise * 7) / (1 + cfg.economy.prestige.trafficPerFranchise * 3)) < 1e-9);
   s.franchise.count = 999;
   assert.equal(franchiseTraffic(s, cfg), 1 + cfg.economy.prestige.trafficPerFranchise * 999);
   s.franchise.count = 1000;
@@ -314,7 +396,8 @@ test('each franchise brings more customers, with no upper limit', () => {
     g.upgrades.counter = 5;
     return runFor(g, 600).filter((e) => e.type === 'arrived' || e.type === 'turned_away').length;
   };
-  assert.ok(count(4) > count(0) * 1.5);
+  // Compared from the third franchise, once the early boost has ended.
+  assert.ok(count(7) > count(3) * 1.3);
 });
 
 // ---- Empire upgrades ----

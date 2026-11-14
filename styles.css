@@ -337,3 +337,15 @@ button.bonus { background: #ffd166; color: #3a2a1d; font-weight: 900; font-size:
 
 /* Tutorial: the actions that are not the current step are dimmed. */
 #actions button.tut-off { opacity: .35; filter: grayscale(.7); }
+
+/* Map sheet: the cities reached this franchise run, drawn at their real positions. */
+.citymap { display: block; width: 100%; max-height: 230px; margin: 6px 0 12px; }
+.cm-sea { fill: #dff1f6; }
+.cm-route { fill: none; stroke: #c8392b; stroke-width: 2; stroke-dasharray: 5 4; }
+.cm-city circle { fill: #ffffff; stroke: #8a8f98; stroke-width: 2; }
+.cm-city.visited circle { fill: #2f7d6a; stroke: #2f7d6a; }
+.cm-city.here circle { fill: #c8392b; stroke: #ffffff; stroke-width: 3; }
+.cm-city.next circle { fill: #fff3dc; stroke: #e9a23b; stroke-width: 2.5; stroke-dasharray: 3 2; }
+.cm-city text { font-size: 13px; font-weight: 700; fill: #2a2622; paint-order: stroke; stroke: rgba(255, 255, 255, 0.85); stroke-width: 3px; }
+.cm-city.locked text { fill: #6b6f76; }
+.row.current { border-color: #c8392b; }

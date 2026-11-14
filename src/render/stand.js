@@ -694,6 +694,139 @@ function empireExtras(ctx, lv) {
   }
 }
 
+// City decorations: each city adds its own three, on top of the shared ones above. They sit
+// beside the stand (the queue and the counter are left clear).
+const SIDE = (ctx, s, dx, dz) => [CX + s * (ctx.L.W / 2 + dx), ctx.L.floorY, dz];
+const CITY_DECOR = {
+  // Riccione: beach umbrella, a sandcastle and buoys.
+  parasol(ctx) {
+    const { S, M } = ctx;
+    const [x, y, z] = SIDE(ctx, 1, 1.3, 0.6);
+    M.cylC(0.025, 2.2, IRON, [x, y + 1.1, z]);
+    S.dome(1.05, RED, [x, y + 2.25, z], [1, 0.4, 1]);
+    S.dome(0.5, CREAM, [x, y + 2.3, z], [1, 0.3, 1]);
+  },
+  sandcastle(ctx) {
+    const { S } = ctx;
+    const [x, y, z] = SIDE(ctx, -1, 1.1, 0.5);
+    S.box([0.9, 0.22, 0.8], '#e8cf8f', [x, y + 0.11, z]);
+    S.cyl(0.13, 0.13, 0.42, '#e8cf8f', [x - 0.2, y + 0.32, z]);
+    S.cyl(0.13, 0.13, 0.42, '#e8cf8f', [x + 0.2, y + 0.32, z]);
+    S.dome(0.1, '#d8402f', [x + 0.2, y + 0.6, z], [1, 1.2, 1]);
+  },
+  buoys(ctx) {
+    const { S } = ctx;
+    const [x, y, z] = SIDE(ctx, -1, 0.9, -0.4);
+    S.cyl(0.2, 0.2, 0.46, '#ef476f', [x, y + 0.23, z]);
+    S.cyl(0.2, 0.2, 0.12, '#ffffff', [x, y + 0.5, z]);
+    S.cyl(0.2, 0.2, 0.46, '#ffd166', [x + 0.5, y + 0.23, z + 0.1]);
+  },
+
+  // Ravenna: a mosaic arch, painted pots with basil and small candle lanterns.
+  mosaic(ctx) {
+    const { S } = ctx;
+    const [x, y, z] = SIDE(ctx, -1, 1.3, -0.9);
+    S.box([1.3, 1.9, 0.12], '#b5654a', [x, y + 0.95, z]);
+    S.dome(0.65, '#d9a07a', [x, y + 1.9, z], [1, 0.45, 0.2]);
+    S.box([1.0, 0.1, 0.14], '#f0d2a6', [x, y + 0.25, z]);
+  },
+  pottery(ctx) {
+    const { S, F } = ctx;
+    const [x, y, z] = SIDE(ctx, -1, 0.7, 1.7);
+    for (const [dx, dz, c] of [[0, 0, '#c97b5a'], [0.45, 0.1, '#b5654a'], [0.22, -0.25, '#e7c9a0']]) {
+      S.cyl(0.17, 0.12, 0.42, c, [x + dx, y + 0.21, z + dz]);
+      F.ico(0.15, '#4f8f47', [x + dx, y + 0.5, z + dz], [1, 0.7, 1]);
+    }
+  },
+  candles(ctx) {
+    const { S, F } = ctx;
+    const [x, y, z] = SIDE(ctx, 1, 0.9, 1.4);
+    for (let i = 0; i < 3; i++) {
+      const cx = x + (i - 1) * 0.4;
+      S.cyl(0.07, 0.07, 0.22, CREAM, [cx, y + 0.11, z]);
+      F.ico(0.04, '#ffd166', [cx, y + 0.27, z]);
+    }
+  },
+
+  // Florence: lily planters, hanging banners and a small bronze statuette.
+  lilies(ctx) {
+    const { S, F } = ctx;
+    for (const dz of [1.8, 0.4]) {
+      const [x, y, z] = SIDE(ctx, -1, 0.8, dz);
+      S.box([0.9, 0.3, 0.4], '#8d5a3b', [x, y + 0.15, z]);
+      for (let k = 0; k < 4; k++) F.ico(0.12, k % 2 ? '#ffffff' : '#f78c6b', [x - 0.3 + k * 0.2, y + 0.42, z + (k % 2) * 0.1]);
+    }
+  },
+  banners(ctx) {
+    const { S, M } = ctx;
+    for (const dz of [1.7, 0.9]) {
+      const [x, y, z] = SIDE(ctx, -1, -0.15, dz);
+      M.cylC(0.02, 2.4, IRON, [x, y + 1.2, z]);
+      S.box([0.5, 1.2, 0.04], '#4a6fa5', [x + 0.25, y + 1.5, z]);
+      S.box([0.14, 0.4, 0.05], '#e9c46a', [x + 0.25, y + 1.5, z + 0.01]);
+    }
+  },
+  statuette(ctx) {
+    const { S } = ctx;
+    const [x, y, z] = SIDE(ctx, 1, 0.9, -0.2);
+    S.cyl(0.25, 0.3, 0.3, '#6b4f3a', [x, y + 0.15, z]);
+    S.cyl(0.12, 0.16, 0.5, '#b08d4a', [x, y + 0.55, z]);
+    S.dome(0.14, '#b08d4a', [x, y + 0.9, z]);
+  },
+
+  // Milan: a chandelier under the eave, planters with trees and a velvet rope.
+  chandelier(ctx) {
+    const { S, M, eave } = ctx;
+    M.cylC(0.012, 0.8, IRON, [CX, eave.y - 0.4, eave.z - 0.5]);
+    S.dome(0.32, '#f6e7c1', [CX, eave.y - 0.95, eave.z - 0.5], [1, 0.6, 1], [Math.PI, 0, 0]);
+  },
+  planters(ctx) {
+    const { S, F } = ctx;
+    for (const s of [-1, 1]) {
+      const [x, y, z] = SIDE(ctx, s, 0.9, 2.2);
+      S.box([0.6, 0.9, 0.6], '#f2e3a6', [x, y + 0.45, z]);
+      F.ico(0.45, '#4f8f47', [x, y + 1.25, z], [1, 1.2, 1]);
+    }
+  },
+  velvetRope(ctx) {
+    const { S, M } = ctx;
+    const xs = [ctx.L.W / 2 + 0.6, ctx.L.W / 2 + 2.4];
+    for (const dx of xs) {
+      const [x, y, z] = SIDE(ctx, 1, dx, 3.0);
+      M.cylC(0.02, 1, IRON, [x, y + 0.5, z]);
+    }
+    const [x, y, z] = SIDE(ctx, 1, (xs[0] + xs[1]) / 2, 3.0);
+    S.box([xs[1] - xs[0], 0.04, 0.04], '#8c1d2e', [x, y + 0.9, z]);
+  },
+
+  // Rome: a fountain, a laurel wreath on the wall and an amphora.
+  fountain(ctx) {
+    const { S } = ctx;
+    const [x, y, z] = SIDE(ctx, 1, 2.6, -0.6);
+    S.cyl(1.0, 1.0, 0.25, '#d9d4c7', [x, y + 0.12, z]);
+    S.cyl(0.15, 0.15, 0.9, '#d9d4c7', [x, y + 0.6, z]);
+    S.dome(0.25, '#9fd3e6', [x, y + 1.0, z], [1, 0.4, 1]);
+  },
+  laurels(ctx) {
+    const { S, F } = ctx;
+    const [x, y, z] = SIDE(ctx, -1, 1.2, -1.0);
+    S.box([0.9, 0.9, 0.06], '#b08d4a', [x, y + 1.6, z]);
+    for (let k = 0; k < 10; k++) {
+      const a = (k / 10) * Math.PI * 2;
+      F.ico(0.09, '#4f8f47', [x + Math.cos(a) * 0.3, y + 1.6 + Math.sin(a) * 0.3, z + 0.05]);
+    }
+  },
+  amphora(ctx) {
+    const { S } = ctx;
+    const [x, y, z] = SIDE(ctx, 1, 0.9, 1.6);
+    S.cyl(0.14, 0.22, 0.6, '#c96a3d', [x, y + 0.3, z]);
+    S.cyl(0.08, 0.14, 0.2, '#c96a3d', [x, y + 0.7, z]);
+    S.box([0.2, 0.06, 0.06], '#c96a3d', [x - 0.22, y + 0.5, z]);
+    S.box([0.2, 0.06, 0.06], '#c96a3d', [x + 0.22, y + 0.5, z]);
+  },
+};
+Object.assign(DECOR, CITY_DECOR);
+
 function decorate(ctx, level) {
   const steps = ctx.L.decorSteps || Object.keys(DECOR);
   steps.slice(0, level).forEach((id) => {

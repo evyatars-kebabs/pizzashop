@@ -10,7 +10,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const load = (p) => JSON.parse(readFileSync(path.join(root, p), 'utf8'));
 const cfg = {
   economy: load('data/economy.json'),
-  locations: { corner: load('data/locations/corner.json'), sideStreet: load('data/locations/sideStreet.json') },
+  locations: Object.fromEntries(['cityRiccione', 'cityRavenna', 'cityFlorence', 'cityMilan', 'cityRome'].map((id) => [id, load('data/locations/' + id + '.json')])),
 };
 const { newGame } = await import('../src/game/state.js');
 const { tick } = await import('../src/game/sim.js');
@@ -48,23 +48,25 @@ function checkInvariants(s) {
 
 const SCENARIOS = [];
 for (const franchises of [0, 1, 2, 3, 6]) {
-  for (const location of ['corner', 'sideStreet']) {
+  for (const city of ['riccione', 'ravenna', 'florence', 'milan', 'rome']) {
     for (const staff of [[0, 0], [1, 0], [1, 1], [3, 3]]) {
       for (const event of [null, 'rainyDay', 'foodFestival']) {
-        SCENARIOS.push({ franchises, location, staff, event });
+        SCENARIOS.push({ franchises, city, staff, event });
       }
     }
   }
 }
 
-test(`${SCENARIOS.length} combinations of franchises, location, staff and events keep the numbers valid`, () => {
+test(`${SCENARIOS.length} combinations of franchises, city, staff and events keep the numbers valid`, () => {
   for (const sc of SCENARIOS) {
     const s = newGame(cfg, NOW);
     s.rngSeed = 1000 + sc.franchises * 17 + sc.staff[0] * 3 + sc.staff[1];
     s.franchise.count = sc.franchises;
     s.franchise.points = sc.franchises;
-    s.location = sc.location;
-    s.unlockedLocations.sideStreet = true;
+    const order = ['riccione', 'ravenna', 'florence', 'milan', 'rome'];
+    s.city = sc.city;
+    s.location = 'city' + sc.city[0].toUpperCase() + sc.city.slice(1);
+    s.cityVisited = order.slice(0, order.indexOf(sc.city) + 1);
     s.staff.cashier = sc.staff[0];
     s.staff.cook = sc.staff[1];
     s.upgrades.counter = 3;
@@ -119,6 +121,7 @@ test('every upgrade can be bought up to its maximum without going negative', () 
   const s = newGame(cfg, NOW);
   s.franchise.count = 3;
   s.cash = 1e15;
+  s.cityVisited = ['riccione', 'ravenna', 'florence', 'milan', 'rome'];
   const keys = Object.keys(cfg.economy.upgrades).filter((k) => cfg.economy.upgrades[k].enabled !== false);
   for (const k of keys) {
     for (let i = 0; i < cfg.economy.upgrades[k].maxLevel + 2; i++) A.buyUpgrade(s, k, cfg);
@@ -173,7 +176,7 @@ test('save round trip and migration from the first save format', () => {
   assert.deepEqual(copy, JSON.parse(JSON.stringify(copy)));
   const v1 = { schemaVersion: 1, cash: 50, lifetimeCash: 900, franchise: { points: 1, count: 1, unlocked: true }, upgrades: { oven: 2 } };
   const m = migrate(v1);
-  assert.equal(m.schemaVersion, 2);
+  assert.equal(m.schemaVersion, 3);
   assert.equal(m.upgrades.oven, 2, 'kept what it had');
   assert.equal(m.upgrades.megaOven, 0, 'filled in what is new');
   assert.equal(m.franchise.lifetimeAtLast, 900, 'a franchised v1 save starts its next run from zero');

@@ -2,7 +2,7 @@
 // Migrations run in order: MIGRATIONS[v] upgrades a save from version v to v+1.
 import { DEFAULT_STATE_PARTIAL } from '../game/state.js';
 
-export const SAVE_VERSION = 2;
+export const SAVE_VERSION = 3;
 const KEY = 'pizzastand.save';
 
 const MIGRATIONS = {
@@ -13,6 +13,16 @@ const MIGRATIONS = {
     f.lifetimeAtLast = f.count > 0 ? (save.lifetimeCash || 0) : 0;
     f.readyNotified = false;
     delete f.unlocked;
+    return save;
+  },
+  // v2 -> v3: cities replace the old street choice. Older saves start in the first city, and
+  // their decorations are still up (decorShown is the count installed, so it starts at the level).
+  2: (save) => {
+    save.city = 'riccione';
+    save.cityVisited = ['riccione'];
+    save.location = 'cityRiccione';
+    save.decorShown = save.upgrades?.decor || 0;
+    delete save.unlockedLocations;
     return save;
   },
 };

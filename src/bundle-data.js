@@ -3,10 +3,13 @@
 import economy from '../data/economy.json';
 import strings from '../data/strings/en.json';
 import ids from '../data/locations/index.json';
-import corner from '../data/locations/corner.json';
-import sideStreet from '../data/locations/sideStreet.json';
+import cityRiccione from '../data/locations/cityRiccione.json';
+import cityRavenna from '../data/locations/cityRavenna.json';
+import cityFlorence from '../data/locations/cityFlorence.json';
+import cityMilan from '../data/locations/cityMilan.json';
+import cityRome from '../data/locations/cityRome.json';
 
-const all = { corner, sideStreet };
+const all = { cityRiccione, cityRavenna, cityFlorence, cityMilan, cityRome };
 const locations = {};
 for (const id of ids) {
   if (all[id]) locations[all[id].id] = all[id];

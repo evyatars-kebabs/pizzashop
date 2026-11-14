@@ -18,7 +18,6 @@ export function tick(state, dt, cfg, out = []) {
   const daylight = daylightOf(state.dayClock);
 
   unlockStyles(state, cfg, out);
-  unlockLocations(state, cfg, out);
   if (!state.bonus.readyNotified && state.gameTime >= state.bonus.nextAt) {
     state.bonus.readyNotified = true;
     out.push({ type: 'bonus_ready' });
@@ -41,16 +40,6 @@ function unlockStyles(state, cfg, out) {
     if (def.enabled && !state.styles[k] && unlockMet(state, def.unlock)) {
       state.styles[k] = true;
       out.push({ type: 'style_unlocked', style: k });
-    }
-  }
-}
-
-function unlockLocations(state, cfg, out) {
-  if (!cfg.locations) return;
-  for (const [id, loc] of Object.entries(cfg.locations)) {
-    if (!state.unlockedLocations[id] && unlockMet(state, loc.unlock)) {
-      state.unlockedLocations[id] = true;
-      out.push({ type: 'location_unlocked', location: id });
     }
   }
 }

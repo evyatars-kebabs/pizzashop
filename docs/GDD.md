@@ -126,7 +126,7 @@ The tutorial advances on counters in `state.stats`. Each step highlights the but
 **Goals (top bar, "Next:").** Shown in order: hire a cashier, unlock pepperoni (600 lifetime cash), hire a cook, buy a neon sign, reach the franchise milestone (20,000 lifetime cash).
 
 **Mid game (designed, partly stubbed).**
-- **Second street location (built).** Side street unlocks at 3,000 lifetime cash. It has 35% more foot traffic and doubles pepperoni demand. The stand moves from the Shop's Locations list. Moving clears the queue and cooking pizzas. Upgrades and staff come along. Franchising sends the stand back to the corner, and unlocked streets stay unlocked.
+- **Cities (built).** Five cities in travel order: Riccione (start, ×1), Ravenna (×1.5), Florence (×2.5), Milan (×4) and Rome (×7). The Map opens at 100,000 lifetime cash. The next city costs its relocation fee and needs its franchises; cities already reached are free to revisit. Moving clears the queue and cooking pizzas. Shops, upgrades and staff come along. Decorations come down when you move, but the decor level stays, so "Decorate again" puts them back for free. Each city has its own street, three decorations of its own, and unlocks one upgrade: terrace seating (Ravenna), delivery bikes (Florence), trattoria ovens (Milan) and a rooftop terrace (Rome). Franchising sends the stand back to Riccione and starts the map run again.
 - New pizza styles: Margherita (start), Pepperoni (600 lifetime), Veggie (2,500, disabled), Seasonal (8,000, disabled). Styles unlock automatically when their condition is met. Veggie and Seasonal are data-only, so they can be turned on without code.
 
 **Late game (designed, not in prototype).** Themed district and collectible recipes. The `styles` save field is already designed to carry over, so recipes can be collected across franchises.
@@ -164,8 +164,8 @@ Right after a franchise the amount earned here is zero, so it cannot be repeated
 
 Franchising resets the current stand and starts again. The Franchise sheet spells out what happens, including what the next one will need:
 
-- **Resets:** cash, upgrades, staff, queue, pizzas, and the stand goes back to the corner.
-- **Keeps:** franchise points, unlocked pizza styles (recipes), unlocked locations, the tutorial, settings, and lifetime stats.
+- **Resets:** cash, upgrades, staff, queue, pizzas, and the stand goes back to Riccione.
+- **Keeps:** franchise points, unlocked pizza styles (recipes), the tutorial, settings, and lifetime stats.
 
 Gain: `max(1, floor(earned here / 20000))` franchise points. Each point is a permanent +10% to payment.
 
@@ -342,7 +342,7 @@ Open with `?debug=1` (a bug button appears), or tap the version number in Settin
 
 - **Engine.** The prototype is Three.js, which the brief allows. For store release, wrap it with a mobile shell such as Capacitor. The brief's Unity option is not used.
 - **Testing.** Logic has 18 Node unit tests. The UI was checked in headless Chromium with software WebGL. The richer graphics run much slower there than the first prototype did (about 8 fps on High and 13 on Low at 390 x 844, against 27 before). Software rendering exaggerates per-pixel cost and is not a device measurement, but it is a warning: the 60 fps target on mid-range phones is unverified and needs a real-device pass, along with touch feel and audio latency.
-- **Locations, styles and events** are data-driven. The side street is built, but a third location, the health inspector event, the delivery kid and the collectible recipes are not.
+- **Locations, styles and events** are data-driven. Five cities, the map and the city upgrades are built. Not yet built: the health inspector event, the delivery kid and the collectible recipes.
 - **Balance** is a first pass. Use the debug panel and analytics to tune the spawn interval, upgrade growth rates and offline efficiency.
 - **Offline push notifications** need a push service.
 - **Accessibility.** Motion can be reduced with a setting. Colour-blind safe topping colours need review.

@@ -26,7 +26,7 @@
       "hungry": {
         "weight": 3,
         "patience": 90,
-        "tipMult": 1.0
+        "tipMult": 1
       },
       "chatty": {
         "weight": 2,
@@ -96,14 +96,14 @@
     "autoLoadQuality": 0.7,
     "perfectBakeQuality": 0.9,
     "perfectBakeSpeedMult": 0.85,
-    "autoServeDelaySeconds": 1.0
+    "autoServeDelaySeconds": 1
   },
   "manual": {
     "doughWindowSeconds": 8,
     "doughSwipesNeeded": 1200,
     "doughRushedQuality": 0.5,
     "doughFinishMinQuality": 0.6,
-    "toppingCorrectQuality": 1.0,
+    "toppingCorrectQuality": 1,
     "toppingWrongQuality": 0.55,
     "ovenSweetZone": 0.18,
     "ovenMinQuality": 0.6,
@@ -198,6 +198,46 @@
       "requires": {
         "franchises": 3
       }
+    },
+    "terrace": {
+      "baseCost": 2500,
+      "growth": 1.18,
+      "maxLevel": 20,
+      "trafficPerLevel": 0.05,
+      "group": "city",
+      "requires": {
+        "city": "ravenna"
+      }
+    },
+    "delivery": {
+      "baseCost": 25000,
+      "growth": 1.2,
+      "maxLevel": 20,
+      "payMultPerLevel": 0.1,
+      "group": "city",
+      "requires": {
+        "city": "florence"
+      }
+    },
+    "trattoria": {
+      "baseCost": 400000,
+      "growth": 1.22,
+      "maxLevel": 20,
+      "ovenSlotsPerLevel": 1,
+      "group": "city",
+      "requires": {
+        "city": "milan"
+      }
+    },
+    "rooftop": {
+      "baseCost": 6000000,
+      "growth": 1.22,
+      "maxLevel": 20,
+      "trafficPerLevel": 0.08,
+      "group": "city",
+      "requires": {
+        "city": "rome"
+      }
     }
   },
   "staff": {
@@ -226,7 +266,7 @@
         "staffVisible": 1,
         "ovenSlotsBonus": 0,
         "maxQueueBonus": 0,
-        "cameraZoom": 1.0,
+        "cameraZoom": 1,
         "recruitCap": 2
       },
       {
@@ -244,7 +284,7 @@
         "id": "shop",
         "minFranchises": 2,
         "width": 7.6,
-        "depth": 5.0,
+        "depth": 5,
         "staffVisible": 3,
         "ovenSlotsBonus": 2,
         "maxQueueBonus": 4,
@@ -266,14 +306,14 @@
       "weight": 1,
       "spawnMult": 1.5,
       "patienceDrainMult": 1.25,
-      "cashMult": 1.0,
+      "cashMult": 1,
       "styleDemand": {}
     },
     "foodFestival": {
       "durationSeconds": 150,
       "weight": 1,
       "spawnMult": 1.2,
-      "patienceDrainMult": 1.0,
+      "patienceDrainMult": 1,
       "cashMult": 1.1,
       "styleDemand": {
         "pepperoni": 3
@@ -450,5 +490,109 @@
     "payMult": 1.25,
     "tutorialSpawnDelaySeconds": 1.5,
     "_note": "Easier first time: until the tutorial is finished, customers arrive one at a time and wait patiently, arrive a little less often, and pay more."
+  },
+  "earlyFranchises": {
+    "count": 3,
+    "payMult": 2,
+    "customerMult": 2,
+    "requirementMult": 0.5,
+    "_note": "Boost for the first few franchises: while fewer than `count` franchises have been done, pay and customers are multiplied, and the amount needed to franchise is multiplied by requirementMult."
+  },
+  "cities": {
+    "mapUnlockLifetime": 100000,
+    "list": [
+      {
+        "id": "riccione",
+        "order": 0,
+        "background": "cityRiccione",
+        "requiresFranchises": 0,
+        "relocationCost": 0,
+        "multiplier": 1,
+        "map": {
+          "lat": 44,
+          "lon": 12.65
+        },
+        "upgrade": null,
+        "decorSteps": [
+          "parasol",
+          "sandcastle",
+          "buoys"
+        ]
+      },
+      {
+        "id": "ravenna",
+        "order": 1,
+        "background": "cityRavenna",
+        "requiresFranchises": 1,
+        "relocationCost": 150000,
+        "multiplier": 1.5,
+        "map": {
+          "lat": 44.42,
+          "lon": 12.2
+        },
+        "upgrade": "terrace",
+        "decorSteps": [
+          "mosaic",
+          "pottery",
+          "candles"
+        ],
+        "labelSide": "left"
+      },
+      {
+        "id": "florence",
+        "order": 2,
+        "background": "cityFlorence",
+        "requiresFranchises": 2,
+        "relocationCost": 2000000,
+        "multiplier": 2.5,
+        "map": {
+          "lat": 43.77,
+          "lon": 11.25
+        },
+        "upgrade": "delivery",
+        "decorSteps": [
+          "lilies",
+          "banners",
+          "statuette"
+        ],
+        "labelSide": "left"
+      },
+      {
+        "id": "milan",
+        "order": 3,
+        "background": "cityMilan",
+        "requiresFranchises": 4,
+        "relocationCost": 25000000,
+        "multiplier": 4,
+        "map": {
+          "lat": 45.46,
+          "lon": 9.19
+        },
+        "upgrade": "trattoria",
+        "decorSteps": [
+          "chandelier",
+          "planters",
+          "velvetRope"
+        ]
+      },
+      {
+        "id": "rome",
+        "order": 4,
+        "background": "cityRome",
+        "requiresFranchises": 7,
+        "relocationCost": 300000000,
+        "multiplier": 7,
+        "map": {
+          "lat": 41.9,
+          "lon": 12.5
+        },
+        "upgrade": "rooftop",
+        "decorSteps": [
+          "fountain",
+          "laurels",
+          "amphora"
+        ]
+      }
+    ]
   }
 }

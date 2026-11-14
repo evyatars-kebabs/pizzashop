@@ -1,6 +1,6 @@
-// Modal sheets: shop, collect (offline earnings), franchise, settings, debug.
+// Modal sheets: shop, collect (offline earnings), franchise, map, settings, debug.
 import { t, money, moneyFull, duration } from '../core/i18n.js';
-import { upgradeCost, derive, franchiseGain, franchiseReady, franchiseRequirement, franchiseTraffic, ovenSpeed, quoteLevels, runCash, tierIndex, tierOf } from '../game/economy.js';
+import { upgradeCost, derive, franchiseGain, franchiseReady, franchiseRequirement, franchiseTraffic, isEarlyFranchising, ovenSpeed, quoteLevels, runCash, tierIndex, tierOf, cityOf, cityList, nextCity, decorStepsFor, mapUnlocked } from '../game/economy.js';
 import { firstCashierFree } from '../game/actions.js';
 
 const $ = (id) => document.getElementById(id);
@@ -92,14 +92,21 @@ function buyLabel(n, cost, oneCost) {
 }
 
 // Next-level values for upgrade descriptions.
-function upgradeVars(key, level, cfg) {
+function upgradeVars(key, level, cfg, state) {
   const u = cfg.economy.upgrades[key];
   const next = level + 1;
   switch (key) {
     case 'oven': return { slots: u.ovenSlotsBase + u.ovenSlotsPerLevel * next };
     case 'counter': return { slots: u.maxQueueBase + u.maxQueuePerLevel * next };
     case 'cheese': return { pct: Math.round(u.cheeseMultPerLevel * next * 100) };
-    case 'decor': return { pct: Math.round(u.trafficPerLevel * next * 100), item: level < u.steps.length ? '. Adds: ' + t('decor.step.' + u.steps[level]) : '' };
+    case 'decor': {
+      const steps = decorStepsFor(state, cfg);
+      return { pct: Math.round(u.trafficPerLevel * next * 100), item: state.decorShown < steps.length ? '. Adds: ' + t('decor.step.' + steps[state.decorShown]) : '' };
+    }
+    case 'terrace': return { pct: Math.round(u.trafficPerLevel * next * 100) };
+    case 'rooftop': return { pct: Math.round(u.trafficPerLevel * next * 100) };
+    case 'delivery': return { pct: Math.round(u.payMultPerLevel * next * 100) };
+    case 'trattoria': return { slots: u.ovenSlotsPerLevel * next };
     case 'neon': return { pct: Math.round(u.trafficPerLevel * 100) };
     case 'marketing': return { pct: Math.round(u.trafficMultPerLevel * next * 100) };
     case 'pizzaSchool': return { pct: Math.round(u.payMultPerLevel * next * 100) };
@@ -128,7 +135,7 @@ export function openShop(state, cfg, actions) {
         el('b', '', t('upgrade.' + key + '.name')),
         el('small', '', locked
           ? t('shop.needsFranchise', { n: needs })
-          : (maxed ? t('action.maxed') : t('upgrade.' + key + '.desc', upgradeVars(key, level, cfg)))),
+          : (maxed ? t('action.maxed') : t('upgrade.' + key + '.desc', upgradeVars(key, level, cfg, state)))),
         el('small', 'lvl', `${level}/${u.maxLevel}`),
       );
       const label = locked ? t('action.locked') : (maxed ? t('action.maxed') : buyLabel(q.n, q.cost, cost));
@@ -137,7 +144,7 @@ export function openShop(state, cfg, actions) {
     };
     for (const key of Object.keys(cfg.economy.upgrades)) {
       const u = cfg.economy.upgrades[key];
-      if (u.enabled === false || u.group === 'empire') continue;
+      if (u.enabled === false || u.group === 'empire' || u.group === 'city') continue;
       body.append(upgradeRow(key, false));
     }
     body.append(el('h3', '', t('shop.empire')));
@@ -148,25 +155,18 @@ export function openShop(state, cfg, actions) {
       body.append(upgradeRow(key, true));
     }
 
-    body.append(el('h3', '', t('shop.locations')));
-    for (const id of Object.keys(cfg.locations)) {
-      const loc = cfg.locations[id];
-      const unlocked = !!state.unlockedLocations[id];
-      const here = state.location === id;
-      const row = el('div', 'row');
-      const info = el('div', 'info');
-      info.append(el('b', '', t(loc.nameKey)), el('small', '', t(loc.descKey)));
-      let label = t('action.move');
-      let disabled = false;
-      if (here) { label = t('location.current'); disabled = true; }
-      else if (!unlocked) {
-        label = t('action.locked');
-        disabled = true;
-        info.append(el('small', 'lvl', t('location.locked', { target: moneyFull(loc.unlock?.value ?? 0) })));
-      }
-      row.append(info, button(label, () => actions.move(id), { disabled, primary: !here && unlocked }));
-      body.append(row);
-    }
+    // City upgrades: only the ones for cities reached in this franchise run.
+    const cityKeys = Object.keys(cfg.economy.upgrades).filter((k) => {
+      const u = cfg.economy.upgrades[k];
+      return u.group === 'city' && u.enabled !== false && (state.cityVisited || []).includes(u.requires.city);
+    });
+    body.append(el('h3', '', t('shop.cityUpgrades')));
+    if (cityKeys.length === 0) body.append(el('p', 'muted', t('shop.cityUpgradesNone')));
+    for (const key of cityKeys) body.append(upgradeRow(key, false));
+
+    body.append(el('h3', '', t('shop.cities')));
+    body.append(el('p', 'muted', t('shop.citiesDesc', { city: t('city.' + cityOf(state, cfg).id + '.name') })));
+    body.append(button(t('map.open'), () => actions.openMap(), { primary: true }));
 
     body.append(el('h3', '', t('shop.staff')));
     for (const role of Object.keys(cfg.economy.staff)) {
@@ -310,6 +310,7 @@ export function openFranchise(state, cfg, actions) {
     const tiers = cfg.economy.prestige.tiers;
     const nextTier = tiers.find((x) => x.minFranchises > state.franchise.count);
     body.append(
+      isEarlyFranchising(state, cfg) ? el('p', 'lead', t('franchise.early', { pay: cfg.economy.earlyFranchises.payMult, customers: cfg.economy.earlyFranchises.customerMult, need: Math.round((1 - cfg.economy.earlyFranchises.requirementMult) * 100) })) : null,
       el('p', 'lead', t('franchise.explain', { bonus: Math.round(cfg.economy.prestige.bonusPerPoint * 100), traffic: Math.round((cfg.economy.prestige.trafficPerFranchise || 0) * 100) })),
       el('p', '', t('franchise.trafficNext', { pct: Math.round((franchiseTraffic(state, cfg, state.franchise.count + 1) - 1) * 100) })),
       el('p', '', t('franchise.nextCost', { target: moneyFull(franchiseRequirement({ franchise: { count: state.franchise.count + 1 } }, cfg)) })),
@@ -395,5 +396,98 @@ export function openDebug(actions) {
     const grid = el('div', 'stack');
     for (const [key, fn, arg] of items) grid.append(button(t(key), () => fn(arg)));
     body.append(grid);
+  });
+}
+
+// ---------- Map: the cities reached this franchise run, the next one, and where you are ----------
+
+const SVG_NS = 'http://www.w3.org/2000/svg';
+
+function svgEl(tag, attrs = {}) {
+  const node = document.createElementNS(SVG_NS, tag);
+  for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, String(v));
+  return node;
+}
+
+// A stylised map of the peninsula: each city is a dot placed by its real coordinates.
+function cityMap(state, cfg, here, next) {
+  const W = 300;
+  const H = 230;
+  const pad = 24;
+  const list = cityList(cfg);
+  const lonMin = 8.5;
+  const lonMax = 14;
+  const latMax = 46;
+  const latMin = 40.8;
+  const px = (c) => pad + ((c.map.lon - lonMin) / (lonMax - lonMin)) * (W - pad * 2);
+  const py = (c) => pad + ((latMax - c.map.lat) / (latMax - latMin)) * (H - pad * 2);
+  const reached = list.filter((c) => (state.cityVisited || []).includes(c.id));
+  const svg = svgEl('svg', { viewBox: `0 0 ${W} ${H}`, class: 'citymap', role: 'img', 'aria-label': t('map.title') });
+  svg.append(svgEl('rect', { x: 0, y: 0, width: W, height: H, rx: 14, class: 'cm-sea' }));
+  if (reached.length > 1) {
+    svg.append(svgEl('polyline', { class: 'cm-route', points: reached.map((c) => `${px(c)},${py(c)}`).join(' ') }));
+  }
+  for (const c of list) {
+    const status = c.id === here.id ? 'here' : (state.cityVisited || []).includes(c.id) ? 'visited' : c.id === next?.id ? 'next' : 'locked';
+    const g = svgEl('g', { class: 'cm-city ' + status });
+    g.append(svgEl('circle', { cx: px(c), cy: py(c), r: status === 'here' ? 9 : 7 }));
+    const left = c.labelSide === 'left';
+    const label = svgEl('text', { x: px(c) + (left ? -12 : 12), y: py(c) + 4, 'text-anchor': left ? 'end' : 'start' });
+    label.textContent = t('city.' + c.id + '.name');
+    g.append(label);
+    svg.append(g);
+  }
+  return svg;
+}
+
+function cityRow(state, cfg, c, here, next, actions) {
+  const visited = (state.cityVisited || []).includes(c.id);
+  const status = c.id === here.id ? t('map.here') : visited ? t('map.visited') : c.id === next?.id ? t('map.next') : t('map.locked');
+  const info = el('div', 'info');
+  info.append(el('b', '', t('city.' + c.id + '.name')), el('small', '', t('map.multiplier', { mult: c.multiplier }) + ' · ' + status));
+  let label = t('action.locked');
+  let disabled = true;
+  let onClick = () => {};
+  if (c.id === here.id) {
+    label = t('map.here');
+  } else if (visited) {
+    label = t('map.travel');
+    disabled = false;
+    onClick = () => actions.move(c.id);
+  } else if (c.id === next?.id) {
+    const needFr = state.franchise.count < c.requiresFranchises;
+    const needCash = state.cash < c.relocationCost;
+    info.append(el('small', 'lvl', t(c.requiresFranchises === 1 ? 'map.requiresOne' : 'map.requires', { franchises: c.requiresFranchises, cost: moneyFull(c.relocationCost) })));
+    if (needFr) info.append(el('small', 'lvl', t('map.needFranchises', { n: c.requiresFranchises })));
+    else if (needCash) info.append(el('small', 'lvl', t('map.needCash', { cost: moneyFull(c.relocationCost) })));
+    label = t('map.buy', { cost: moneyFull(c.relocationCost) });
+    disabled = needFr || needCash;
+    onClick = () => actions.move(c.id);
+  }
+  if (c.upgrade) info.append(el('small', '', t('map.unlocksUpgrade', { upgrade: t('upgrade.' + c.upgrade + '.name') })));
+  const row = el('div', 'row' + (c.id === here.id ? ' current' : ''));
+  row.append(info, button(label, onClick, { disabled, primary: !disabled && c.id !== here.id }));
+  return row;
+}
+
+export function openMap(state, cfg, actions) {
+  if (!mapUnlocked(state, cfg)) return;
+  openModal('map', t('map.title'), (body) => {
+    const here = cityOf(state, cfg);
+    const next = nextCity(state, cfg);
+    body.append(el('p', 'lead', t('map.intro')));
+    body.append(cityMap(state, cfg, here, next));
+    for (const c of cityList(cfg)) body.append(cityRow(state, cfg, c, here, next, actions));
+
+    const steps = decorStepsFor(state, cfg).length;
+    const packed = Math.min(state.upgrades.decor, steps) - (state.decorShown || 0);
+    body.append(el('h3', '', t('map.decorTitle')));
+    if (packed > 0) {
+      body.append(el('p', '', t('map.packed', { n: packed, city: t('city.' + here.id + '.name') })));
+      body.append(button(t('map.decorate'), () => actions.redecorate(), { primary: true }));
+    } else {
+      body.append(el('p', 'muted', t('map.decorAll')));
+    }
+    body.append(button(t('action.close'), () => closeModal()));
   });
 }

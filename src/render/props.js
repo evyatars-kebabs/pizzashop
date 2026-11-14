@@ -240,6 +240,33 @@ const PROPS = {
     env.signs.push({ id: 'sandwich', pos: [x, 0.6 * k, z + 0.23 * k], size: [0.62 * k, 0.74 * k], kind: 'street' });
   },
 
+  // Market stall: a striped canopy over a counter with fruit (small towns).
+  stall(p, { solid }) {
+    const [x, , z] = p.pos;
+    const c = p.color || '#d8402f';
+    const a = p.awning || '#fff3dc';
+    solid.box([1.7, 0.9, 0.8], '#a8703f', [x, 0.45, z]);
+    solid.box([1.8, 0.06, 0.9], '#f2e3a6', [x, 0.93, z]);
+    for (const sx of [-0.8, 0.8]) solid.cyl(0.04, 0.04, 2.2, '#2f3238', [x + sx, 1.1, z - 0.4]);
+    solid.box([2.1, 0.08, 1.3], a, [x, 2.2, z]);
+    for (let i = 0; i < 5; i++) solid.box([0.2, 0.5, 0.04], i % 2 ? a : c, [x - 0.84 + i * 0.42, 1.85, z + 0.67]);
+    const fruit = ['#f4a261', '#d8402f', '#4f8f47', '#ffd166'];
+    for (let i = 0; i < 6; i++) solid.cyl(0.06, 0.06, 0.08, fruit[i % fruit.length], [x - 0.6 + i * 0.24, 1.0, z + 0.1]);
+  },
+
+  // Domed landmark: a drum with columns and a dome (the Rome skyline).
+  dome(p, { solid }) {
+    const [x, , z] = p.pos;
+    const r = p.radius || 3;
+    const h = p.height || 4;
+    solid.cyl(r, r, h, '#f3ede0', [x, h / 2, z], [0, 0, 0], 20);
+    for (let i = 0; i < 8; i++) {
+      const a = (i / 8) * Math.PI * 2;
+      solid.cyl(0.22, 0.22, h, '#e9e4d8', [x + Math.cos(a) * (r + 0.3), h / 2, z + Math.sin(a) * (r + 0.3)], [0, 0, 0], 8);
+    }
+    solid.dome(r + 0.2, '#9aa3ab', [x, h, z], [1, 0.8, 1]);
+  },
+
   car(p, { group }) {
     const m = carMesh(p.color || '#d8402f');
     m.position.set(p.pos[0], 0, p.pos[2]);
