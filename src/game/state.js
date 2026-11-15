@@ -19,7 +19,7 @@ export const DEFAULT_STATE_PARTIAL = {
   // Decorations installed in the current city. Moving to a city removes them; the decor
   // upgrade keeps its level, so they can be put back for free (Map > Decorate again).
   decorShown: 0,
-  upgrades: { oven: 0, counter: 0, cheese: 0, decor: 0, neon: 0, scooter: 0, marketing: 0, pizzaSchool: 0, megaOven: 0, terrace: 0, delivery: 0, trattoria: 0, rooftop: 0 },
+  upgrades: { oven: 0, counter: 0, cheese: 0, decor: 0, neon: 0, scooter: 0, marketing: 0, pizzaSchool: 0, megaOven: 0, terrace: 0, delivery: 0, trattoria: 0, rooftop: 0, zurichUp: 0, monacoUp: 0, barcelonaUp: 0, madridUp: 0, lisbonUp: 0, parisUp: 0, brusselsUp: 0, amsterdamUp: 0, londonUp: 0, liverpoolUp: 0, berlinUp: 0, warsawUp: 0, minskUp: 0, budapestUp: 0, zagrebUp: 0, belgradeUp: 0, sofiaUp: 0, bucharestUp: 0, istanbulUp: 0, athensUp: 0, telavivUp: 0 },
   staff: { cashier: 0, cook: 0 },
   // Extra employees recruited after franchising (on top of the first hire of each role).
   staffing: { cashier: 0, cook: 0 },

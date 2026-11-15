@@ -68,3 +68,17 @@ test('every city upgrade is tied to a city and has its strings', () => {
     assert.ok(strings['upgrade.' + key + '.desc'], key + ' description');
   }
 });
+
+test('the first paid city costs 10^45, and the price keeps doubling', () => {
+  const sorted = [...list].sort((a, b) => a.order - b.order);
+  assert.equal(sorted[1].relocationCost, 1e45);
+  for (let i = 2; i < sorted.length; i++) assert.ok(Math.abs(sorted[i].relocationCost / (sorted[i - 1].relocationCost * 2) - 1) < 1e-4, sorted[i].id);
+});
+
+test('the map covers the 26 cities in travel order, each with a place on the map', () => {
+  assert.equal(list.length, 26);
+  for (const c of list) {
+    assert.ok(c.map.lat >= 30 && c.map.lat <= 57, c.id + ' latitude on the map');
+    assert.ok(c.map.lon >= -10 && c.map.lon <= 36, c.id + ' longitude on the map');
+  }
+});

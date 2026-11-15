@@ -103,15 +103,16 @@ function upgradeVars(key, level, cfg, state) {
       const steps = decorStepsFor(state, cfg);
       return { pct: Math.round(u.trafficPerLevel * next * 100), item: state.decorShown < steps.length ? '. Adds: ' + t('decor.step.' + steps[state.decorShown]) : '' };
     }
-    case 'terrace': return { pct: Math.round(u.trafficPerLevel * next * 100) };
-    case 'rooftop': return { pct: Math.round(u.trafficPerLevel * next * 100) };
-    case 'delivery': return { pct: Math.round(u.payMultPerLevel * next * 100) };
-    case 'trattoria': return { slots: u.ovenSlotsPerLevel * next };
     case 'neon': return { pct: Math.round(u.trafficPerLevel * 100) };
     case 'marketing': return { pct: Math.round(u.trafficMultPerLevel * next * 100) };
     case 'pizzaSchool': return { pct: Math.round(u.payMultPerLevel * next * 100) };
     case 'megaOven': return { slots: u.ovenSlotsPerLevel * next };
-    default: return {};
+    default: {
+      // City upgrades: one bonus each, described by its effect.
+      if (u.group !== 'city') return {};
+      if (u.effect === 'oven') return { slots: u.perLevel * next };
+      return { pct: Math.round(u.perLevel * next * 100) };
+    }
   }
 }
 
@@ -415,10 +416,11 @@ function cityMap(state, cfg, here, next) {
   const H = 230;
   const pad = 24;
   const list = cityList(cfg);
-  const lonMin = 8.5;
-  const lonMax = 14;
-  const latMax = 46;
-  const latMin = 40.8;
+  // Covers Lisbon to Tel Aviv.
+  const lonMin = -10;
+  const lonMax = 36;
+  const latMax = 57;
+  const latMin = 30;
   const px = (c) => pad + ((c.map.lon - lonMin) / (lonMax - lonMin)) * (W - pad * 2);
   const py = (c) => pad + ((latMax - c.map.lat) / (latMax - latMin)) * (H - pad * 2);
   const reached = list.filter((c) => (state.cityVisited || []).includes(c.id));
@@ -430,11 +432,17 @@ function cityMap(state, cfg, here, next) {
   for (const c of list) {
     const status = c.id === here.id ? 'here' : (state.cityVisited || []).includes(c.id) ? 'visited' : c.id === next?.id ? 'next' : 'locked';
     const g = svgEl('g', { class: 'cm-city ' + status });
-    g.append(svgEl('circle', { cx: px(c), cy: py(c), r: status === 'here' ? 9 : 7 }));
-    const left = c.labelSide === 'left';
-    const label = svgEl('text', { x: px(c) + (left ? -12 : 12), y: py(c) + 4, 'text-anchor': left ? 'end' : 'start' });
-    label.textContent = t('city.' + c.id + '.name');
-    g.append(label);
+    g.append(svgEl('circle', { cx: px(c), cy: py(c), r: status === 'here' ? 8 : status === 'locked' ? 4.5 : 6.5 }));
+    // Names only where they matter (reached, here, next); the list below has every city.
+    if (status !== 'locked') {
+      const where = c.labelPos || 'right';
+      const dx = where === 'left' ? -10 : where === 'right' ? 10 : 0;
+      const dy = where === 'above' ? -11 : where === 'below' ? 17 : 4;
+      const anchor = where === 'left' ? 'end' : where === 'right' ? 'start' : 'middle';
+      const label = svgEl('text', { x: px(c) + dx, y: py(c) + dy, 'text-anchor': anchor });
+      label.textContent = t('city.' + c.id + '.name');
+      g.append(label);
+    }
     svg.append(g);
   }
   return svg;

@@ -48,7 +48,7 @@ function checkInvariants(s) {
 
 const SCENARIOS = [];
 for (const franchises of [0, 1, 2, 3, 6]) {
-  for (const city of ['riccione', 'ravenna', 'florence', 'milan', 'rome']) {
+  for (const city of ['riccione', 'ravenna', 'rome', 'paris', 'telaviv']) {
     for (const staff of [[0, 0], [1, 0], [1, 1], [3, 3]]) {
       for (const event of [null, 'rainyDay', 'foodFestival']) {
         SCENARIOS.push({ franchises, city, staff, event });
@@ -63,7 +63,7 @@ test(`${SCENARIOS.length} combinations of franchises, city, staff and events kee
     s.rngSeed = 1000 + sc.franchises * 17 + sc.staff[0] * 3 + sc.staff[1];
     s.franchise.count = sc.franchises;
     s.franchise.points = sc.franchises;
-    const order = ['riccione', 'ravenna', 'florence', 'milan', 'rome'];
+    const order = cfg.economy.cities.list.slice().sort((x, y) => x.order - y.order).map((c) => c.id);
     s.city = sc.city;
     s.location = 'city' + sc.city[0].toUpperCase() + sc.city.slice(1);
     s.cityVisited = order.slice(0, order.indexOf(sc.city) + 1);
@@ -120,8 +120,8 @@ test('the player-only path (no staff) keeps running, with customers leaving when
 test('every upgrade can be bought up to its maximum without going negative', () => {
   const s = newGame(cfg, NOW);
   s.franchise.count = 3;
-  s.cash = 1e15;
-  s.cityVisited = ['riccione', 'ravenna', 'florence', 'milan', 'rome'];
+  s.cash = 1e90;
+  s.cityVisited = cfg.economy.cities.list.map((c) => c.id);
   const keys = Object.keys(cfg.economy.upgrades).filter((k) => cfg.economy.upgrades[k].enabled !== false);
   for (const k of keys) {
     for (let i = 0; i < cfg.economy.upgrades[k].maxLevel + 2; i++) A.buyUpgrade(s, k, cfg);

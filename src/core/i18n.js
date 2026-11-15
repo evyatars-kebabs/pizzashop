@@ -24,6 +24,8 @@ const fmtFull = new Intl.NumberFormat(undefined, { maximumFractionDigits: 0 });
 const BIG = [
   [1e9, 'B'], [1e12, 'T'], [1e15, 'Qa'], [1e18, 'Qi'], [1e21, 'Sx'],
   [1e24, 'Sp'], [1e27, 'Oc'], [1e30, 'No'], [1e33, 'Dc'],
+  [1e36, 'Ud'], [1e39, 'Dd'], [1e42, 'Td'], [1e45, 'Qad'], [1e48, 'Qid'],
+  [1e51, 'Sxd'], [1e54, 'Spd'], [1e57, 'Ocd'], [1e60, 'Nod'], [1e63, 'Vg'],
 ];
 
 // Returns the abbreviated form for amounts of a billion or more, otherwise null.

@@ -49,6 +49,15 @@ export function locationEconomy(state, cfg) {
   return loc?.economy ?? { trafficMult: 1, styleDemand: {} };
 }
 
+// Total of one bonus kind over every city upgrade bought (each upgrade's effect and perLevel).
+export function cityEffect(state, cfg, kind) {
+  let sum = 0;
+  for (const [key, u] of Object.entries(cfg.economy.upgrades)) {
+    if (u.group === 'city' && u.effect === kind) sum += u.perLevel * (state.upgrades[key] || 0);
+  }
+  return sum;
+}
+
 // Cities in travel order: the first is where every franchise starts.
 export function cityList(cfg) {
   return [...cfg.economy.cities.list].sort((a, b) => a.order - b.order);
@@ -154,16 +163,16 @@ export function derive(state, cfg) {
   const cookLvl = state.staff.cook;
 
   const city = cityOf(state, cfg);
-  const cityUp = (key, per) => (up[key] ? per(up[key]) * (lvl[key] || 0) : 0);
-  const traffic = up.decor.trafficPerLevel * lvl.decor + up.neon.trafficPerLevel * lvl.neon
-    + cityUp('terrace', (u) => u.trafficPerLevel) + cityUp('rooftop', (u) => u.trafficPerLevel);
+  // City upgrades each add one kind of bonus (traffic, pay or oven slots) per level.
+  const cityFx = (kind) => cityEffect(state, cfg, kind);
+  const traffic = up.decor.trafficPerLevel * lvl.decor + up.neon.trafficPerLevel * lvl.neon + cityFx('traffic');
   const locEcon = locationEconomy(state, cfg);
   const frTraffic = franchiseTraffic(state, cfg);
   const bakeSpeed = ovenSpeed(state, cfg);
   const empireTraffic = up.marketing ? 1 + up.marketing.trafficMultPerLevel * (lvl.marketing || 0) : 1;
   // Empire and city bonuses: pizza school, delivery, and the city's own multiplier.
   const empirePay = (up.pizzaSchool ? 1 + up.pizzaSchool.payMultPerLevel * (lvl.pizzaSchool || 0) : 1)
-    * (1 + cityUp('delivery', (u) => u.payMultPerLevel)) * city.multiplier;
+    * (1 + cityFx('pay')) * city.multiplier;
   const shopM = shopMultiplier(state, cfg);
   const beginner = !state.tutorialDone;
   const beginnerSpawn = beginner ? (e.beginner?.spawnMult || 1) : 1;
@@ -175,7 +184,7 @@ export function derive(state, cfg) {
   const tier = tierOf(state, cfg);
   const ovenSlots = (up.oven.ovenSlotsBase + up.oven.ovenSlotsPerLevel * lvl.oven + tier.ovenSlotsBonus
     + (up.megaOven ? up.megaOven.ovenSlotsPerLevel * (lvl.megaOven || 0) : 0)
-    + cityUp('trattoria', (u) => u.ovenSlotsPerLevel)) * shopM;
+    + cityFx('oven')) * shopM;
   // The queue is capped (queueHardCap) so a huge queue can never overload the game.
   const maxQueue = Math.min(
     (up.counter.maxQueueBase + up.counter.maxQueuePerLevel * lvl.counter + tier.maxQueueBonus) * shopM,

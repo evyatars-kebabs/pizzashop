@@ -200,43 +200,278 @@
       }
     },
     "terrace": {
-      "baseCost": 2500,
-      "growth": 1.18,
+      "baseCost": 3e+36,
+      "growth": 1.2,
       "maxLevel": 20,
-      "trafficPerLevel": 0.05,
       "group": "city",
+      "effect": "traffic",
+      "perLevel": 0.05,
       "requires": {
         "city": "ravenna"
       }
     },
     "delivery": {
-      "baseCost": 25000,
+      "baseCost": 4e+37,
       "growth": 1.2,
       "maxLevel": 20,
-      "payMultPerLevel": 0.1,
       "group": "city",
+      "effect": "pay",
+      "perLevel": 0.1,
       "requires": {
         "city": "florence"
       }
     },
     "trattoria": {
-      "baseCost": 400000,
-      "growth": 1.22,
+      "baseCost": 5e+38,
+      "growth": 1.2,
       "maxLevel": 20,
-      "ovenSlotsPerLevel": 1,
       "group": "city",
+      "effect": "oven",
+      "perLevel": 1,
       "requires": {
         "city": "milan"
       }
     },
     "rooftop": {
-      "baseCost": 6000000,
-      "growth": 1.22,
+      "baseCost": 6e+39,
+      "growth": 1.2,
       "maxLevel": 20,
-      "trafficPerLevel": 0.08,
       "group": "city",
+      "effect": "traffic",
+      "perLevel": 0.05,
       "requires": {
         "city": "rome"
+      }
+    },
+    "zurichUp": {
+      "baseCost": 3.2e+44,
+      "growth": 1.2,
+      "maxLevel": 20,
+      "group": "city",
+      "effect": "traffic",
+      "perLevel": 0.05,
+      "requires": {
+        "city": "zurich"
+      }
+    },
+    "monacoUp": {
+      "baseCost": 6.4e+44,
+      "growth": 1.2,
+      "maxLevel": 20,
+      "group": "city",
+      "effect": "pay",
+      "perLevel": 0.1,
+      "requires": {
+        "city": "monaco"
+      }
+    },
+    "barcelonaUp": {
+      "baseCost": 1.28e+45,
+      "growth": 1.2,
+      "maxLevel": 20,
+      "group": "city",
+      "effect": "traffic",
+      "perLevel": 0.05,
+      "requires": {
+        "city": "barcelona"
+      }
+    },
+    "madridUp": {
+      "baseCost": 2.56e+45,
+      "growth": 1.2,
+      "maxLevel": 20,
+      "group": "city",
+      "effect": "oven",
+      "perLevel": 1,
+      "requires": {
+        "city": "madrid"
+      }
+    },
+    "lisbonUp": {
+      "baseCost": 5.12e+45,
+      "growth": 1.2,
+      "maxLevel": 20,
+      "group": "city",
+      "effect": "traffic",
+      "perLevel": 0.05,
+      "requires": {
+        "city": "lisbon"
+      }
+    },
+    "parisUp": {
+      "baseCost": 1.024e+46,
+      "growth": 1.2,
+      "maxLevel": 20,
+      "group": "city",
+      "effect": "traffic",
+      "perLevel": 0.05,
+      "requires": {
+        "city": "paris"
+      }
+    },
+    "brusselsUp": {
+      "baseCost": 2.048e+46,
+      "growth": 1.2,
+      "maxLevel": 20,
+      "group": "city",
+      "effect": "pay",
+      "perLevel": 0.1,
+      "requires": {
+        "city": "brussels"
+      }
+    },
+    "amsterdamUp": {
+      "baseCost": 4.096e+46,
+      "growth": 1.2,
+      "maxLevel": 20,
+      "group": "city",
+      "effect": "oven",
+      "perLevel": 1,
+      "requires": {
+        "city": "amsterdam"
+      }
+    },
+    "londonUp": {
+      "baseCost": 8.192e+46,
+      "growth": 1.2,
+      "maxLevel": 20,
+      "group": "city",
+      "effect": "pay",
+      "perLevel": 0.1,
+      "requires": {
+        "city": "london"
+      }
+    },
+    "liverpoolUp": {
+      "baseCost": 1.6384e+47,
+      "growth": 1.2,
+      "maxLevel": 20,
+      "group": "city",
+      "effect": "traffic",
+      "perLevel": 0.05,
+      "requires": {
+        "city": "liverpool"
+      }
+    },
+    "berlinUp": {
+      "baseCost": 3.2768e+47,
+      "growth": 1.2,
+      "maxLevel": 20,
+      "group": "city",
+      "effect": "traffic",
+      "perLevel": 0.05,
+      "requires": {
+        "city": "berlin"
+      }
+    },
+    "warsawUp": {
+      "baseCost": 6.5536e+47,
+      "growth": 1.2,
+      "maxLevel": 20,
+      "group": "city",
+      "effect": "oven",
+      "perLevel": 1,
+      "requires": {
+        "city": "warsaw"
+      }
+    },
+    "minskUp": {
+      "baseCost": 1.31072e+48,
+      "growth": 1.2,
+      "maxLevel": 20,
+      "group": "city",
+      "effect": "oven",
+      "perLevel": 1,
+      "requires": {
+        "city": "minsk"
+      }
+    },
+    "budapestUp": {
+      "baseCost": 2.62144e+48,
+      "growth": 1.2,
+      "maxLevel": 20,
+      "group": "city",
+      "effect": "pay",
+      "perLevel": 0.1,
+      "requires": {
+        "city": "budapest"
+      }
+    },
+    "zagrebUp": {
+      "baseCost": 5.24288e+48,
+      "growth": 1.2,
+      "maxLevel": 20,
+      "group": "city",
+      "effect": "traffic",
+      "perLevel": 0.05,
+      "requires": {
+        "city": "zagreb"
+      }
+    },
+    "belgradeUp": {
+      "baseCost": 1.04858e+49,
+      "growth": 1.2,
+      "maxLevel": 20,
+      "group": "city",
+      "effect": "pay",
+      "perLevel": 0.1,
+      "requires": {
+        "city": "belgrade"
+      }
+    },
+    "sofiaUp": {
+      "baseCost": 2.09715e+49,
+      "growth": 1.2,
+      "maxLevel": 20,
+      "group": "city",
+      "effect": "oven",
+      "perLevel": 1,
+      "requires": {
+        "city": "sofia"
+      }
+    },
+    "bucharestUp": {
+      "baseCost": 4.1943e+49,
+      "growth": 1.2,
+      "maxLevel": 20,
+      "group": "city",
+      "effect": "traffic",
+      "perLevel": 0.05,
+      "requires": {
+        "city": "bucharest"
+      }
+    },
+    "istanbulUp": {
+      "baseCost": 8.38861e+49,
+      "growth": 1.2,
+      "maxLevel": 20,
+      "group": "city",
+      "effect": "pay",
+      "perLevel": 0.1,
+      "requires": {
+        "city": "istanbul"
+      }
+    },
+    "athensUp": {
+      "baseCost": 1.67772e+50,
+      "growth": 1.2,
+      "maxLevel": 20,
+      "group": "city",
+      "effect": "oven",
+      "perLevel": 1,
+      "requires": {
+        "city": "athens"
+      }
+    },
+    "telavivUp": {
+      "baseCost": 3.35544e+50,
+      "growth": 1.2,
+      "maxLevel": 20,
+      "group": "city",
+      "effect": "traffic",
+      "perLevel": 0.05,
+      "requires": {
+        "city": "telaviv"
       }
     }
   },
@@ -524,7 +759,7 @@
         "order": 1,
         "background": "cityRavenna",
         "requiresFranchises": 1,
-        "relocationCost": 150000,
+        "relocationCost": 1e+45,
         "multiplier": 1.5,
         "map": {
           "lat": 44.42,
@@ -536,14 +771,14 @@
           "pottery",
           "candles"
         ],
-        "labelSide": "left"
+        "labelPos": "left"
       },
       {
         "id": "florence",
         "order": 2,
         "background": "cityFlorence",
         "requiresFranchises": 2,
-        "relocationCost": 2000000,
+        "relocationCost": 2e+45,
         "multiplier": 2.5,
         "map": {
           "lat": 43.77,
@@ -555,14 +790,14 @@
           "banners",
           "statuette"
         ],
-        "labelSide": "left"
+        "labelPos": "left"
       },
       {
         "id": "milan",
         "order": 3,
         "background": "cityMilan",
         "requiresFranchises": 4,
-        "relocationCost": 25000000,
+        "relocationCost": 4e+45,
         "multiplier": 4,
         "map": {
           "lat": 45.46,
@@ -580,7 +815,7 @@
         "order": 4,
         "background": "cityRome",
         "requiresFranchises": 7,
-        "relocationCost": 300000000,
+        "relocationCost": 8e+45,
         "multiplier": 7,
         "map": {
           "lat": 41.9,
@@ -592,6 +827,391 @@
           "laurels",
           "amphora"
         ]
+      },
+      {
+        "id": "zurich",
+        "order": 5,
+        "background": "cityZurich",
+        "requiresFranchises": 8,
+        "relocationCost": 1.6e+46,
+        "multiplier": 8,
+        "map": {
+          "lat": 47.37,
+          "lon": 8.54
+        },
+        "upgrade": "zurichUp",
+        "decorSteps": [
+          "zurich_flags",
+          "zurich_planters",
+          "zurich_fountain"
+        ],
+        "labelPos": "above"
+      },
+      {
+        "id": "monaco",
+        "order": 6,
+        "background": "cityMonaco",
+        "requiresFranchises": 9,
+        "relocationCost": 3.2e+46,
+        "multiplier": 9,
+        "map": {
+          "lat": 43.73,
+          "lon": 7.42
+        },
+        "upgrade": "monacoUp",
+        "decorSteps": [
+          "monaco_flags",
+          "monaco_umbrella",
+          "monaco_statue"
+        ],
+        "labelPos": "below"
+      },
+      {
+        "id": "barcelona",
+        "order": 7,
+        "background": "cityBarcelona",
+        "requiresFranchises": 10,
+        "relocationCost": 6.4e+46,
+        "multiplier": 10,
+        "map": {
+          "lat": 41.39,
+          "lon": 2.17
+        },
+        "upgrade": "barcelonaUp",
+        "decorSteps": [
+          "barcelona_banners",
+          "barcelona_planters",
+          "barcelona_lanterns"
+        ],
+        "labelPos": "right"
+      },
+      {
+        "id": "madrid",
+        "order": 8,
+        "background": "cityMadrid",
+        "requiresFranchises": 11,
+        "relocationCost": 1.28e+47,
+        "multiplier": 11,
+        "map": {
+          "lat": 40.42,
+          "lon": -3.7
+        },
+        "upgrade": "madridUp",
+        "decorSteps": [
+          "madrid_umbrella",
+          "madrid_kiosk",
+          "madrid_flags"
+        ],
+        "labelPos": "left"
+      },
+      {
+        "id": "lisbon",
+        "order": 9,
+        "background": "cityLisbon",
+        "requiresFranchises": 12,
+        "relocationCost": 2.56e+47,
+        "multiplier": 12,
+        "map": {
+          "lat": 38.72,
+          "lon": -9.14
+        },
+        "upgrade": "lisbonUp",
+        "decorSteps": [
+          "lisbon_banners",
+          "lisbon_planters",
+          "lisbon_lanterns"
+        ]
+      },
+      {
+        "id": "paris",
+        "order": 10,
+        "background": "cityParis",
+        "requiresFranchises": 13,
+        "relocationCost": 5.12e+47,
+        "multiplier": 13,
+        "map": {
+          "lat": 48.86,
+          "lon": 2.35
+        },
+        "upgrade": "parisUp",
+        "decorSteps": [
+          "paris_flags",
+          "paris_umbrella",
+          "paris_statue"
+        ]
+      },
+      {
+        "id": "brussels",
+        "order": 11,
+        "background": "cityBrussels",
+        "requiresFranchises": 14,
+        "relocationCost": 1.024e+48,
+        "multiplier": 14,
+        "map": {
+          "lat": 50.85,
+          "lon": 4.35
+        },
+        "upgrade": "brusselsUp",
+        "decorSteps": [
+          "brussels_banners",
+          "brussels_kiosk",
+          "brussels_wreath"
+        ]
+      },
+      {
+        "id": "amsterdam",
+        "order": 12,
+        "background": "cityAmsterdam",
+        "requiresFranchises": 15,
+        "relocationCost": 2.048e+48,
+        "multiplier": 15,
+        "map": {
+          "lat": 52.37,
+          "lon": 4.9
+        },
+        "upgrade": "amsterdamUp",
+        "decorSteps": [
+          "amsterdam_planters",
+          "amsterdam_lanterns",
+          "amsterdam_flags"
+        ]
+      },
+      {
+        "id": "london",
+        "order": 13,
+        "background": "cityLondon",
+        "requiresFranchises": 16,
+        "relocationCost": 4.096e+48,
+        "multiplier": 16,
+        "map": {
+          "lat": 51.51,
+          "lon": -0.13
+        },
+        "upgrade": "londonUp",
+        "decorSteps": [
+          "london_flags",
+          "london_lanterns",
+          "london_statue"
+        ],
+        "labelPos": "left"
+      },
+      {
+        "id": "liverpool",
+        "order": 14,
+        "background": "cityLiverpool",
+        "requiresFranchises": 17,
+        "relocationCost": 8.192e+48,
+        "multiplier": 17,
+        "map": {
+          "lat": 53.41,
+          "lon": -2.99
+        },
+        "upgrade": "liverpoolUp",
+        "decorSteps": [
+          "liverpool_banners",
+          "liverpool_flags",
+          "liverpool_planters"
+        ],
+        "labelPos": "left"
+      },
+      {
+        "id": "berlin",
+        "order": 15,
+        "background": "cityBerlin",
+        "requiresFranchises": 18,
+        "relocationCost": 1.6384e+49,
+        "multiplier": 18,
+        "map": {
+          "lat": 52.52,
+          "lon": 13.4
+        },
+        "upgrade": "berlinUp",
+        "decorSteps": [
+          "berlin_flags",
+          "berlin_umbrella",
+          "berlin_dome"
+        ]
+      },
+      {
+        "id": "warsaw",
+        "order": 16,
+        "background": "cityWarsaw",
+        "requiresFranchises": 19,
+        "relocationCost": 3.2768e+49,
+        "multiplier": 19,
+        "map": {
+          "lat": 52.23,
+          "lon": 21.01
+        },
+        "upgrade": "warsawUp",
+        "decorSteps": [
+          "warsaw_banners",
+          "warsaw_planters",
+          "warsaw_statue"
+        ]
+      },
+      {
+        "id": "minsk",
+        "order": 17,
+        "background": "cityMinsk",
+        "requiresFranchises": 20,
+        "relocationCost": 6.5536e+49,
+        "multiplier": 20,
+        "map": {
+          "lat": 53.9,
+          "lon": 27.56
+        },
+        "upgrade": "minskUp",
+        "decorSteps": [
+          "minsk_banners",
+          "minsk_kiosk",
+          "minsk_lanterns"
+        ]
+      },
+      {
+        "id": "budapest",
+        "order": 18,
+        "background": "cityBudapest",
+        "requiresFranchises": 21,
+        "relocationCost": 1.31072e+50,
+        "multiplier": 21,
+        "map": {
+          "lat": 47.5,
+          "lon": 19.04
+        },
+        "upgrade": "budapestUp",
+        "decorSteps": [
+          "budapest_lanterns",
+          "budapest_dome",
+          "budapest_planters"
+        ]
+      },
+      {
+        "id": "zagreb",
+        "order": 19,
+        "background": "cityZagreb",
+        "requiresFranchises": 22,
+        "relocationCost": 2.62144e+50,
+        "multiplier": 22,
+        "map": {
+          "lat": 45.81,
+          "lon": 15.98
+        },
+        "upgrade": "zagrebUp",
+        "decorSteps": [
+          "zagreb_flags",
+          "zagreb_umbrella",
+          "zagreb_wreath"
+        ]
+      },
+      {
+        "id": "belgrade",
+        "order": 20,
+        "background": "cityBelgrade",
+        "requiresFranchises": 23,
+        "relocationCost": 5.24288e+50,
+        "multiplier": 23,
+        "map": {
+          "lat": 44.79,
+          "lon": 20.45
+        },
+        "upgrade": "belgradeUp",
+        "decorSteps": [
+          "belgrade_banners",
+          "belgrade_kiosk",
+          "belgrade_planters"
+        ]
+      },
+      {
+        "id": "sofia",
+        "order": 21,
+        "background": "citySofia",
+        "requiresFranchises": 24,
+        "relocationCost": 1.04858e+51,
+        "multiplier": 24,
+        "map": {
+          "lat": 42.7,
+          "lon": 23.32
+        },
+        "upgrade": "sofiaUp",
+        "decorSteps": [
+          "sofia_dome",
+          "sofia_lanterns",
+          "sofia_statue"
+        ]
+      },
+      {
+        "id": "bucharest",
+        "order": 22,
+        "background": "cityBucharest",
+        "requiresFranchises": 25,
+        "relocationCost": 2.09715e+51,
+        "multiplier": 25,
+        "map": {
+          "lat": 44.43,
+          "lon": 26.1
+        },
+        "upgrade": "bucharestUp",
+        "decorSteps": [
+          "bucharest_flags",
+          "bucharest_fountain",
+          "bucharest_umbrella"
+        ]
+      },
+      {
+        "id": "istanbul",
+        "order": 23,
+        "background": "cityIstanbul",
+        "requiresFranchises": 26,
+        "relocationCost": 4.1943e+51,
+        "multiplier": 26,
+        "map": {
+          "lat": 41.01,
+          "lon": 28.98
+        },
+        "upgrade": "istanbulUp",
+        "decorSteps": [
+          "istanbul_flags",
+          "istanbul_dome",
+          "istanbul_lanterns"
+        ]
+      },
+      {
+        "id": "athens",
+        "order": 24,
+        "background": "cityAthens",
+        "requiresFranchises": 27,
+        "relocationCost": 8.38861e+51,
+        "multiplier": 27,
+        "map": {
+          "lat": 37.98,
+          "lon": 23.73
+        },
+        "upgrade": "athensUp",
+        "decorSteps": [
+          "athens_wreath",
+          "athens_statue",
+          "athens_planters"
+        ]
+      },
+      {
+        "id": "telaviv",
+        "order": 25,
+        "background": "cityTelaviv",
+        "requiresFranchises": 28,
+        "relocationCost": 1.67772e+52,
+        "multiplier": 28,
+        "map": {
+          "lat": 32.09,
+          "lon": 34.78
+        },
+        "upgrade": "telavivUp",
+        "decorSteps": [
+          "telaviv_umbrella",
+          "telaviv_banners",
+          "telaviv_fountain"
+        ],
+        "labelPos": "left"
       }
     ]
   }

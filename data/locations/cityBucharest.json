@@ -1,0 +1,484 @@
+{
+  "id": "cityBucharest",
+  "nameKey": "city.bucharest.name",
+  "descKey": "city.bucharest.desc",
+  "unlock": {
+    "type": "city"
+  },
+  "economy": {
+    "trafficMult": 1,
+    "styleDemand": {}
+  },
+  "_note": "Street behind the stand for this city. Generated from the corner street; the stand and its stations are laid out in code.",
+  "queueStart": [
+    -2.2,
+    0,
+    4.4
+  ],
+  "queueStep": [
+    0.78,
+    0,
+    0.9
+  ],
+  "queueRowLength": 4,
+  "camera": {
+    "position": [
+      0,
+      6.6,
+      12.8
+    ],
+    "target": [
+      0,
+      1.45,
+      0.7
+    ],
+    "fov": 46
+  },
+  "props": [
+    {
+      "type": "road",
+      "z": -8,
+      "width": 7
+    },
+    {
+      "type": "tree",
+      "pos": [
+        -17,
+        0,
+        -12.4
+      ],
+      "scale": 0.95
+    },
+    {
+      "type": "tree",
+      "pos": [
+        -10.5,
+        0,
+        -12.4
+      ],
+      "scale": 0.95
+    },
+    {
+      "type": "tree",
+      "pos": [
+        -3.5,
+        0,
+        -12.4
+      ],
+      "scale": 0.95
+    },
+    {
+      "type": "tree",
+      "pos": [
+        3.5,
+        0,
+        -12.4
+      ],
+      "scale": 0.95
+    },
+    {
+      "type": "tree",
+      "pos": [
+        10,
+        0,
+        -12.4
+      ],
+      "scale": 0.95
+    },
+    {
+      "type": "tree",
+      "pos": [
+        17,
+        0,
+        -12.4
+      ],
+      "scale": 0.95
+    },
+    {
+      "type": "car",
+      "pos": [
+        -8.5,
+        0,
+        -5.6
+      ],
+      "color": "#d8402f",
+      "rot": 0
+    },
+    {
+      "type": "car",
+      "pos": [
+        8.8,
+        0,
+        -5.6
+      ],
+      "color": "#3d9a8b",
+      "rot": 0
+    },
+    {
+      "type": "lamp",
+      "pos": [
+        -6.2,
+        0,
+        -3.4
+      ],
+      "light": true
+    },
+    {
+      "type": "lamp",
+      "pos": [
+        6,
+        0,
+        -3.4
+      ],
+      "light": true
+    },
+    {
+      "type": "lamp",
+      "pos": [
+        -11.5,
+        0,
+        -3.4
+      ]
+    },
+    {
+      "type": "lamp",
+      "pos": [
+        12,
+        0,
+        -3.4
+      ]
+    },
+    {
+      "type": "tree",
+      "pos": [
+        -7.2,
+        0,
+        1.2
+      ],
+      "scale": 1.05
+    },
+    {
+      "type": "tree",
+      "pos": [
+        8.2,
+        0,
+        2.2
+      ],
+      "scale": 1
+    },
+    {
+      "type": "bush",
+      "pos": [
+        -8.6,
+        0,
+        3.4
+      ]
+    },
+    {
+      "type": "bush",
+      "pos": [
+        9.4,
+        0,
+        4.6
+      ]
+    },
+    {
+      "type": "bench",
+      "pos": [
+        6.6,
+        0,
+        5.6
+      ]
+    },
+    {
+      "type": "bin",
+      "pos": [
+        -5.8,
+        0,
+        3.6
+      ]
+    },
+    {
+      "type": "hydrant",
+      "pos": [
+        4.9,
+        0,
+        -3.5
+      ]
+    },
+    {
+      "type": "planter",
+      "pos": [
+        -5.4,
+        0,
+        6.2
+      ]
+    },
+    {
+      "type": "planter",
+      "pos": [
+        5.6,
+        0,
+        7.4
+      ]
+    },
+    {
+      "type": "sandwichBoard",
+      "pos": [
+        1.9,
+        0,
+        6.6
+      ]
+    },
+    {
+      "type": "stall",
+      "pos": [
+        -5.4,
+        0,
+        -3.7
+      ],
+      "color": "#d8402f",
+      "awning": "#fff3dc"
+    },
+    {
+      "type": "stall",
+      "pos": [
+        5.6,
+        0,
+        -3.7
+      ],
+      "color": "#d8402f",
+      "awning": "#fff3dc"
+    },
+    {
+      "type": "stall",
+      "pos": [
+        5.6,
+        0,
+        -3.7
+      ],
+      "color": "#d8402f",
+      "awning": "#fff3dc"
+    },
+    {
+      "type": "building",
+      "pos": [
+        -48,
+        0,
+        -16.2
+      ],
+      "size": [
+        6.2,
+        10.2,
+        6
+      ],
+      "color": "#e6d2a8",
+      "awning": "#2f7d6a"
+    },
+    {
+      "type": "building",
+      "pos": [
+        -41,
+        0,
+        -16.2
+      ],
+      "size": [
+        6.9,
+        10,
+        6
+      ],
+      "color": "#d4bc90",
+      "awning": "#d8402f"
+    },
+    {
+      "type": "building",
+      "pos": [
+        -33.1,
+        0,
+        -16.2
+      ],
+      "size": [
+        7.2,
+        10.3,
+        6
+      ],
+      "color": "#f2e4c4",
+      "awning": "#4a6fa5"
+    },
+    {
+      "type": "building",
+      "pos": [
+        -25.7,
+        0,
+        -16.2
+      ],
+      "size": [
+        7.3,
+        11.9,
+        6
+      ],
+      "color": "#c4a97c",
+      "awning": "#8c3b2e"
+    },
+    {
+      "type": "building",
+      "pos": [
+        -18.9,
+        0,
+        -16.2
+      ],
+      "size": [
+        6.4,
+        10.4,
+        6
+      ],
+      "color": "#e6d2a8",
+      "awning": "#e9a23b"
+    },
+    {
+      "type": "building",
+      "pos": [
+        -11.5,
+        0,
+        -16.2
+      ],
+      "size": [
+        6.6,
+        13.3,
+        6
+      ],
+      "color": "#d4bc90",
+      "awning": "#2f7d6a"
+    },
+    {
+      "type": "building",
+      "pos": [
+        -3.3,
+        0,
+        -16.2
+      ],
+      "size": [
+        7.6,
+        12.3,
+        6
+      ],
+      "color": "#f2e4c4",
+      "awning": "#d8402f"
+    },
+    {
+      "type": "building",
+      "pos": [
+        4,
+        0,
+        -16.2
+      ],
+      "size": [
+        7.9,
+        9.3,
+        6
+      ],
+      "color": "#c4a97c",
+      "awning": "#4a6fa5"
+    },
+    {
+      "type": "building",
+      "pos": [
+        11.3,
+        0,
+        -16.2
+      ],
+      "size": [
+        7.5,
+        9,
+        6
+      ],
+      "color": "#e6d2a8",
+      "awning": "#8c3b2e"
+    },
+    {
+      "type": "building",
+      "pos": [
+        18.6,
+        0,
+        -16.2
+      ],
+      "size": [
+        7.7,
+        10.2,
+        6
+      ],
+      "color": "#d4bc90",
+      "awning": "#e9a23b"
+    },
+    {
+      "type": "building",
+      "pos": [
+        26.2,
+        0,
+        -16.2
+      ],
+      "size": [
+        7.8,
+        9.5,
+        6
+      ],
+      "color": "#f2e4c4",
+      "awning": "#2f7d6a"
+    },
+    {
+      "type": "building",
+      "pos": [
+        33,
+        0,
+        -16.2
+      ],
+      "size": [
+        7.6,
+        13,
+        6
+      ],
+      "color": "#c4a97c",
+      "awning": "#d8402f"
+    },
+    {
+      "type": "building",
+      "pos": [
+        40.8,
+        0,
+        -16.2
+      ],
+      "size": [
+        7.1,
+        12.8,
+        6
+      ],
+      "color": "#e6d2a8",
+      "awning": "#4a6fa5"
+    },
+    {
+      "type": "building",
+      "pos": [
+        47.9,
+        0,
+        -16.2
+      ],
+      "size": [
+        7.2,
+        10.2,
+        6
+      ],
+      "color": "#d4bc90",
+      "awning": "#8c3b2e"
+    },
+    {
+      "type": "dome",
+      "pos": [
+        -3.5,
+        0,
+        -16.2
+      ],
+      "radius": 3.2,
+      "height": 4.2
+    }
+  ]
+}

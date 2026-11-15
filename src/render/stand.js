@@ -827,6 +827,151 @@ const CITY_DECOR = {
 };
 Object.assign(DECOR, CITY_DECOR);
 
+// Decorations for the European cities. A small set of shapes, each drawn in the city's colour
+// and placed in one of three spots (slot 0, 1 or 2) beside the stand.
+const SLOT = [[1, 1.2, 0.6], [-1, 1.1, 0.4], [1, 1.0, 2.2]];
+const SHAPE = {
+  flags(ctx, c, slot) {
+    const { S, M } = ctx;
+    const [x, y, z] = SIDE(ctx, ...SLOT[slot]);
+    M.cylC(0.02, 2.4, IRON, [x, y + 1.2, z]);
+    S.box([0.5, 0.3, 0.03], c, [x + 0.25, y + 2.2, z]);
+  },
+  umbrella(ctx, c, slot) {
+    const { S, M } = ctx;
+    const [x, y, z] = SIDE(ctx, ...SLOT[slot]);
+    M.cylC(0.025, 2.2, IRON, [x, y + 1.1, z]);
+    S.dome(1.0, c, [x, y + 2.2, z], [1, 0.4, 1]);
+    M.cylC(0.02, 0.7, IRON, [x + 0.5, y + 0.35, z + 0.4]);
+    S.cyl(0.25, 0.25, 0.05, '#f6ead2', [x + 0.5, y + 0.72, z + 0.4]);
+  },
+  planters(ctx, c, slot) {
+    const { S, F } = ctx;
+    const [x, y, z] = SIDE(ctx, ...SLOT[slot]);
+    S.box([0.8, 0.35, 0.5], '#8d5a3b', [x, y + 0.18, z]);
+    F.ico(0.3, c, [x, y + 0.5, z], [1.2, 0.8, 1.2]);
+    F.ico(0.08, '#ffd166', [x - 0.2, y + 0.7, z]);
+    F.ico(0.08, '#ef476f', [x + 0.2, y + 0.66, z]);
+  },
+  fountain(ctx, c, slot) {
+    const { S } = ctx;
+    const [x, y, z] = SIDE(ctx, ...SLOT[slot]);
+    S.cyl(0.9, 0.9, 0.22, '#d9d4c7', [x, y + 0.11, z]);
+    S.cyl(0.12, 0.12, 0.7, '#d9d4c7', [x, y + 0.5, z]);
+    S.dome(0.22, c, [x, y + 0.9, z], [1, 0.4, 1]);
+  },
+  statue(ctx, c, slot) {
+    const { S } = ctx;
+    const [x, y, z] = SIDE(ctx, ...SLOT[slot]);
+    S.box([0.6, 0.3, 0.6], '#d9d4c7', [x, y + 0.15, z]);
+    S.cyl(0.15, 0.2, 0.7, c, [x, y + 0.65, z]);
+    S.dome(0.15, c, [x, y + 1.1, z]);
+  },
+  banners(ctx, c, slot) {
+    const { S, M } = ctx;
+    const [x, y, z] = SIDE(ctx, ...SLOT[slot]);
+    M.cylC(0.02, 2.6, IRON, [x, y + 1.3, z]);
+    S.box([0.45, 1.1, 0.04], c, [x + 0.25, y + 1.6, z]);
+  },
+  lanterns(ctx, c, slot) {
+    const { S, M } = ctx;
+    const [x, y, z] = SIDE(ctx, ...SLOT[slot]);
+    M.cylC(0.02, 2, IRON, [x, y + 1, z]);
+    S.box([0.2, 0.25, 0.2], c, [x, y + 2.1, z]);
+  },
+  kiosk(ctx, c, slot) {
+    const { S } = ctx;
+    const [x, y, z] = SIDE(ctx, ...SLOT[slot]);
+    S.box([1.2, 0.9, 0.8], '#f6ead2', [x, y + 0.45, z]);
+    S.box([1.4, 0.1, 1.0], c, [x, y + 1.0, z]);
+    S.box([1.0, 0.08, 0.6], '#a8703f', [x, y + 0.92, z + 0.1]);
+  },
+  dome(ctx, c, slot) {
+    const { S } = ctx;
+    const [x, y, z] = SIDE(ctx, ...SLOT[slot]);
+    S.cyl(0.6, 0.6, 0.8, '#f3ede0', [x, y + 0.4, z]);
+    S.dome(0.62, c, [x, y + 0.8, z], [1, 0.9, 1]);
+  },
+  wreath(ctx, c, slot) {
+    const { S, F } = ctx;
+    const [x, y, z] = SIDE(ctx, ...SLOT[slot]);
+    S.box([0.9, 0.9, 0.06], '#b08d4a', [x, y + 1.6, z]);
+    for (let k = 0; k < 10; k++) {
+      const a = (k / 10) * Math.PI * 2;
+      F.ico(0.09, c, [x + Math.cos(a) * 0.3, y + 1.6 + Math.sin(a) * 0.3, z + 0.05]);
+    }
+  },
+};
+// id: [shape, colour, slot]. The ids match the cities' decorSteps and the strings table.
+const CITY_DECOR_SPEC = {
+  zurich_flags: ['flags', '#d8402f', 0],
+  zurich_planters: ['planters', '#4f8f47', 1],
+  zurich_fountain: ['fountain', '#9fd3e6', 2],
+  monaco_flags: ['flags', '#d8402f', 0],
+  monaco_umbrella: ['umbrella', '#ffffff', 1],
+  monaco_statue: ['statue', '#c9a227', 2],
+  barcelona_banners: ['banners', '#f4a261', 0],
+  barcelona_planters: ['planters', '#4f8f47', 1],
+  barcelona_lanterns: ['lanterns', '#ffd166', 2],
+  madrid_umbrella: ['umbrella', '#d8402f', 0],
+  madrid_kiosk: ['kiosk', '#ffffff', 1],
+  madrid_flags: ['flags', '#ffd166', 2],
+  lisbon_banners: ['banners', '#2f7d6a', 0],
+  lisbon_planters: ['planters', '#4a6fa5', 1],
+  lisbon_lanterns: ['lanterns', '#ffd166', 2],
+  paris_flags: ['flags', '#1d4ed8', 0],
+  paris_umbrella: ['umbrella', '#ffffff', 1],
+  paris_statue: ['statue', '#8c7a5b', 2],
+  brussels_banners: ['banners', '#ffd166', 0],
+  brussels_kiosk: ['kiosk', '#d8402f', 1],
+  brussels_wreath: ['wreath', '#4f8f47', 2],
+  amsterdam_planters: ['planters', '#d8402f', 0],
+  amsterdam_lanterns: ['lanterns', '#ffd166', 1],
+  amsterdam_flags: ['flags', '#d8402f', 2],
+  london_flags: ['flags', '#d8402f', 0],
+  london_lanterns: ['lanterns', '#1d3557', 1],
+  london_statue: ['statue', '#8c7a5b', 2],
+  liverpool_banners: ['banners', '#d8402f', 0],
+  liverpool_flags: ['flags', '#1d4ed8', 1],
+  liverpool_planters: ['planters', '#4f8f47', 2],
+  berlin_flags: ['flags', '#ffd166', 0],
+  berlin_umbrella: ['umbrella', '#4f8f47', 1],
+  berlin_dome: ['dome', '#9aa3ab', 2],
+  warsaw_banners: ['banners', '#d8402f', 0],
+  warsaw_planters: ['planters', '#4f8f47', 1],
+  warsaw_statue: ['statue', '#8c7a5b', 2],
+  minsk_banners: ['banners', '#4f8f47', 0],
+  minsk_kiosk: ['kiosk', '#ffffff', 1],
+  minsk_lanterns: ['lanterns', '#ffd166', 2],
+  budapest_lanterns: ['lanterns', '#ffd166', 0],
+  budapest_dome: ['dome', '#9aa3ab', 1],
+  budapest_planters: ['planters', '#4f8f47', 2],
+  zagreb_flags: ['flags', '#d8402f', 0],
+  zagreb_umbrella: ['umbrella', '#ffffff', 1],
+  zagreb_wreath: ['wreath', '#4f8f47', 2],
+  belgrade_banners: ['banners', '#1d4ed8', 0],
+  belgrade_kiosk: ['kiosk', '#d8402f', 1],
+  belgrade_planters: ['planters', '#4f8f47', 2],
+  sofia_dome: ['dome', '#9aa3ab', 0],
+  sofia_lanterns: ['lanterns', '#ffd166', 1],
+  sofia_statue: ['statue', '#8c7a5b', 2],
+  bucharest_flags: ['flags', '#1d4ed8', 0],
+  bucharest_fountain: ['fountain', '#9fd3e6', 1],
+  bucharest_umbrella: ['umbrella', '#ffd166', 2],
+  istanbul_flags: ['flags', '#d8402f', 0],
+  istanbul_dome: ['dome', '#f3ede0', 1],
+  istanbul_lanterns: ['lanterns', '#ffd166', 2],
+  athens_wreath: ['wreath', '#4f8f47', 0],
+  athens_statue: ['statue', '#e9e4d8', 1],
+  athens_planters: ['planters', '#4f8f47', 2],
+  telaviv_umbrella: ['umbrella', '#1d4ed8', 0],
+  telaviv_banners: ['banners', '#ffffff', 1],
+  telaviv_fountain: ['fountain', '#9fd3e6', 2],
+};
+for (const [id, [shape, color, slot]] of Object.entries(CITY_DECOR_SPEC)) {
+  DECOR[id] = (ctx) => SHAPE[shape](ctx, color, slot);
+}
+
 function decorate(ctx, level) {
   const steps = ctx.L.decorSteps || Object.keys(DECOR);
   steps.slice(0, level).forEach((id) => {
