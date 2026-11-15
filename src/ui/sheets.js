@@ -463,13 +463,11 @@ function cityRow(state, cfg, c, here, next, actions) {
     disabled = false;
     onClick = () => actions.move(c.id);
   } else if (c.id === next?.id) {
-    const needFr = state.franchise.count < c.requiresFranchises;
     const needCash = state.cash < c.relocationCost;
-    info.append(el('small', 'lvl', t(c.requiresFranchises === 1 ? 'map.requiresOne' : 'map.requires', { franchises: c.requiresFranchises, cost: moneyFull(c.relocationCost) })));
-    if (needFr) info.append(el('small', 'lvl', t('map.needFranchises', { n: c.requiresFranchises })));
-    else if (needCash) info.append(el('small', 'lvl', t('map.needCash', { cost: moneyFull(c.relocationCost) })));
+    info.append(el('small', 'lvl', t('map.requires', { cost: moneyFull(c.relocationCost) })));
+    if (needCash) info.append(el('small', 'lvl', t('map.needCash', { cost: moneyFull(c.relocationCost) })));
     label = t('map.buy', { cost: moneyFull(c.relocationCost) });
-    disabled = needFr || needCash;
+    disabled = needCash;
     onClick = () => actions.move(c.id);
   }
   if (c.upgrade) info.append(el('small', '', t('map.unlocksUpgrade', { upgrade: t('upgrade.' + c.upgrade + '.name') })));

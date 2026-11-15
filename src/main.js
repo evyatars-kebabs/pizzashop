@@ -140,7 +140,6 @@ function moveTo(id) {
   const r = moveCity(S, cfg, id);
   if (!r.ok) {
     if (r.reason === 'cash') return hud.toast(t('toast.notEnough'));
-    if (r.reason === 'needsFranchise') return hud.toast(t('map.needFranchises', { n: r.need }));
     if (r.reason === 'order') return hud.toast(t('map.notNext'));
     return;
   }

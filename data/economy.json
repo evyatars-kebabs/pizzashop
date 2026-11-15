@@ -740,7 +740,6 @@
         "id": "riccione",
         "order": 0,
         "background": "cityRiccione",
-        "requiresFranchises": 0,
         "relocationCost": 0,
         "multiplier": 1,
         "map": {
@@ -758,7 +757,6 @@
         "id": "ravenna",
         "order": 1,
         "background": "cityRavenna",
-        "requiresFranchises": 1,
         "relocationCost": 1e+45,
         "multiplier": 1.5,
         "map": {
@@ -777,7 +775,6 @@
         "id": "florence",
         "order": 2,
         "background": "cityFlorence",
-        "requiresFranchises": 2,
         "relocationCost": 2e+45,
         "multiplier": 2.5,
         "map": {
@@ -796,7 +793,6 @@
         "id": "milan",
         "order": 3,
         "background": "cityMilan",
-        "requiresFranchises": 4,
         "relocationCost": 4e+45,
         "multiplier": 4,
         "map": {
@@ -814,7 +810,6 @@
         "id": "rome",
         "order": 4,
         "background": "cityRome",
-        "requiresFranchises": 7,
         "relocationCost": 8e+45,
         "multiplier": 7,
         "map": {
@@ -832,7 +827,6 @@
         "id": "zurich",
         "order": 5,
         "background": "cityZurich",
-        "requiresFranchises": 8,
         "relocationCost": 1.6e+46,
         "multiplier": 8,
         "map": {
@@ -851,7 +845,6 @@
         "id": "monaco",
         "order": 6,
         "background": "cityMonaco",
-        "requiresFranchises": 9,
         "relocationCost": 3.2e+46,
         "multiplier": 9,
         "map": {
@@ -870,7 +863,6 @@
         "id": "barcelona",
         "order": 7,
         "background": "cityBarcelona",
-        "requiresFranchises": 10,
         "relocationCost": 6.4e+46,
         "multiplier": 10,
         "map": {
@@ -889,7 +881,6 @@
         "id": "madrid",
         "order": 8,
         "background": "cityMadrid",
-        "requiresFranchises": 11,
         "relocationCost": 1.28e+47,
         "multiplier": 11,
         "map": {
@@ -908,7 +899,6 @@
         "id": "lisbon",
         "order": 9,
         "background": "cityLisbon",
-        "requiresFranchises": 12,
         "relocationCost": 2.56e+47,
         "multiplier": 12,
         "map": {
@@ -926,7 +916,6 @@
         "id": "paris",
         "order": 10,
         "background": "cityParis",
-        "requiresFranchises": 13,
         "relocationCost": 5.12e+47,
         "multiplier": 13,
         "map": {
@@ -944,7 +933,6 @@
         "id": "brussels",
         "order": 11,
         "background": "cityBrussels",
-        "requiresFranchises": 14,
         "relocationCost": 1.024e+48,
         "multiplier": 14,
         "map": {
@@ -962,7 +950,6 @@
         "id": "amsterdam",
         "order": 12,
         "background": "cityAmsterdam",
-        "requiresFranchises": 15,
         "relocationCost": 2.048e+48,
         "multiplier": 15,
         "map": {
@@ -980,7 +967,6 @@
         "id": "london",
         "order": 13,
         "background": "cityLondon",
-        "requiresFranchises": 16,
         "relocationCost": 4.096e+48,
         "multiplier": 16,
         "map": {
@@ -999,7 +985,6 @@
         "id": "liverpool",
         "order": 14,
         "background": "cityLiverpool",
-        "requiresFranchises": 17,
         "relocationCost": 8.192e+48,
         "multiplier": 17,
         "map": {
@@ -1018,7 +1003,6 @@
         "id": "berlin",
         "order": 15,
         "background": "cityBerlin",
-        "requiresFranchises": 18,
         "relocationCost": 1.6384e+49,
         "multiplier": 18,
         "map": {
@@ -1036,7 +1020,6 @@
         "id": "warsaw",
         "order": 16,
         "background": "cityWarsaw",
-        "requiresFranchises": 19,
         "relocationCost": 3.2768e+49,
         "multiplier": 19,
         "map": {
@@ -1054,7 +1037,6 @@
         "id": "minsk",
         "order": 17,
         "background": "cityMinsk",
-        "requiresFranchises": 20,
         "relocationCost": 6.5536e+49,
         "multiplier": 20,
         "map": {
@@ -1072,7 +1054,6 @@
         "id": "budapest",
         "order": 18,
         "background": "cityBudapest",
-        "requiresFranchises": 21,
         "relocationCost": 1.31072e+50,
         "multiplier": 21,
         "map": {
@@ -1090,7 +1071,6 @@
         "id": "zagreb",
         "order": 19,
         "background": "cityZagreb",
-        "requiresFranchises": 22,
         "relocationCost": 2.62144e+50,
         "multiplier": 22,
         "map": {
@@ -1108,7 +1088,6 @@
         "id": "belgrade",
         "order": 20,
         "background": "cityBelgrade",
-        "requiresFranchises": 23,
         "relocationCost": 5.24288e+50,
         "multiplier": 23,
         "map": {
@@ -1126,7 +1105,6 @@
         "id": "sofia",
         "order": 21,
         "background": "citySofia",
-        "requiresFranchises": 24,
         "relocationCost": 1.04858e+51,
         "multiplier": 24,
         "map": {
@@ -1144,7 +1122,6 @@
         "id": "bucharest",
         "order": 22,
         "background": "cityBucharest",
-        "requiresFranchises": 25,
         "relocationCost": 2.09715e+51,
         "multiplier": 25,
         "map": {
@@ -1162,7 +1139,6 @@
         "id": "istanbul",
         "order": 23,
         "background": "cityIstanbul",
-        "requiresFranchises": 26,
         "relocationCost": 4.1943e+51,
         "multiplier": 26,
         "map": {
@@ -1180,7 +1156,6 @@
         "id": "athens",
         "order": 24,
         "background": "cityAthens",
-        "requiresFranchises": 27,
         "relocationCost": 8.38861e+51,
         "multiplier": 27,
         "map": {
@@ -1198,7 +1173,6 @@
         "id": "telaviv",
         "order": 25,
         "background": "cityTelaviv",
-        "requiresFranchises": 28,
         "relocationCost": 1.67772e+52,
         "multiplier": 28,
         "map": {

@@ -21,16 +21,14 @@ test('cities have unique ids and orders, starting at Riccione with no fee', () =
   const sorted = [...list].sort((a, b) => a.order - b.order);
   assert.equal(sorted[0].id, 'riccione');
   assert.equal(sorted[0].relocationCost, 0);
-  assert.equal(sorted[0].requiresFranchises, 0);
   assert.equal(sorted[0].multiplier, 1);
 });
 
-test('costs, franchise requirements and multipliers rise along the travel order', () => {
+test('costs and multipliers rise along the travel order', () => {
   const sorted = [...list].sort((a, b) => a.order - b.order);
   for (let i = 1; i < sorted.length; i++) {
     assert.ok(sorted[i].multiplier > sorted[i - 1].multiplier, sorted[i].id + ' multiplier');
     assert.ok(sorted[i].relocationCost > sorted[i - 1].relocationCost, sorted[i].id + ' cost');
-    assert.ok(sorted[i].requiresFranchises >= sorted[i - 1].requiresFranchises, sorted[i].id + ' franchises');
   }
 });
 

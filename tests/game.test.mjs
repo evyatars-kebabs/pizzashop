@@ -202,12 +202,10 @@ test('each city multiplies income by its multiplier', () => {
   assert.equal(derive(inCity('rome', CITY_IDS), cityCfg).empirePay / base, 7);
 });
 
-test('the next city costs its relocation fee and needs its franchises; order is enforced', () => {
+test('the next city costs its relocation fee; order is enforced', () => {
   const s = inCity('riccione');
   assert.equal(nextCity(s, cityCfg).id, 'ravenna');
   s.cash = 0;
-  assert.equal(moveCity(s, cityCfg, 'ravenna').reason, 'needsFranchise');
-  s.franchise.count = 1;
   assert.equal(moveCity(s, cityCfg, 'ravenna').reason, 'cash');
   assert.equal(moveCity(s, cityCfg, 'florence').reason, 'order');
   s.cash = 1e47;

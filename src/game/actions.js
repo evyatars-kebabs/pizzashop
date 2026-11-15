@@ -265,7 +265,7 @@ export function unlockedStyles(state, cfg) {
 }
 
 // Moves the stand to another unlocked location. The queue and cooking pizzas do not come along.
-// Travel to a city. The next city costs its relocation fee and needs its franchises; cities
+// Travel to a city. The next city costs its relocation fee; cities
 // already reached are free to revisit. Shops, upgrades and staff come along. Decorations are
 // taken down (the decor level stays, so they can be put back for free with redecorate).
 export function moveCity(state, cfg, id) {
@@ -277,7 +277,6 @@ export function moveCity(state, cfg, id) {
   if (first) {
     const next = nextCity(state, cfg);
     if (!next || next.id !== id) return { ok: false, reason: 'order', next: next?.id || null };
-    if (state.franchise.count < city.requiresFranchises) return { ok: false, reason: 'needsFranchise', need: city.requiresFranchises };
     if (state.cash < city.relocationCost) return { ok: false, reason: 'cash', cost: city.relocationCost };
     cost = city.relocationCost;
     state.cash -= cost;
