@@ -208,7 +208,7 @@ test('the next city costs its relocation fee; order is enforced', () => {
   s.cash = 0;
   assert.equal(moveCity(s, cityCfg, 'ravenna').reason, 'cash');
   assert.equal(moveCity(s, cityCfg, 'florence').reason, 'order');
-  s.cash = 1e47;
+  s.cash = 1e18;
   const before = s.cash;
   const r = moveCity(s, cityCfg, 'ravenna');
   assert.equal(r.ok, true);

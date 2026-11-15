@@ -200,7 +200,7 @@
       }
     },
     "terrace": {
-      "baseCost": 3e+36,
+      "baseCost": 20000000000,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -211,7 +211,7 @@
       }
     },
     "delivery": {
-      "baseCost": 4e+37,
+      "baseCost": 474000000000,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -222,7 +222,7 @@
       }
     },
     "trattoria": {
-      "baseCost": 5e+38,
+      "baseCost": 11200000000000,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -233,7 +233,7 @@
       }
     },
     "rooftop": {
-      "baseCost": 6e+39,
+      "baseCost": 266000000000000,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -244,7 +244,7 @@
       }
     },
     "zurichUp": {
-      "baseCost": 3.2e+44,
+      "baseCost": 6320000000000000,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -255,7 +255,7 @@
       }
     },
     "monacoUp": {
-      "baseCost": 6.4e+44,
+      "baseCost": 150000000000000000,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -266,7 +266,7 @@
       }
     },
     "barcelonaUp": {
-      "baseCost": 1.28e+45,
+      "baseCost": 3560000000000000000,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -277,7 +277,7 @@
       }
     },
     "madridUp": {
-      "baseCost": 2.56e+45,
+      "baseCost": 84400000000000000000,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -288,7 +288,7 @@
       }
     },
     "lisbonUp": {
-      "baseCost": 5.12e+45,
+      "baseCost": 2e+21,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -299,7 +299,7 @@
       }
     },
     "parisUp": {
-      "baseCost": 1.024e+46,
+      "baseCost": 4.74e+22,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -310,7 +310,7 @@
       }
     },
     "brusselsUp": {
-      "baseCost": 2.048e+46,
+      "baseCost": 1.12e+24,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -321,7 +321,7 @@
       }
     },
     "amsterdamUp": {
-      "baseCost": 4.096e+46,
+      "baseCost": 2.66e+25,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -332,7 +332,7 @@
       }
     },
     "londonUp": {
-      "baseCost": 8.192e+46,
+      "baseCost": 6.32e+26,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -343,7 +343,7 @@
       }
     },
     "liverpoolUp": {
-      "baseCost": 1.6384e+47,
+      "baseCost": 1.5e+28,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -354,7 +354,7 @@
       }
     },
     "berlinUp": {
-      "baseCost": 3.2768e+47,
+      "baseCost": 3.56e+29,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -365,7 +365,7 @@
       }
     },
     "warsawUp": {
-      "baseCost": 6.5536e+47,
+      "baseCost": 8.44e+30,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -376,7 +376,7 @@
       }
     },
     "minskUp": {
-      "baseCost": 1.31072e+48,
+      "baseCost": 2e+32,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -387,7 +387,7 @@
       }
     },
     "budapestUp": {
-      "baseCost": 2.62144e+48,
+      "baseCost": 4.74e+33,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -398,7 +398,7 @@
       }
     },
     "zagrebUp": {
-      "baseCost": 5.24288e+48,
+      "baseCost": 1.12e+35,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -409,7 +409,7 @@
       }
     },
     "belgradeUp": {
-      "baseCost": 1.04858e+49,
+      "baseCost": 2.66e+36,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -420,7 +420,7 @@
       }
     },
     "sofiaUp": {
-      "baseCost": 2.09715e+49,
+      "baseCost": 6.32e+37,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -431,7 +431,7 @@
       }
     },
     "bucharestUp": {
-      "baseCost": 4.1943e+49,
+      "baseCost": 1.5e+39,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -442,7 +442,7 @@
       }
     },
     "istanbulUp": {
-      "baseCost": 8.38861e+49,
+      "baseCost": 3.56e+40,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -453,7 +453,7 @@
       }
     },
     "athensUp": {
-      "baseCost": 1.67772e+50,
+      "baseCost": 8.44e+41,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -464,7 +464,7 @@
       }
     },
     "telavivUp": {
-      "baseCost": 3.35544e+50,
+      "baseCost": 2e+43,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -757,7 +757,7 @@
         "id": "ravenna",
         "order": 1,
         "background": "cityRavenna",
-        "relocationCost": 1e+45,
+        "relocationCost": 1000000000000,
         "multiplier": 1.5,
         "map": {
           "lat": 44.42,
@@ -775,7 +775,7 @@
         "id": "florence",
         "order": 2,
         "background": "cityFlorence",
-        "relocationCost": 2e+45,
+        "relocationCost": 23700000000000,
         "multiplier": 2.5,
         "map": {
           "lat": 43.77,
@@ -793,7 +793,7 @@
         "id": "milan",
         "order": 3,
         "background": "cityMilan",
-        "relocationCost": 4e+45,
+        "relocationCost": 562000000000000,
         "multiplier": 4,
         "map": {
           "lat": 45.46,
@@ -810,7 +810,7 @@
         "id": "rome",
         "order": 4,
         "background": "cityRome",
-        "relocationCost": 8e+45,
+        "relocationCost": 13300000000000000,
         "multiplier": 7,
         "map": {
           "lat": 41.9,
@@ -827,7 +827,7 @@
         "id": "zurich",
         "order": 5,
         "background": "cityZurich",
-        "relocationCost": 1.6e+46,
+        "relocationCost": 316000000000000000,
         "multiplier": 8,
         "map": {
           "lat": 47.37,
@@ -845,7 +845,7 @@
         "id": "monaco",
         "order": 6,
         "background": "cityMonaco",
-        "relocationCost": 3.2e+46,
+        "relocationCost": 7500000000000000000,
         "multiplier": 9,
         "map": {
           "lat": 43.73,
@@ -863,7 +863,7 @@
         "id": "barcelona",
         "order": 7,
         "background": "cityBarcelona",
-        "relocationCost": 6.4e+46,
+        "relocationCost": 178000000000000000000,
         "multiplier": 10,
         "map": {
           "lat": 41.39,
@@ -881,7 +881,7 @@
         "id": "madrid",
         "order": 8,
         "background": "cityMadrid",
-        "relocationCost": 1.28e+47,
+        "relocationCost": 4.22e+21,
         "multiplier": 11,
         "map": {
           "lat": 40.42,
@@ -899,7 +899,7 @@
         "id": "lisbon",
         "order": 9,
         "background": "cityLisbon",
-        "relocationCost": 2.56e+47,
+        "relocationCost": 1e+23,
         "multiplier": 12,
         "map": {
           "lat": 38.72,
@@ -916,7 +916,7 @@
         "id": "paris",
         "order": 10,
         "background": "cityParis",
-        "relocationCost": 5.12e+47,
+        "relocationCost": 2.37e+24,
         "multiplier": 13,
         "map": {
           "lat": 48.86,
@@ -933,7 +933,7 @@
         "id": "brussels",
         "order": 11,
         "background": "cityBrussels",
-        "relocationCost": 1.024e+48,
+        "relocationCost": 5.62e+25,
         "multiplier": 14,
         "map": {
           "lat": 50.85,
@@ -950,7 +950,7 @@
         "id": "amsterdam",
         "order": 12,
         "background": "cityAmsterdam",
-        "relocationCost": 2.048e+48,
+        "relocationCost": 1.33e+27,
         "multiplier": 15,
         "map": {
           "lat": 52.37,
@@ -967,7 +967,7 @@
         "id": "london",
         "order": 13,
         "background": "cityLondon",
-        "relocationCost": 4.096e+48,
+        "relocationCost": 3.16e+28,
         "multiplier": 16,
         "map": {
           "lat": 51.51,
@@ -985,7 +985,7 @@
         "id": "liverpool",
         "order": 14,
         "background": "cityLiverpool",
-        "relocationCost": 8.192e+48,
+        "relocationCost": 7.5e+29,
         "multiplier": 17,
         "map": {
           "lat": 53.41,
@@ -1003,7 +1003,7 @@
         "id": "berlin",
         "order": 15,
         "background": "cityBerlin",
-        "relocationCost": 1.6384e+49,
+        "relocationCost": 1.78e+31,
         "multiplier": 18,
         "map": {
           "lat": 52.52,
@@ -1020,7 +1020,7 @@
         "id": "warsaw",
         "order": 16,
         "background": "cityWarsaw",
-        "relocationCost": 3.2768e+49,
+        "relocationCost": 4.22e+32,
         "multiplier": 19,
         "map": {
           "lat": 52.23,
@@ -1037,7 +1037,7 @@
         "id": "minsk",
         "order": 17,
         "background": "cityMinsk",
-        "relocationCost": 6.5536e+49,
+        "relocationCost": 1e+34,
         "multiplier": 20,
         "map": {
           "lat": 53.9,
@@ -1054,7 +1054,7 @@
         "id": "budapest",
         "order": 18,
         "background": "cityBudapest",
-        "relocationCost": 1.31072e+50,
+        "relocationCost": 2.37e+35,
         "multiplier": 21,
         "map": {
           "lat": 47.5,
@@ -1071,7 +1071,7 @@
         "id": "zagreb",
         "order": 19,
         "background": "cityZagreb",
-        "relocationCost": 2.62144e+50,
+        "relocationCost": 5.62e+36,
         "multiplier": 22,
         "map": {
           "lat": 45.81,
@@ -1088,7 +1088,7 @@
         "id": "belgrade",
         "order": 20,
         "background": "cityBelgrade",
-        "relocationCost": 5.24288e+50,
+        "relocationCost": 1.33e+38,
         "multiplier": 23,
         "map": {
           "lat": 44.79,
@@ -1105,7 +1105,7 @@
         "id": "sofia",
         "order": 21,
         "background": "citySofia",
-        "relocationCost": 1.04858e+51,
+        "relocationCost": 3.16e+39,
         "multiplier": 24,
         "map": {
           "lat": 42.7,
@@ -1122,7 +1122,7 @@
         "id": "bucharest",
         "order": 22,
         "background": "cityBucharest",
-        "relocationCost": 2.09715e+51,
+        "relocationCost": 7.5e+40,
         "multiplier": 25,
         "map": {
           "lat": 44.43,
@@ -1139,7 +1139,7 @@
         "id": "istanbul",
         "order": 23,
         "background": "cityIstanbul",
-        "relocationCost": 4.1943e+51,
+        "relocationCost": 1.78e+42,
         "multiplier": 26,
         "map": {
           "lat": 41.01,
@@ -1156,7 +1156,7 @@
         "id": "athens",
         "order": 24,
         "background": "cityAthens",
-        "relocationCost": 8.38861e+51,
+        "relocationCost": 4.22e+43,
         "multiplier": 27,
         "map": {
           "lat": 37.98,
@@ -1173,7 +1173,7 @@
         "id": "telaviv",
         "order": 25,
         "background": "cityTelaviv",
-        "relocationCost": 1.67772e+52,
+        "relocationCost": 1e+45,
         "multiplier": 28,
         "map": {
           "lat": 32.09,

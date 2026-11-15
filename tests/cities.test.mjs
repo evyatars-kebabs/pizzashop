@@ -67,10 +67,14 @@ test('every city upgrade is tied to a city and has its strings', () => {
   }
 });
 
-test('the first paid city costs 10^45, and the price keeps doubling', () => {
+test('the first paid city costs a trillion and the last costs 10^45, with a steady rate between them', () => {
   const sorted = [...list].sort((a, b) => a.order - b.order);
-  assert.equal(sorted[1].relocationCost, 1e45);
-  for (let i = 2; i < sorted.length; i++) assert.ok(Math.abs(sorted[i].relocationCost / (sorted[i - 1].relocationCost * 2) - 1) < 1e-4, sorted[i].id);
+  assert.equal(sorted[1].relocationCost, 1e12);
+  assert.equal(sorted[sorted.length - 1].relocationCost, 1e45);
+  const rate = Math.pow(10, 33 / (sorted.length - 2));
+  for (let i = 2; i < sorted.length; i++) {
+    assert.ok(Math.abs(sorted[i].relocationCost / sorted[i - 1].relocationCost / rate - 1) < 0.02, sorted[i].id + ' steps by the same rate');
+  }
 });
 
 test('the map covers the 26 cities in travel order, each with a place on the map', () => {
