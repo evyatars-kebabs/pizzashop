@@ -20,7 +20,11 @@ test('the rate display uses the same big-number format', () => {
   assert.equal(money(7_400_000_000_000), '7.4T');
 });
 
-test('very large amounts switch to scientific notation', () => {
-  assert.equal(abbrev(1e108), '1.00e108');
+test('past Vg the names go Aa, Ab, ... and then scientific notation', () => {
+  assert.equal(abbrev(1e66), '1Aa');
+  assert.equal(abbrev(1e69), '1Ab');
+  assert.equal(abbrev(1e141), '1Az');
+  assert.equal(abbrev(1e144), '1Ba');
+  assert.equal(abbrev(1e108), '1Ao');
   assert.equal(abbrev(1e63), '1Vg');
 });
