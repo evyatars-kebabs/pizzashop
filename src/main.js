@@ -467,7 +467,7 @@ function applyTheme(pref) {
   const dark = pref === 'dark' || (pref === 'system' && !!systemDark?.matches);
   document.documentElement.dataset.theme = dark ? 'dark' : 'light';
   // The phone colours its own status and navigation bars from these, so they follow the theme too.
-  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#241f2b' : '#ffd9a0');
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#241f2b' : '#3a2a1d');
   document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]')?.setAttribute('content', dark ? 'black' : 'default');
 }
 
