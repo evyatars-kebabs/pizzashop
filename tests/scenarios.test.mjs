@@ -120,7 +120,7 @@ test('the player-only path (no staff) keeps running, with customers leaving when
 test('every upgrade can be bought up to its maximum without going negative', () => {
   const s = newGame(cfg, NOW);
   s.franchise.count = 3;
-  s.cash = 1e90;
+  s.cash = 1e200;
   s.cityVisited = cfg.economy.cities.list.map((c) => c.id);
   const keys = Object.keys(cfg.economy.upgrades).filter((k) => cfg.economy.upgrades[k].enabled !== false);
   for (const k of keys) {

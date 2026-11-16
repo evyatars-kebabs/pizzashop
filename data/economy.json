@@ -211,7 +211,7 @@
       }
     },
     "delivery": {
-      "baseCost": 2000000000000,
+      "baseCost": 200000000000000,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -222,7 +222,7 @@
       }
     },
     "trattoria": {
-      "baseCost": 200000000000000,
+      "baseCost": 2000000000000000000,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -233,7 +233,7 @@
       }
     },
     "rooftop": {
-      "baseCost": 20000000000000000,
+      "baseCost": 2e+22,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -244,7 +244,7 @@
       }
     },
     "zurichUp": {
-      "baseCost": 2000000000000000000,
+      "baseCost": 2e+26,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -255,7 +255,7 @@
       }
     },
     "monacoUp": {
-      "baseCost": 200000000000000000000,
+      "baseCost": 2e+30,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -266,7 +266,7 @@
       }
     },
     "barcelonaUp": {
-      "baseCost": 2e+22,
+      "baseCost": 2e+34,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -277,7 +277,7 @@
       }
     },
     "madridUp": {
-      "baseCost": 2e+24,
+      "baseCost": 2e+38,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -288,7 +288,7 @@
       }
     },
     "lisbonUp": {
-      "baseCost": 2e+26,
+      "baseCost": 2e+42,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -299,7 +299,7 @@
       }
     },
     "parisUp": {
-      "baseCost": 2e+28,
+      "baseCost": 2e+46,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -310,7 +310,7 @@
       }
     },
     "brusselsUp": {
-      "baseCost": 2e+30,
+      "baseCost": 2e+50,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -321,7 +321,7 @@
       }
     },
     "amsterdamUp": {
-      "baseCost": 2e+32,
+      "baseCost": 2e+54,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -332,7 +332,7 @@
       }
     },
     "londonUp": {
-      "baseCost": 2e+34,
+      "baseCost": 2e+58,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -343,7 +343,7 @@
       }
     },
     "liverpoolUp": {
-      "baseCost": 2e+36,
+      "baseCost": 2e+62,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -354,7 +354,7 @@
       }
     },
     "berlinUp": {
-      "baseCost": 2e+38,
+      "baseCost": 2e+66,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -365,7 +365,7 @@
       }
     },
     "warsawUp": {
-      "baseCost": 2e+40,
+      "baseCost": 2e+70,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -376,7 +376,7 @@
       }
     },
     "minskUp": {
-      "baseCost": 2e+42,
+      "baseCost": 2e+74,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -387,7 +387,7 @@
       }
     },
     "budapestUp": {
-      "baseCost": 2e+44,
+      "baseCost": 2e+78,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -398,7 +398,7 @@
       }
     },
     "zagrebUp": {
-      "baseCost": 2e+46,
+      "baseCost": 2e+82,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -409,7 +409,7 @@
       }
     },
     "belgradeUp": {
-      "baseCost": 2e+48,
+      "baseCost": 2e+86,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -420,7 +420,7 @@
       }
     },
     "sofiaUp": {
-      "baseCost": 2e+50,
+      "baseCost": 2e+90,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -431,7 +431,7 @@
       }
     },
     "bucharestUp": {
-      "baseCost": 2e+52,
+      "baseCost": 2e+94,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -442,7 +442,7 @@
       }
     },
     "istanbulUp": {
-      "baseCost": 2e+54,
+      "baseCost": 2e+98,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -453,7 +453,7 @@
       }
     },
     "athensUp": {
-      "baseCost": 2e+56,
+      "baseCost": 2e+102,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -464,7 +464,7 @@
       }
     },
     "telavivUp": {
-      "baseCost": 2e+58,
+      "baseCost": 2e+106,
       "growth": 1.2,
       "maxLevel": 20,
       "group": "city",
@@ -775,7 +775,7 @@
         "id": "florence",
         "order": 2,
         "background": "cityFlorence",
-        "relocationCost": 100000000000000,
+        "relocationCost": 10000000000000000,
         "multiplier": 2.5,
         "map": {
           "lat": 43.77,
@@ -793,7 +793,7 @@
         "id": "milan",
         "order": 3,
         "background": "cityMilan",
-        "relocationCost": 10000000000000000,
+        "relocationCost": 100000000000000000000,
         "multiplier": 4,
         "map": {
           "lat": 45.46,
@@ -810,7 +810,7 @@
         "id": "rome",
         "order": 4,
         "background": "cityRome",
-        "relocationCost": 1000000000000000000,
+        "relocationCost": 1e+24,
         "multiplier": 7,
         "map": {
           "lat": 41.9,
@@ -827,7 +827,7 @@
         "id": "zurich",
         "order": 5,
         "background": "cityZurich",
-        "relocationCost": 100000000000000000000,
+        "relocationCost": 1e+28,
         "multiplier": 8,
         "map": {
           "lat": 47.37,
@@ -845,7 +845,7 @@
         "id": "monaco",
         "order": 6,
         "background": "cityMonaco",
-        "relocationCost": 1e+22,
+        "relocationCost": 1e+32,
         "multiplier": 9,
         "map": {
           "lat": 43.73,
@@ -863,7 +863,7 @@
         "id": "barcelona",
         "order": 7,
         "background": "cityBarcelona",
-        "relocationCost": 1e+24,
+        "relocationCost": 1e+36,
         "multiplier": 10,
         "map": {
           "lat": 41.39,
@@ -881,7 +881,7 @@
         "id": "madrid",
         "order": 8,
         "background": "cityMadrid",
-        "relocationCost": 1e+26,
+        "relocationCost": 1e+40,
         "multiplier": 11,
         "map": {
           "lat": 40.42,
@@ -899,7 +899,7 @@
         "id": "lisbon",
         "order": 9,
         "background": "cityLisbon",
-        "relocationCost": 1e+28,
+        "relocationCost": 1e+44,
         "multiplier": 12,
         "map": {
           "lat": 38.72,
@@ -916,7 +916,7 @@
         "id": "paris",
         "order": 10,
         "background": "cityParis",
-        "relocationCost": 1e+30,
+        "relocationCost": 1e+48,
         "multiplier": 13,
         "map": {
           "lat": 48.86,
@@ -933,7 +933,7 @@
         "id": "brussels",
         "order": 11,
         "background": "cityBrussels",
-        "relocationCost": 1e+32,
+        "relocationCost": 1e+52,
         "multiplier": 14,
         "map": {
           "lat": 50.85,
@@ -950,7 +950,7 @@
         "id": "amsterdam",
         "order": 12,
         "background": "cityAmsterdam",
-        "relocationCost": 1e+34,
+        "relocationCost": 1e+56,
         "multiplier": 15,
         "map": {
           "lat": 52.37,
@@ -967,7 +967,7 @@
         "id": "london",
         "order": 13,
         "background": "cityLondon",
-        "relocationCost": 1e+36,
+        "relocationCost": 1e+60,
         "multiplier": 16,
         "map": {
           "lat": 51.51,
@@ -985,7 +985,7 @@
         "id": "liverpool",
         "order": 14,
         "background": "cityLiverpool",
-        "relocationCost": 1e+38,
+        "relocationCost": 1e+64,
         "multiplier": 17,
         "map": {
           "lat": 53.41,
@@ -1003,7 +1003,7 @@
         "id": "berlin",
         "order": 15,
         "background": "cityBerlin",
-        "relocationCost": 1e+40,
+        "relocationCost": 1e+68,
         "multiplier": 18,
         "map": {
           "lat": 52.52,
@@ -1020,7 +1020,7 @@
         "id": "warsaw",
         "order": 16,
         "background": "cityWarsaw",
-        "relocationCost": 1e+42,
+        "relocationCost": 1e+72,
         "multiplier": 19,
         "map": {
           "lat": 52.23,
@@ -1037,7 +1037,7 @@
         "id": "minsk",
         "order": 17,
         "background": "cityMinsk",
-        "relocationCost": 1e+44,
+        "relocationCost": 1e+76,
         "multiplier": 20,
         "map": {
           "lat": 53.9,
@@ -1054,7 +1054,7 @@
         "id": "budapest",
         "order": 18,
         "background": "cityBudapest",
-        "relocationCost": 1e+46,
+        "relocationCost": 1e+80,
         "multiplier": 21,
         "map": {
           "lat": 47.5,
@@ -1071,7 +1071,7 @@
         "id": "zagreb",
         "order": 19,
         "background": "cityZagreb",
-        "relocationCost": 1e+48,
+        "relocationCost": 1e+84,
         "multiplier": 22,
         "map": {
           "lat": 45.81,
@@ -1088,7 +1088,7 @@
         "id": "belgrade",
         "order": 20,
         "background": "cityBelgrade",
-        "relocationCost": 1e+50,
+        "relocationCost": 1e+88,
         "multiplier": 23,
         "map": {
           "lat": 44.79,
@@ -1105,7 +1105,7 @@
         "id": "sofia",
         "order": 21,
         "background": "citySofia",
-        "relocationCost": 1e+52,
+        "relocationCost": 1e+92,
         "multiplier": 24,
         "map": {
           "lat": 42.7,
@@ -1122,7 +1122,7 @@
         "id": "bucharest",
         "order": 22,
         "background": "cityBucharest",
-        "relocationCost": 1e+54,
+        "relocationCost": 1e+96,
         "multiplier": 25,
         "map": {
           "lat": 44.43,
@@ -1139,7 +1139,7 @@
         "id": "istanbul",
         "order": 23,
         "background": "cityIstanbul",
-        "relocationCost": 1e+56,
+        "relocationCost": 1e+100,
         "multiplier": 26,
         "map": {
           "lat": 41.01,
@@ -1156,7 +1156,7 @@
         "id": "athens",
         "order": 24,
         "background": "cityAthens",
-        "relocationCost": 1e+58,
+        "relocationCost": 1e+104,
         "multiplier": 27,
         "map": {
           "lat": 37.98,
@@ -1173,7 +1173,7 @@
         "id": "telaviv",
         "order": 25,
         "background": "cityTelaviv",
-        "relocationCost": 1e+60,
+        "relocationCost": 1e+108,
         "multiplier": 28,
         "map": {
           "lat": 32.09,

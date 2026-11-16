@@ -19,3 +19,8 @@ test('amounts from a billion up use B, T, Qa and so on', () => {
 test('the rate display uses the same big-number format', () => {
   assert.equal(money(7_400_000_000_000), '7.4T');
 });
+
+test('very large amounts switch to scientific notation', () => {
+  assert.equal(abbrev(1e108), '1.00e108');
+  assert.equal(abbrev(1e63), '1Vg');
+});

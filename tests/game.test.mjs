@@ -192,7 +192,7 @@ function inCity(id, reached = [id], franchises = 0) {
   s.location = 'city' + id[0].toUpperCase() + id.slice(1);
   s.cityVisited = reached;
   s.franchise.count = franchises;
-  s.cash = 1e80;
+  s.cash = 1e200;
   return s;
 }
 
@@ -402,7 +402,7 @@ test('each franchise brings more customers, with no upper limit', () => {
 // ---- Empire upgrades ----
 test('Empire upgrades cannot be bought before the required franchises', () => {
   const s = newGame(cfg, NOW);
-  s.cash = 1e80;
+  s.cash = 1e200;
   assert.equal(buyUpgrade(s, 'marketing', cfg).reason, 'needsFranchise');
   assert.equal(buyUpgrade(s, 'pizzaSchool', cfg).reason, 'needsFranchise');
   assert.equal(buyUpgrade(s, 'megaOven', cfg).reason, 'needsFranchise');
@@ -418,7 +418,7 @@ test('Empire upgrades cannot be bought before the required franchises', () => {
 test('Empire upgrades give large boosts to customers, pay and oven capacity', () => {
   const s = newGame(cfg, NOW);
   s.franchise.count = 3;
-  s.cash = 1e80;
+  s.cash = 1e200;
   const base = derive(s, cfg);
   const basePay = payment('margherita', 1, base, { cashMult: 1 }, false, cfg);
   for (let i = 0; i < 5; i++) buyUpgrade(s, 'marketing', cfg);
@@ -438,7 +438,7 @@ test('Empire upgrades reset with a franchise, and the gate applies again afterwa
   const s = newGame(cfg, NOW);
   s.franchise.count = 1;
   s.lifetimeCash = 25000;
-  s.cash = 1e80;
+  s.cash = 1e200;
   buyUpgrade(s, 'marketing', cfg);
   const after = franchise(s, cfg, newGame, NOW).state;
   assert.equal(after.upgrades.marketing, 0);

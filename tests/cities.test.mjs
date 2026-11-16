@@ -67,11 +67,11 @@ test('every city upgrade is tied to a city and has its strings', () => {
   }
 });
 
-test('the first paid city costs a trillion, and each city after costs 100 times the last', () => {
+test('the first paid city costs a trillion, and each city after costs 10,000 times the last', () => {
   const sorted = [...list].sort((a, b) => a.order - b.order);
   assert.equal(sorted[1].relocationCost, 1e12);
   for (let i = 2; i < sorted.length; i++) {
-    assert.ok(Math.abs(Math.log10(sorted[i].relocationCost / sorted[i - 1].relocationCost) - 2) < 1e-9, sorted[i].id);
+    assert.ok(Math.abs(Math.log10(sorted[i].relocationCost / sorted[i - 1].relocationCost) - 4) < 1e-9, sorted[i].id);
   }
 });
 

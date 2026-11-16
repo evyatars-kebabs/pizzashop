@@ -31,6 +31,8 @@ const BIG = [
 // Returns the abbreviated form for amounts of a billion or more, otherwise null.
 export function abbrev(n) {
   const a = Math.abs(n);
+  // Past the last name, show scientific notation (1.00e108) instead of a long run of units.
+  if (a >= 1e66) return n.toExponential(2).replace("e+", "e");
   let hit = null;
   for (const entry of BIG) if (a >= entry[0]) hit = entry;
   if (!hit) return null;
