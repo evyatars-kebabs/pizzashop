@@ -9,16 +9,46 @@
   --sky: #9fd8f2;
   --panel: rgba(255, 250, 240, 0.94);
   --shadow: 0 6px 18px rgba(60, 30, 10, 0.22);
+  --bg: #ffd9a0;
+  --surface: #ffffff;
+  --surface-2: #efe3d0;
+  --surface-hover: #fff8ec;
+  --kbd: #f3eadb;
+  --bar: #e8dcc8;
+  --switch-off: #cbbba7;
+  --sea: #dff1f6;
+  --halo: rgba(255, 255, 255, 0.85);
+  --hint-bg: #fff3c4;
   --radius: 16px;
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --tap: 48px;
 }
 
+/* Dark theme: the same tokens with dark values. Set by settings.theme (see applyTheme in main.js). */
+:root[data-theme="dark"] {
+  --cream: #241f2b;
+  --ink: #f2ebe0;
+  --muted: #a99c8d;
+  --panel: rgba(36, 31, 43, 0.95);
+  --shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
+  --bg: #15121b;
+  --surface: #2e2838;
+  --surface-2: #3a3345;
+  --surface-hover: #443d52;
+  --kbd: #3a3345;
+  --bar: #3a3345;
+  --switch-off: #5a5166;
+  --sea: #1c2c3a;
+  --halo: rgba(20, 18, 26, 0.85);
+  --hint-bg: #4a3d1c;
+  color-scheme: dark;
+}
+
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 html, body { height: 100%; margin: 0; }
 body {
-  background: #ffd9a0;
+  background: var(--bg);
   color: var(--ink);
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   overflow: hidden;
@@ -60,7 +90,7 @@ body.paused #scene { filter: saturate(0.6); }
 button.icon {
   min-width: var(--tap); min-height: var(--tap);
   border: 0; border-radius: 14px;
-  background: #fff; color: var(--ink);
+  background: var(--surface); color: var(--ink);
   font-size: 20px; cursor: pointer;
   box-shadow: 0 2px 6px rgba(0,0,0,.12);
 }
@@ -77,7 +107,7 @@ button.icon {
 .hint {
   position: fixed; left: 12px; right: 12px;
   bottom: calc(var(--safe-bottom) + 96px);
-  background: #fff3c4; border: 2px solid var(--gold);
+  background: var(--hint-bg); border: 2px solid var(--gold);
   color: var(--ink); padding: 10px 14px; border-radius: 14px;
   font-weight: 700; text-align: center; box-shadow: var(--shadow);
   z-index: 4; pointer-events: none;
@@ -125,7 +155,7 @@ button.icon {
 #actions button {
   position: relative;
   min-height: 60px; border: 0; border-radius: var(--radius);
-  background: #fff; color: var(--ink); cursor: pointer;
+  background: var(--surface); color: var(--ink); cursor: pointer;
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
   box-shadow: 0 2px 0 rgba(0,0,0,.12);
   padding: 4px 2px;
@@ -168,7 +198,7 @@ button.icon {
 
 .row {
   display: flex; align-items: center; gap: 10px;
-  background: #fff; border-radius: var(--radius); padding: 10px 12px; margin: 6px 0;
+  background: var(--surface); border-radius: var(--radius); padding: 10px 12px; margin: 6px 0;
   box-shadow: 0 1px 0 rgba(0,0,0,.06);
 }
 .info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
@@ -178,7 +208,7 @@ button.icon {
 
 .btn {
   min-height: var(--tap); min-width: 96px; padding: 0 14px;
-  border: 0; border-radius: 14px; background: #efe3d0; color: var(--ink);
+  border: 0; border-radius: 14px; background: var(--surface-2); color: var(--ink);
   font-weight: 800; font-size: 15px; cursor: pointer; font-variant-numeric: tabular-nums;
 }
 .btn.primary { background: var(--tomato); color: #fff; }
@@ -186,12 +216,12 @@ button.icon {
 .btn:not(:disabled):active { transform: translateY(1px); }
 
 .switch {
-  width: 60px; height: 34px; border-radius: 17px; border: 0; background: #cbbba7;
+  width: 60px; height: 34px; border-radius: 17px; border: 0; background: var(--switch-off);
   position: relative; cursor: pointer; flex: none;
 }
 .switch::after {
   content: ""; position: absolute; top: 4px; left: 4px;
-  width: 26px; height: 26px; border-radius: 50%; background: #fff; transition: transform .2s;
+  width: 26px; height: 26px; border-radius: 50%; background: var(--surface); transition: transform .2s;
 }
 .switch.on { background: var(--basil); }
 .switch.on::after { transform: translateX(26px); }
@@ -210,7 +240,7 @@ button.icon {
   box-shadow: inset -8px -10px 0 rgba(150, 90, 30, .2), 0 6px 14px rgba(0,0,0,.2);
   transition: transform .05s linear;
 }
-.bar { height: 14px; border-radius: 7px; background: #e8dcc8; overflow: hidden; margin: 10px 0; }
+.bar { height: 14px; border-radius: 7px; background: var(--bar); overflow: hidden; margin: 10px 0; }
 .bar .fill { height: 100%; width: 0; background: var(--basil); transition: width .08s linear; }
 .bar.time .fill { background: var(--gold); }
 .wants { font-weight: 800; font-size: 17px; margin: 8px 0; }
@@ -252,7 +282,7 @@ button.icon {
 /* Loading */
 #loading {
   position: fixed; inset: 0; z-index: 20; display: flex; align-items: center; justify-content: center;
-  background: #ffd9a0; font-weight: 800; font-size: 18px; padding: 24px; text-align: center;
+  background: var(--bg); font-weight: 800; font-size: 18px; padding: 24px; text-align: center;
 }
 
 /* Wider screens (tablet, desktop): centre the sheets and widen the bars a bit. */
@@ -267,9 +297,9 @@ button.icon {
   #actions kbd.key {
     display: block; position: absolute; top: 5px; left: 7px;
     font: 700 11px/1 ui-monospace, Menlo, Consolas, monospace;
-    color: var(--muted); background: #f3eadb; border-radius: 5px; padding: 2px 5px;
+    color: var(--muted); background: var(--kbd); border-radius: 5px; padding: 2px 5px;
   }
-  #actions button:hover { background: #fff8ec; }
+  #actions button:hover { background: var(--surface-hover); }
   #actions button:focus-visible, .btn:focus-visible, .icon:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
   #actions { left: 50%; right: auto; width: min(760px, calc(100% - 24px)); transform: translateX(-50%); bottom: 12px; border-radius: 18px; }
   .hint { left: 50%; right: auto; width: min(640px, calc(100% - 24px)); transform: translateX(-50%); }
@@ -282,7 +312,7 @@ button.icon {
   .btn:hover:not(:disabled) { filter: brightness(1.05); }
   .switch { cursor: pointer; }
   .keys-help { font-size: 13px; color: var(--muted); margin: 10px 0 0; line-height: 1.6; }
-  .keys-help kbd { font: 700 12px ui-monospace, Menlo, Consolas, monospace; background: #f3eadb; border-radius: 5px; padding: 1px 6px; }
+  .keys-help kbd { font: 700 12px ui-monospace, Menlo, Consolas, monospace; background: var(--kbd); border-radius: 5px; padding: 1px 6px; }
 }
 
 .chip-topping.selected { outline: 4px solid var(--gold); outline-offset: 3px; transform: scale(1.06); }
@@ -317,9 +347,9 @@ button.icon {
 .sign-label.shopname { background: transparent; box-shadow: none; color: #b5372a; font-size: 17px; font-weight: 900; letter-spacing: .03em; text-shadow: 0 1px 0 #fff6e6; }
 .sign-label.franchise { background: #d4af37; color: #3a2a1d; font-size: 10px; padding: 2px 6px; }
 
-.segmented { display: flex; background: #efe3d0; border-radius: 12px; padding: 3px; flex: none; }
+.segmented { display: flex; background: var(--surface-2); border-radius: 12px; padding: 3px; flex: none; }
 .segmented .seg { min-height: 40px; min-width: 52px; padding: 0 10px; border: 0; border-radius: 10px; background: transparent; color: var(--ink); font-weight: 800; font-size: 13px; cursor: pointer; }
-.segmented .seg.on { background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.18); }
+.segmented .seg.on { background: var(--surface); box-shadow: 0 1px 3px rgba(0,0,0,.18); }
 
 .row.locked { opacity: .55; }
 
@@ -340,12 +370,12 @@ button.bonus { background: #ffd166; color: #3a2a1d; font-weight: 900; font-size:
 
 /* Map sheet: the cities reached this franchise run, drawn at their real positions. */
 .citymap { display: block; width: 100%; max-height: 230px; margin: 6px 0 12px; }
-.cm-sea { fill: #dff1f6; }
+.cm-sea { fill: var(--sea); }
 .cm-route { fill: none; stroke: #c8392b; stroke-width: 2; stroke-dasharray: 5 4; }
-.cm-city circle { fill: #ffffff; stroke: #8a8f98; stroke-width: 2; }
+.cm-city circle { fill: var(--surface); stroke: #8a8f98; stroke-width: 2; }
 .cm-city.visited circle { fill: #2f7d6a; stroke: #2f7d6a; }
 .cm-city.here circle { fill: #c8392b; stroke: #ffffff; stroke-width: 3; }
 .cm-city.next circle { fill: #fff3dc; stroke: #e9a23b; stroke-width: 2.5; stroke-dasharray: 3 2; }
-.cm-city text { font-size: 13px; font-weight: 700; fill: #2a2622; paint-order: stroke; stroke: rgba(255, 255, 255, 0.85); stroke-width: 3px; }
-.cm-city.locked text { fill: #6b6f76; }
+.cm-city text { font-size: 13px; font-weight: 700; fill: var(--ink); paint-order: stroke; stroke: var(--halo); stroke-width: 3px; }
+.cm-city.locked text { fill: var(--muted); }
 .row.current { border-color: #c8392b; }

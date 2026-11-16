@@ -434,5 +434,10 @@
   "upgrade.telavivUp.desc": "+{pct}% foot traffic",
   "decor.step.telaviv_umbrella": "beach umbrellas",
   "decor.step.telaviv_banners": "sea-blue banners",
-  "decor.step.telaviv_fountain": "a plaza fountain"
+  "decor.step.telaviv_fountain": "a plaza fountain",
+  "settings.theme": "Theme",
+  "settings.themeDesc": "Light or dark colours for the menus and the stand screen.",
+  "settings.theme.light": "Light",
+  "settings.theme.dark": "Dark",
+  "settings.theme.system": "System"
 }

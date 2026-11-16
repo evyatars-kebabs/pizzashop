@@ -336,6 +336,8 @@ export function openSettings(state, actions) {
         (v) => actions.setLook(v), (v) => t('settings.look.' + v)),
       choiceRow(t('settings.graphics'), t('settings.graphicsDesc'), ['auto', 'high', 'low'], state.settings.graphics || 'auto',
         (v) => actions.setGraphics(v), (v) => t('settings.graphics.' + v)),
+      choiceRow(t('settings.theme'), t('settings.themeDesc'), ['light', 'dark', 'system'], state.settings.theme || 'light',
+        (v) => actions.setTheme(v), (v) => t('settings.theme.' + v)),
     );
     const version = el('button', 'version-tap', `${t('app.version')}`);
     let taps = 0;

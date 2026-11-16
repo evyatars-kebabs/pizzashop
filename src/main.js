@@ -72,6 +72,7 @@ async function boot() {
   });
 
   setSoundEnabled(S.settings.sound);
+  applyTheme(S.settings.theme || 'light');
   env.setQuality(S.settings.graphics || 'auto');
   env.setLook(S.settings.look || '3d');
   startSession();
@@ -456,8 +457,24 @@ function mapActions() {
   };
 }
 
+// Light, dark, or the device's setting. The page is marked with data-theme and the CSS does the rest.
+let systemDark = null;
+function applyTheme(pref) {
+  if (systemDark === null && globalThis.matchMedia) {
+    systemDark = globalThis.matchMedia('(prefers-color-scheme: dark)');
+    systemDark.addEventListener?.('change', () => { if (S?.settings?.theme === 'system') applyTheme('system'); });
+  }
+  const dark = pref === 'dark' || (pref === 'system' && !!systemDark?.matches);
+  document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+}
+
 function settingsActions() {
   return {
+    setTheme: (v) => {
+      S.settings.theme = v;
+      applyTheme(v);
+      sheets.openSettings(S, settingsActions());
+    },
     setSound: (v) => {
       S.settings.sound = v;
       setSoundEnabled(v);

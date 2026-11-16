@@ -49,7 +49,8 @@ export const DEFAULT_STATE_PARTIAL = {
   idleNotified: { cashier: false, cook: false },
   spawnTimer: 4,
   tutorialSpawnTimer: 1.5,
-  settings: { sound: true, notify: false, graphics: 'auto', look: '3d' },
+  // theme: 'light' | 'dark' | 'system' (system follows the device setting).
+  settings: { sound: true, notify: false, graphics: 'auto', look: '3d', theme: 'light' },
   cosmetics: { ovenSkin: 'skin.classic' },
 };
 
